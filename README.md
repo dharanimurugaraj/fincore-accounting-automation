@@ -8,13 +8,13 @@ Vyrenzo Bank is a next-generation banking intelligence platform designed to auto
 
 The project is structured as a modular Monorepo:
 
-### 1. **Backend (`fincore-backend/`)** — *The Brains*
+### 1. **Backend (`backend/`)** — *The Brains*
 Powered by **FastAPI**, it handles the heavy lifting through a discrete 3-stage pipeline:
 - **Stage 1 (Extraction & Classification)**: Recognizes bank-specific PDF formats, classifies accounts, and extracts transactional data with high-confidence OCR.
 - **Stage 2 (Computation)**: Processes raw data through our verified formula engine (CC Interest, WCDL, Forex Excess, ROI Verification).
 - **Stage 3 (Reporting)**: Generates automated Working Sheets and Management Reports in Excel format.
 
-### 2. **Frontend (`fincore-frontend/`)** — *The UI*
+### 2. **Frontend (`frontend/`)** — *The UI*
 Powered by **Next.js 16** and **Tailwind CSS**:
 - **Smart Proxy**: A custom Next.js API route that intelligently maps legacy frontend calls (CamelCase) to our modern Python API (snake_case).
 - **Protected Environment**: Full auth-gated dashboard for document management, pipeline monitoring, and report downloads.
@@ -32,20 +32,18 @@ Powered by **Next.js 16** and **Tailwind CSS**:
 
 ### 2. Backend Setup
 ```bash
-cd fincore-backend
+cd backend
 # Copy and update your environment variables
 cp .env.example .env
 # Install dependencies
 pip install -r requirements.txt
-# Initialize Database Schema
-python scripts/init_db.py
 # Start the server
 python -m uvicorn app.main:app --reload --port 8000
 ```
 
 ### 3. Frontend Setup
 ```bash
-cd fincore-frontend
+cd frontend
 # Copy and update your environment variables
 cp .env.example .env.local
 # Install dependencies
@@ -56,9 +54,46 @@ npm run dev
 
 ---
 
+## 🗄️ Database Setup
+
+To run the database for the first time, follow these steps to ensure your PostgreSQL instance is ready and the schema is correctly applied.
+
+### 1. Create the Database
+In your PostgreSQL tool (PGAdmin, DBeaver, or `psql`), create the database:
+```sql
+CREATE DATABASE fincore_dev;
+```
+
+### 2. Apply the Schema
+Apply the schema script located at `backend/database/schema.sql` to your new database.
+
+**Via Command Line (`psql`):**
+```powershell
+cd backend
+psql -U postgres -d fincore_dev -f database/schema.sql
+```
+*(Default password is `Bharadwaj2112` unless changed in your local Postgres setup)*
+
+### 3. Verify Connection
+Ensure your `backend/.env` file has the correct `DATABASE_URL`:
+```env
+DATABASE_URL=postgresql://postgres:Bharadwaj2112@localhost:5432/fincore_dev
+```
+
+**What this setup includes:**
+- **UUIDs**: Enabled for secure, unique record IDs.
+- **Enums**: Pre-defined roles (`ADMIN`, `ANALYST`) and statuses (`UPLOADED`, `PENDING`).
+- **Tables**: `Organisation`, `User`, `Upload`, `PipelineRun`, `AuditLog`.
+- **Seed Data**: Automatically creates a default organization (`Vyrenzo Bank Demo`).
+
+> [!NOTE]
+> Since the platform uses **Firebase Auth**, your first login will create a Firebase user. Ensure your email is linked to an organization in the `User` table to access protected routes.
+
+---
+
 ## 📂 Directory Structure
 
-### Backend (`app/`)
+### Backend (`backend/app/`)
 - `api/v1/`: Modular routers for uploads, pipeline, and reports.
 - `computation/`: Pure Python formula engine (zero-dependency, highly testable).
 - `ocr/`: LLM-based extraction agents and bank classifiers.
@@ -67,7 +102,7 @@ npm run dev
 - `services/`: Infrastructure adapters (S3, Forex Rates, Validation).
 - `core/`: Central configuration and database connection pooling.
 
-### Frontend (`app/`)
+### Frontend (`frontend/app/`)
 - `(auth)/`: Login and registration flows.
 - `(protected)/`: Auth-gated routes for Dashboard, Uploads, Documents, Reports, and Forex Analysis.
 - `api/[...path]/`: Our custom **Smart Proxy** for backend communication.
@@ -86,7 +121,7 @@ The platform includes a robust validation engine that cross-references computed 
 
 Run the computation test suite:
 ```bash
-cd fincore-backend
+cd backend
 python -m pytest tests/ -v
 ```
 
