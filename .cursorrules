@@ -3,19 +3,19 @@
 Comprehensive rules for AI agents working on the Vyrenzo project (Next.js 16.2 Frontend + FastAPI Backend).
 
 ## 1. Project Overview
-- **Backend**: Located in `fincore-backend`. Uses FastAPI, PostgreSQL (via psycopg2), and Google Gemini AI for computation.
-- **Frontend**: Located in `fincore-frontend`. Uses Next.js 16.2 (App Router), Tailwind CSS, Lucide icons, and Radix UI components.
+- **Backend**: Located in `backend`. Uses FastAPI, PostgreSQL (via psycopg2), and Google Gemini AI for computation.
+- **Frontend**: Located in `frontend`. Uses Next.js 16.2 (App Router), Tailwind CSS, Lucide icons, and Radix UI components.
 - **Storage**: Uses both local storage and AWS S3 as alternatives.
 - **Auth**: Firebase Google Authentication for identity management.
 
 ## 2. Coding Guidelines
 
 ### Frontend (Next.js 16.2)
-- Use **Next.js 16.2 App Router** structure (`fincore-frontend/app`).
+- Use **Next.js 16.2 App Router** structure (`frontend/app`).
 - **Styling**: Always use **Tailwind CSS**. Prefer HSL-based color tokens for consistency and maintainability.
-- **Components**: Follow the existing structure in `fincore-frontend/components/ui` for small UI atoms and `components/` for larger pieces.
+- **Components**: Follow the existing structure in `frontend/components/ui` for small UI atoms and `components/` for larger pieces.
 - **State Management**: Use **Zustand** for global logic and React `useState`/`useEffect` for local UI state.
-- **API Calls**: All frontend routes should proxy through `fincore-frontend/app/api` if necessary, or call the backend directly at `http://localhost:8000` (defined in `BACKEND_URL`).
+- **API Calls**: All frontend routes should proxy through `frontend/app/api` if necessary, or call the backend directly at `http://localhost:8000` (defined in `BACKEND_URL`).
 - **Icons**: Use `lucide-react` for all icons.
 
 ### Backend (FastAPI)
@@ -25,7 +25,7 @@ Comprehensive rules for AI agents working on the Vyrenzo project (Next.js 16.2 F
   - `app/services`: Core business logic (OCR, computation, etc.).
   - `app/utils`: Helper functions.
 - **Database**: The backend manages the database directly using PostgreSQL and raw SQL or lightweight handlers. Ensure all migrations are tracked in the `migrations/` folder.
-- **Environment**: Always check `fincore-backend/.env` for database credentials and API keys.
+- **Environment**: Always check `backend/.env` for database credentials and API keys.
 
 ## 3. Communication Style
 - When suggesting code, always state which directory (`frontend` or `backend`) the change belongs to.
