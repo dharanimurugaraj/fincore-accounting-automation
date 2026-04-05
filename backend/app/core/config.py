@@ -7,9 +7,11 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load .env from backend folder (where the environment-specific config lives)
-_env_path = Path(__file__).parent.parent.parent / ".env"
-load_dotenv(_env_path, override=True)
+# Load .env only for local development. Vercel provides these via the Dashboard.
+if not os.getenv("VERCEL"):
+    _env_path = Path(__file__).parent.parent.parent / ".env"
+    if _env_path.exists():
+        load_dotenv(_env_path, override=True)
 
 
 class Settings:
