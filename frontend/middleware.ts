@@ -18,6 +18,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // 3. One-time persistence check (Cookie)
+  const authCookie = request.cookies.get('fincore_auth_session')?.value;
+  if (authCookie === 'true') {
+    return NextResponse.next();
+  }
+
   const authHeader = request.headers.get('authorization');
 
   if (!authHeader) {
@@ -39,7 +45,13 @@ export function middleware(request: NextRequest) {
     const correctPass = process.env.AUTH_PASS || 'finance@1234';
 
     if (user === correctUser && pass === correctPass) {
-      return NextResponse.next();
+      // SUCCESS: Set persistent cookie and allow through
+      const response = NextResponse.next();
+      response.cookies.set('fincore_auth_session', 'true', {
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: '/',
+      });
+      return response;
     }
   } catch (error) {
     // If decoding fails, return 401
