@@ -15,6 +15,10 @@ export async function PUT(request: NextRequest, context: any) {
     return handle(request, context, "PUT");
 }
 
+export async function PATCH(request: NextRequest, context: any) {
+    return handle(request, context, "PATCH");
+}
+
 export async function DELETE(request: NextRequest, context: any) {
     return handle(request, context, "DELETE");
 }
