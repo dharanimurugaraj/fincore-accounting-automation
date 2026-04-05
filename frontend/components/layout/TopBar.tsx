@@ -4,7 +4,7 @@ import { Bell, Search, User, LogOut } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthContext";
 
 export default function TopBar() {
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-slate-800 bg-[#0F172A]/80 px-8 backdrop-blur-md shadow-sm">
@@ -28,9 +28,13 @@ export default function TopBar() {
         <div className="h-8 w-px bg-slate-800 mx-2" />
 
         <div className="flex items-center gap-4">
-          <div className="flex flex-col items-end hidden sm:flex">
-             <span className="text-sm font-bold text-white tracking-tight">{user?.displayName || "Analyst User"}</span>
-             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">Vyrenzo Analyst</span>
+          <div className="flex flex-col items-end hidden sm:flex leading-none">
+             <span className="text-sm font-bold text-white tracking-tight">{user?.displayName || "User"}</span>
+             <span className={`text-[9px] font-bold uppercase tracking-widest mt-1 px-1.5 py-0.5 rounded ${
+                profile?.role_id === 0 ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" : "text-slate-500"
+             }`}>
+               {profile?.role ? `Vyrenzo ${profile.role.replace("_", " ")}` : "Authenticating..."}
+             </span>
           </div>
 
           <div className="group relative">

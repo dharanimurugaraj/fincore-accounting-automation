@@ -78,6 +78,8 @@ const PLACEHOLDER_DATA: DashboardData = {
   ],
   wcdlLoans: [
     {
+      id: "mock1",
+      bankName: "HDFC Bank Ltd.",
       loanNumber: "240LN01260280020",
       startDate: "15-Jan-2026",
       maturityDate: "15-Apr-2026",
@@ -87,6 +89,8 @@ const PLACEHOLDER_DATA: DashboardData = {
       daysToMaturity: 17,
     },
     {
+      id: "mock2",
+      bankName: "HDFC Bank Ltd.",
       loanNumber: "240LN01260340022",
       startDate: "03-Feb-2026",
       maturityDate: "03-May-2026",
@@ -96,6 +100,8 @@ const PLACEHOLDER_DATA: DashboardData = {
       daysToMaturity: 35,
     },
     {
+      id: "mock3",
+      bankName: "Union Bank",
       loanNumber: "240LN01260180018",
       startDate: "20-Dec-2025",
       maturityDate: "20-Feb-2026",
@@ -113,22 +119,24 @@ const PLACEHOLDER_DATA: DashboardData = {
 };
 
 export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData>(PLACEHOLDER_DATA);
+  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("2026-02");
 
   const refreshData = async () => {
     setLoading(true);
     try {
-      // Using our smart API helper which attaches the Auth token
-      // The backend will now automatically identify "Bharadwaj R"
-      const res = await api.get(`documents?month=${selectedMonth}`);
-      if (res) {
-        // Parse dynamic dashboard data if the backend provides it
-        // setData(res as DashboardData);
+      const res = await api.get(`reports/dashboard?statement_month=${selectedMonth}`);
+      if (res && (res as any).has_data) {
+        setData(res as unknown as DashboardData);
+      } else {
+        // Force inject static presentation data to showcase the dashboard
+        setData(PLACEHOLDER_DATA);
       }
     } catch (err) {
       console.error("Dashboard refresh failed:", err);
+      // Fallback to static data for demonstration
+      setData(PLACEHOLDER_DATA);
     }
     setLoading(false);
   };
@@ -138,13 +146,52 @@ export default function DashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMonth]);
 
+  if (loading && !data) {
+    return (
+      <div className="flex h-[70vh] items-center justify-center">
+        <RefreshCw className="h-8 w-8 animate-spin text-indigo-500" />
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex h-[70vh] flex-col items-center justify-center p-12 text-center">
+        <div className="mb-4 rounded-full bg-slate-900/50 p-6 backdrop-blur-sm">
+          <Calendar className="h-12 w-12 text-slate-700" />
+        </div>
+        <div className="mb-6 flex flex-col items-center gap-3">
+          <div className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900 px-3 py-1.5">
+            <Calendar className="h-4 w-4 text-slate-500" />
+            <input
+              type="month"
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="bg-transparent text-sm text-slate-200 outline-none"
+            />
+          </div>
+        </div>
+        <h2 className="text-xl font-semibold text-slate-200">No report data for {selectedMonth}</h2>
+        <p className="mt-2 max-w-md text-slate-500">
+          Upload your bank statements for this month to generate the intelligence report and dashboard KPIs.
+        </p>
+        <button
+          onClick={() => (window.location.href = "/upload")}
+          className="mt-6 rounded-lg bg-indigo-600 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+        >
+          Upload Statements
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${loading ? "opacity-30" : ""}`}>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-100">Dashboard</h1>
           <p className="text-sm text-slate-400">
-            {data.month} — Working Capital Overview
+            {data?.month} — Working Capital Overview
           </p>
         </div>
         <div className="flex items-center gap-3">

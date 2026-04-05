@@ -86,10 +86,9 @@ export default function DocumentsPage() {
   const fetchDocuments = async () => {
     setLoading(true);
     try {
-      // Use our authenticated api client
-      const data = await api.get<{ items: UploadedFile[] }>(`documents`);
-      if (data && data.items) {
-        setDocuments(data.items);
+      const data = await api.get<{ documents: UploadedFile[] }>(`documents`);
+      if (data && data.documents) {
+        setDocuments(data.documents);
       }
     } catch (err) {
       console.error("Failed to fetch documents:", err);

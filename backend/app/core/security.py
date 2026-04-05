@@ -16,7 +16,6 @@ from app.core.config import settings
 from app.core.database import execute_query, execute_insert
 
 # Setup Absolute Paths to the Backend Root (where .env and keys live)
-# Path of this file: app/core/security.py
 _CURRENT_DIR = Path(__file__).resolve().parent
 _BACKEND_ROOT = _CURRENT_DIR.parent.parent # app -> core -> root
 
@@ -58,21 +57,36 @@ async def get_current_user(res: HTTPAuthorizationCredentials = Security(security
 
         # 2. Check if user exists in our DB
         rows = execute_query(
-            'SELECT id, "orgId", role FROM "User" WHERE "firebaseUid" = %s',
+            'SELECT u.id, u."orgId", u."roleId", r.name as role_name, r."allowedPages" '
+            'FROM "User" u JOIN "Role" r ON u."roleId" = r.id '
+            'WHERE u."firebaseUid" = %s',
             (fb_uid,),
         )
 
         if not rows:
             # 3. Dynamic User Creation
             internal_id = f"user_{fb_uid[:12]}"
+            
+            # Fetch the actual ID of PENDING_APPROVAL dynamically just in case sequences shifted it
+            role_rows = execute_query('SELECT id FROM "Role" WHERE name = %s', ("PENDING_APPROVAL",))
+            pending_role_id = role_rows[0]["id"] if role_rows else 4 # Fallback
+            
             execute_insert(
                 """
-                INSERT INTO "User" (id, email, name, "photoUrl", "firebaseUid", "orgId", role, "lastLogin")
+                INSERT INTO "User" (id, email, name, "photoUrl", "firebaseUid", "orgId", "roleId", "lastLogin")
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """,
-                (internal_id, email, name, photo_url, fb_uid, 'default-org', 'ANALYST', datetime.utcnow()),
+                (internal_id, email, name, photo_url, fb_uid, 'default-org', pending_role_id, datetime.utcnow()),
             )
-            return {"id": internal_id, "org_id": 'default-org', "role": 'ANALYST', "email": email, "photo_url": photo_url}
+            return {
+                "id": internal_id, 
+                "org_id": 'default-org', 
+                "role_id": pending_role_id, 
+                "role": "PENDING_APPROVAL", 
+                "allowed_pages": [],
+                "email": email, 
+                "photo_url": photo_url
+            }
 
         # 4. Sync metadata (Photo, Last Login) on every valid token
         execute_query(
@@ -84,8 +98,11 @@ async def get_current_user(res: HTTPAuthorizationCredentials = Security(security
         return {
             "id": user["id"],
             "org_id": user["orgId"],
-            "role": user["role"],
+            "role_id": user["roleId"],
+            "role": user["role_name"],
+            "allowed_pages": user["allowedPages"] or ["*"],
             "email": email,
+            "photo_url": photo_url,
         }
 
     except Exception as e:
