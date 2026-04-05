@@ -30,13 +30,14 @@ async function handle(request: NextRequest, context: any, method: string) {
     let host = vercelUrl || "127.0.0.1:8000";
     const protocol = host.includes("127.0.0.1") || host.includes("localhost") ? "http" : "https";
     
-    // Special handling for Vercel's internal experimentalServices routing
     if (!host.includes("_/backend") && !host.includes("127.0.0.1")) {
         host = `${host}/_/backend`;
     }
     
     const url = new URL(request.url);
-    const backendUrl = `${protocol}://${host}/api/v1/${path}${url.search}`;
+    // Remove duplicate v1 if already present in segments
+    const cleanPath = path.startsWith("v1/") ? path : `v1/${path}`;
+    const backendUrl = `${protocol}://${host}/api/${cleanPath}${url.search}`;
 
     console.log(`[Proxy] ${method} -> ${backendUrl}`);
 

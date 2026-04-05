@@ -59,12 +59,18 @@ app.mount("/files", StaticFiles(directory=str(storage_path)), name="local-files"
 @app.get("/api/v1/health")
 async def health():
     import firebase_admin
+    import os
     from app.core.config import settings
+    
+    # Redacted list of keys for debugging
+    fb_keys = [k for k in os.environ.keys() if "FIREBASE" in k]
+    
     return {
         "status": "healthy",
         "firebase_initialized": bool(firebase_admin._apps),
-        "db_url_configured": bool(settings.DATABASE_URL),
-        "fb_json_configured": bool(settings.FIREBASE_SERVICE_ACCOUNT_JSON)
+        "fb_keys_found": fb_keys,
+        "env_vercel": bool(os.getenv("VERCEL")),
+        "fb_json_len": len(settings.FIREBASE_SERVICE_ACCOUNT_JSON) if settings.FIREBASE_SERVICE_ACCOUNT_JSON else 0
     }
 
 @app.get("/")
