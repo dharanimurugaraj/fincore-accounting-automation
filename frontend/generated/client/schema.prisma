@@ -1,0 +1,231 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  output          = "../frontend/generated/client"
+}
+
+// --- ENUMS ---
+
+enum UploadStatus {
+  UPLOADED
+  OCR_RUNNING
+  OCR_COMPLETE
+  OCR_FAILED
+  NEEDS_REVIEW
+}
+
+enum RunStatus {
+  PENDING
+  STAGE1_RUNNING
+  STAGE1_REVIEW
+  STAGE2_RUNNING
+  STAGE3_RUNNING
+  VALIDATION_FAILED
+  AWAITING_APPROVAL
+  APPROVED
+  FAILED
+}
+
+// --- MODELS ---
+
+model Role {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  description  String?
+  allowedPages String[] @default(["*"]) @map("allowedPages")
+  users        User[]
+
+  @@map("Role")
+}
+
+model Organisation {
+  id             String                 @id @default(cuid())
+  name           String
+  legalName      String?                @map("legalName")
+  address        String?
+  logoUrl        String?                @map("logoUrl")
+  departments    String[]               @default([])
+  createdAt      DateTime               @default(now()) @map("createdAt")
+  users          User[]
+  pipelineRuns   PipelineRun[]
+  uploads        Upload[]
+  wcdlLoans      WCDLLoan[]
+  forexTrans     ForexTransaction[]
+  agentConfigs   AgentConfig[]
+  formulaConfigs FormulaConfiguration[]
+  aiUsageLogs    AIUsageLog[]
+
+  @@map("Organisation")
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  name         String?
+  title        String?
+  phone        String?
+  photoUrl     String?      @map("photoUrl")
+  roleId       Int          @default(2) @map("roleId")
+  role         Role         @relation(fields: [roleId], references: [id])
+  orgId        String       @map("orgId")
+  organisation Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  firebaseUid  String?      @unique @map("firebaseUid")
+  theme        String?      @default("dark")
+  timezone     String?      @default("UTC")
+  dateFormat   String?      @default("MM/DD/YYYY") @map("dateFormat")
+  emailAlerts  Boolean?     @default(true) @map("emailAlerts")
+  lastLogin    DateTime?    @map("lastLogin")
+  createdAt    DateTime     @default(now()) @map("createdAt")
+  uploads      Upload[]
+  aiUsageLogs  AIUsageLog[]
+
+  @@map("User")
+}
+
+model PipelineRun {
+  id                String             @id @default(uuid())
+  orgId             String             @map("orgId")
+  organisation      Organisation       @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  statementMonth    String             @map("statementMonth")
+  status            RunStatus?         @default(PENDING)
+  stage             Int?               @default(0)
+  statementExcelKey String?            @map("statementExcelKey")
+  workingSheetKey   String?            @map("workingSheetKey")
+  bankingReportKey  String?            @map("bankingReportKey")
+  validationResult  String?            @map("validationResult")
+  errorMessage      String?            @map("errorMessage")
+  reportSummary     String?            @map("reportSummary")
+  checksum          String?
+  startedAt         DateTime?          @map("startedAt")
+  completedAt       DateTime?          @map("completedAt")
+  createdAt         DateTime           @default(now()) @map("createdAt")
+  uploads           Upload[]
+  wcdlLoans         WCDLLoan[]
+  forexTrans        ForexTransaction[]
+
+  @@map("PipelineRun")
+}
+
+model Upload {
+  id             String        @id @default(uuid())
+  orgId          String        @map("orgId")
+  organisation   Organisation  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  uploadedById   String        @map("uploadedById")
+  user           User          @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  filename       String
+  s3Key          String        @unique @map("s3Key")
+  bankName       String?       @map("bankName")
+  accountType    String?       @map("accountType")
+  accountId      String?       @map("accountId")
+  statementMonth String?       @map("statementMonth")
+  fileSizeBytes  BigInt?       @map("fileSizeBytes")
+  status         UploadStatus? @default(UPLOADED)
+  runId          String?       @map("runId")
+  pipelineRun    PipelineRun?  @relation(fields: [runId], references: [id], onDelete: SetNull)
+  createdAt      DateTime      @default(now()) @map("createdAt")
+
+  @@map("Upload")
+}
+
+model WCDLLoan {
+  id              String       @id @default(uuid())
+  orgId           String       @map("orgId")
+  organisation    Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  runId           String?      @map("runId")
+  pipelineRun     PipelineRun? @relation(fields: [runId], references: [id], onDelete: SetNull)
+  statementMonth  String       @map("statementMonth")
+  loanNumber      String       @map("loanNumber")
+  bankName        String       @map("bankName")
+  principalAmount Decimal      @map("principalAmount") @db.Decimal(15, 2)
+  roi             Decimal      @map("roi") @db.Decimal(8, 6)
+  startDate       DateTime     @map("startDate") @db.Date
+  maturityDate    DateTime     @map("maturityDate") @db.Date
+  prepaymentDate  DateTime?    @map("prepaymentDate") @db.Date
+  status          String?      @default("ACTIVE")
+  createdAt       DateTime     @default(now()) @map("createdAt")
+  updatedAt       DateTime     @default(now()) @updatedAt @map("updatedAt")
+
+  @@map("WCDLLoan")
+}
+
+model ForexTransaction {
+  id             String       @id @default(uuid())
+  orgId          String       @map("orgId")
+  organisation   Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  runId          String?      @map("runId")
+  pipelineRun    PipelineRun? @relation(fields: [runId], references: [id], onDelete: SetNull)
+  statementMonth String       @map("statementMonth")
+  srNo           Int?         @map("srNo")
+  boeDate        DateTime?    @map("boeDate") @db.Date
+  valueDate      DateTime?    @map("valueDate") @db.Date
+  drawerName     String?      @map("drawerName")
+  billReference  String?      @map("billReference")
+  currency       String?
+  fcAmount       Decimal?     @map("fcAmount") @db.Decimal(18, 4)
+  bankRate       Decimal?     @map("bankRate") @db.Decimal(10, 4)
+  marketAvgRate  Decimal?     @map("marketAvgRate") @db.Decimal(10, 4)
+  dayHighRate    Decimal?     @map("dayHighRate") @db.Decimal(10, 4)
+  excessVsAvg    Decimal?     @map("excessVsAvg") @db.Decimal(18, 2)
+  excessVsHigh   Decimal?     @map("excessVsHigh") @db.Decimal(18, 2)
+  billAmtINR     Decimal?     @map("billAmtINR") @db.Decimal(18, 2)
+  billCommission Decimal?     @map("billCommission") @db.Decimal(18, 2)
+  swiftCharges   Decimal?     @map("swiftCharges") @db.Decimal(18, 2)
+  totalAmtINR    Decimal?     @map("totalAmtINR") @db.Decimal(18, 2)
+  createdAt      DateTime     @default(now()) @map("createdAt")
+
+  @@map("ForexTransaction")
+}
+
+model AgentConfig {
+  id             String       @id @default(uuid())
+  orgId          String       @map("orgId")
+  organisation   Organisation @relation(fields: [orgId], references: [id])
+  agentId        String       @map("agentId")
+  primaryModel   String       @map("primaryModel")
+  fallbackModels String[]     @map("fallbackModels")
+  maxRetries     Int?         @default(3) @map("maxRetries")
+  temperature    Decimal?     @default(0.0) @map("temperature") @db.Decimal(3, 2)
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updatedAt")
+
+  @@unique([orgId, agentId])
+  @@map("AgentConfig")
+}
+
+model AIUsageLog {
+  id           String       @id @default(uuid())
+  userId       String       @map("userId")
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userEmail    String       @map("userEmail")
+  orgId        String       @map("orgId")
+  organisation Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  model        String
+  tokensIn     Int?         @default(0) @map("tokensIn")
+  tokensOut    Int?         @default(0) @map("tokensOut")
+  costUsd      Decimal?     @default(0.0) @map("costUsd") @db.Decimal(15, 6)
+  action       String?
+  sessionId    String?      @map("sessionId")
+  createdAt    DateTime     @default(now()) @map("createdAt")
+
+  @@map("AIUsageLog")
+}
+
+model FormulaConfiguration {
+  id           String       @id @default(uuid())
+  orgId        String       @map("orgId")
+  organisation Organisation @relation(fields: [orgId], references: [id])
+  name         String
+  version      Int
+  expression   String
+  parameters   String?
+  description  String?
+  isActive     Boolean?     @default(true) @map("isActive")
+  updatedAt    DateTime     @default(now()) @updatedAt @map("updatedAt")
+
+  @@map("FormulaConfiguration")
+}
