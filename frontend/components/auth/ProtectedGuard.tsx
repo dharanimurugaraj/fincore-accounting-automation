@@ -50,7 +50,7 @@ export default function ProtectedGuard({ children }: { children: React.ReactNode
                <button 
                   onClick={() => {
                       import("@/lib/firebase").then(({ auth }) => {
-                          auth.signOut();
+                          if (auth) auth.signOut();
                       });
                   }}
                   className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg transition-colors w-full"

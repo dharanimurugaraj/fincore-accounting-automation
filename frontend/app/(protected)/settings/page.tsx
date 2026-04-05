@@ -246,7 +246,7 @@ export default function SettingsPage() {
                                <h3 className="text-rose-400 font-bold">Terminate Sessions</h3>
                                <p className="text-sm text-slate-400 mt-1">Sign out manually out of all web and mobile instances linked to your identity.</p>
                            </div>
-                           <button onClick={() => { import("@/lib/firebase").then(({ auth }) => auth.signOut()); }} className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 px-4 py-2 text-white text-sm font-bold rounded-lg transition-colors">
+                           <button onClick={() => { import("@/lib/firebase").then(({ auth }) => { if (auth) auth.signOut(); }); }} className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 px-4 py-2 text-white text-sm font-bold rounded-lg transition-colors">
                                <LogOut className="w-4 h-4" /> Global Sign Out
                            </button>
                        </div>
