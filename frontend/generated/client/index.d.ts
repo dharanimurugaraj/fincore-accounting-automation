@@ -59,6 +59,16 @@ export type AgentConfig = $Result.DefaultSelection<Prisma.$AgentConfigPayload>
  */
 export type AIUsageLog = $Result.DefaultSelection<Prisma.$AIUsageLogPayload>
 /**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = $Result.DefaultSelection<Prisma.$AuditLogPayload>
+/**
+ * Model Approval
+ * 
+ */
+export type Approval = $Result.DefaultSelection<Prisma.$ApprovalPayload>
+/**
  * Model FormulaConfiguration
  * 
  */
@@ -313,6 +323,26 @@ export class PrismaClient<
     * ```
     */
   get aIUsageLog(): Prisma.AIUsageLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.auditLog`: Exposes CRUD operations for the **AuditLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AuditLogs
+    * const auditLogs = await prisma.auditLog.findMany()
+    * ```
+    */
+  get auditLog(): Prisma.AuditLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.approval`: Exposes CRUD operations for the **Approval** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Approvals
+    * const approvals = await prisma.approval.findMany()
+    * ```
+    */
+  get approval(): Prisma.ApprovalDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.formulaConfiguration`: Exposes CRUD operations for the **FormulaConfiguration** model.
@@ -766,6 +796,8 @@ export namespace Prisma {
     ForexTransaction: 'ForexTransaction',
     AgentConfig: 'AgentConfig',
     AIUsageLog: 'AIUsageLog',
+    AuditLog: 'AuditLog',
+    Approval: 'Approval',
     FormulaConfiguration: 'FormulaConfiguration'
   };
 
@@ -782,7 +814,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "role" | "organisation" | "user" | "pipelineRun" | "upload" | "wCDLLoan" | "forexTransaction" | "agentConfig" | "aIUsageLog" | "formulaConfiguration"
+      modelProps: "role" | "organisation" | "user" | "pipelineRun" | "upload" | "wCDLLoan" | "forexTransaction" | "agentConfig" | "aIUsageLog" | "auditLog" | "approval" | "formulaConfiguration"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1452,6 +1484,154 @@ export namespace Prisma {
           }
         }
       }
+      AuditLog: {
+        payload: Prisma.$AuditLogPayload<ExtArgs>
+        fields: Prisma.AuditLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AuditLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AuditLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          findFirst: {
+            args: Prisma.AuditLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AuditLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          findMany: {
+            args: Prisma.AuditLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+          }
+          create: {
+            args: Prisma.AuditLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          createMany: {
+            args: Prisma.AuditLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AuditLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+          }
+          delete: {
+            args: Prisma.AuditLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          update: {
+            args: Prisma.AuditLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.AuditLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AuditLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AuditLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.AuditLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          }
+          aggregate: {
+            args: Prisma.AuditLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAuditLog>
+          }
+          groupBy: {
+            args: Prisma.AuditLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AuditLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AuditLogCountArgs<ExtArgs>
+            result: $Utils.Optional<AuditLogCountAggregateOutputType> | number
+          }
+        }
+      }
+      Approval: {
+        payload: Prisma.$ApprovalPayload<ExtArgs>
+        fields: Prisma.ApprovalFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ApprovalFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ApprovalFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPayload>
+          }
+          findFirst: {
+            args: Prisma.ApprovalFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ApprovalFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPayload>
+          }
+          findMany: {
+            args: Prisma.ApprovalFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPayload>[]
+          }
+          create: {
+            args: Prisma.ApprovalCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPayload>
+          }
+          createMany: {
+            args: Prisma.ApprovalCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ApprovalCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPayload>[]
+          }
+          delete: {
+            args: Prisma.ApprovalDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPayload>
+          }
+          update: {
+            args: Prisma.ApprovalUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPayload>
+          }
+          deleteMany: {
+            args: Prisma.ApprovalDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ApprovalUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ApprovalUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPayload>[]
+          }
+          upsert: {
+            args: Prisma.ApprovalUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApprovalPayload>
+          }
+          aggregate: {
+            args: Prisma.ApprovalAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateApproval>
+          }
+          groupBy: {
+            args: Prisma.ApprovalGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ApprovalGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ApprovalCountArgs<ExtArgs>
+            result: $Utils.Optional<ApprovalCountAggregateOutputType> | number
+          }
+        }
+      }
       FormulaConfiguration: {
         payload: Prisma.$FormulaConfigurationPayload<ExtArgs>
         fields: Prisma.FormulaConfigurationFieldRefs
@@ -1643,6 +1823,8 @@ export namespace Prisma {
     forexTransaction?: ForexTransactionOmit
     agentConfig?: AgentConfigOmit
     aIUsageLog?: AIUsageLogOmit
+    auditLog?: AuditLogOmit
+    approval?: ApprovalOmit
     formulaConfiguration?: FormulaConfigurationOmit
   }
 
@@ -1763,6 +1945,7 @@ export namespace Prisma {
     agentConfigs: number
     formulaConfigs: number
     aiUsageLogs: number
+    auditLogs: number
   }
 
   export type OrganisationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1774,6 +1957,7 @@ export namespace Prisma {
     agentConfigs?: boolean | OrganisationCountOutputTypeCountAgentConfigsArgs
     formulaConfigs?: boolean | OrganisationCountOutputTypeCountFormulaConfigsArgs
     aiUsageLogs?: boolean | OrganisationCountOutputTypeCountAiUsageLogsArgs
+    auditLogs?: boolean | OrganisationCountOutputTypeCountAuditLogsArgs
   }
 
   // Custom InputTypes
@@ -1843,6 +2027,13 @@ export namespace Prisma {
     where?: AIUsageLogWhereInput
   }
 
+  /**
+   * OrganisationCountOutputType without action
+   */
+  export type OrganisationCountOutputTypeCountAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AuditLogWhereInput
+  }
+
 
   /**
    * Count Type UserCountOutputType
@@ -1851,11 +2042,13 @@ export namespace Prisma {
   export type UserCountOutputType = {
     uploads: number
     aiUsageLogs: number
+    auditLogs: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     uploads?: boolean | UserCountOutputTypeCountUploadsArgs
     aiUsageLogs?: boolean | UserCountOutputTypeCountAiUsageLogsArgs
+    auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
   }
 
   // Custom InputTypes
@@ -1883,6 +2076,13 @@ export namespace Prisma {
     where?: AIUsageLogWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AuditLogWhereInput
+  }
+
 
   /**
    * Count Type PipelineRunCountOutputType
@@ -1892,12 +2092,14 @@ export namespace Prisma {
     uploads: number
     wcdlLoans: number
     forexTrans: number
+    approvals: number
   }
 
   export type PipelineRunCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     uploads?: boolean | PipelineRunCountOutputTypeCountUploadsArgs
     wcdlLoans?: boolean | PipelineRunCountOutputTypeCountWcdlLoansArgs
     forexTrans?: boolean | PipelineRunCountOutputTypeCountForexTransArgs
+    approvals?: boolean | PipelineRunCountOutputTypeCountApprovalsArgs
   }
 
   // Custom InputTypes
@@ -1930,6 +2132,13 @@ export namespace Prisma {
    */
   export type PipelineRunCountOutputTypeCountForexTransArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ForexTransactionWhereInput
+  }
+
+  /**
+   * PipelineRunCountOutputType without action
+   */
+  export type PipelineRunCountOutputTypeCountApprovalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApprovalWhereInput
   }
 
 
@@ -3213,6 +3422,7 @@ export namespace Prisma {
     agentConfigs?: boolean | Organisation$agentConfigsArgs<ExtArgs>
     formulaConfigs?: boolean | Organisation$formulaConfigsArgs<ExtArgs>
     aiUsageLogs?: boolean | Organisation$aiUsageLogsArgs<ExtArgs>
+    auditLogs?: boolean | Organisation$auditLogsArgs<ExtArgs>
     _count?: boolean | OrganisationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organisation"]>
 
@@ -3256,6 +3466,7 @@ export namespace Prisma {
     agentConfigs?: boolean | Organisation$agentConfigsArgs<ExtArgs>
     formulaConfigs?: boolean | Organisation$formulaConfigsArgs<ExtArgs>
     aiUsageLogs?: boolean | Organisation$aiUsageLogsArgs<ExtArgs>
+    auditLogs?: boolean | Organisation$auditLogsArgs<ExtArgs>
     _count?: boolean | OrganisationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrganisationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3272,6 +3483,7 @@ export namespace Prisma {
       agentConfigs: Prisma.$AgentConfigPayload<ExtArgs>[]
       formulaConfigs: Prisma.$FormulaConfigurationPayload<ExtArgs>[]
       aiUsageLogs: Prisma.$AIUsageLogPayload<ExtArgs>[]
+      auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3683,6 +3895,7 @@ export namespace Prisma {
     agentConfigs<T extends Organisation$agentConfigsArgs<ExtArgs> = {}>(args?: Subset<T, Organisation$agentConfigsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AgentConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     formulaConfigs<T extends Organisation$formulaConfigsArgs<ExtArgs> = {}>(args?: Subset<T, Organisation$formulaConfigsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormulaConfigurationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     aiUsageLogs<T extends Organisation$aiUsageLogsArgs<ExtArgs> = {}>(args?: Subset<T, Organisation$aiUsageLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIUsageLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    auditLogs<T extends Organisation$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Organisation$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4304,6 +4517,30 @@ export namespace Prisma {
   }
 
   /**
+   * Organisation.auditLogs
+   */
+  export type Organisation$auditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    where?: AuditLogWhereInput
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    cursor?: AuditLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+  }
+
+  /**
    * Organisation without action
    */
   export type OrganisationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4604,6 +4841,7 @@ export namespace Prisma {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     uploads?: boolean | User$uploadsArgs<ExtArgs>
     aiUsageLogs?: boolean | User$aiUsageLogsArgs<ExtArgs>
+    auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4671,6 +4909,7 @@ export namespace Prisma {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     uploads?: boolean | User$uploadsArgs<ExtArgs>
     aiUsageLogs?: boolean | User$aiUsageLogsArgs<ExtArgs>
+    auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4689,6 +4928,7 @@ export namespace Prisma {
       organisation: Prisma.$OrganisationPayload<ExtArgs>
       uploads: Prisma.$UploadPayload<ExtArgs>[]
       aiUsageLogs: Prisma.$AIUsageLogPayload<ExtArgs>[]
+      auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5104,6 +5344,7 @@ export namespace Prisma {
     organisation<T extends OrganisationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganisationDefaultArgs<ExtArgs>>): Prisma__OrganisationClient<$Result.GetResult<Prisma.$OrganisationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     uploads<T extends User$uploadsArgs<ExtArgs> = {}>(args?: Subset<T, User$uploadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     aiUsageLogs<T extends User$aiUsageLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$aiUsageLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIUsageLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5597,6 +5838,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.auditLogs
+   */
+  export type User$auditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    where?: AuditLogWhereInput
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    cursor?: AuditLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5897,6 +6162,7 @@ export namespace Prisma {
     uploads?: boolean | PipelineRun$uploadsArgs<ExtArgs>
     wcdlLoans?: boolean | PipelineRun$wcdlLoansArgs<ExtArgs>
     forexTrans?: boolean | PipelineRun$forexTransArgs<ExtArgs>
+    approvals?: boolean | PipelineRun$approvalsArgs<ExtArgs>
     _count?: boolean | PipelineRunCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pipelineRun"]>
 
@@ -5962,6 +6228,7 @@ export namespace Prisma {
     uploads?: boolean | PipelineRun$uploadsArgs<ExtArgs>
     wcdlLoans?: boolean | PipelineRun$wcdlLoansArgs<ExtArgs>
     forexTrans?: boolean | PipelineRun$forexTransArgs<ExtArgs>
+    approvals?: boolean | PipelineRun$approvalsArgs<ExtArgs>
     _count?: boolean | PipelineRunCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PipelineRunIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5978,6 +6245,7 @@ export namespace Prisma {
       uploads: Prisma.$UploadPayload<ExtArgs>[]
       wcdlLoans: Prisma.$WCDLLoanPayload<ExtArgs>[]
       forexTrans: Prisma.$ForexTransactionPayload<ExtArgs>[]
+      approvals: Prisma.$ApprovalPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6393,6 +6661,7 @@ export namespace Prisma {
     uploads<T extends PipelineRun$uploadsArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$uploadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     wcdlLoans<T extends PipelineRun$wcdlLoansArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$wcdlLoansArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WCDLLoanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     forexTrans<T extends PipelineRun$forexTransArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$forexTransArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ForexTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    approvals<T extends PipelineRun$approvalsArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$approvalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6907,6 +7176,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ForexTransactionScalarFieldEnum | ForexTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * PipelineRun.approvals
+   */
+  export type PipelineRun$approvalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalInclude<ExtArgs> | null
+    where?: ApprovalWhereInput
+    orderBy?: ApprovalOrderByWithRelationInput | ApprovalOrderByWithRelationInput[]
+    cursor?: ApprovalWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ApprovalScalarFieldEnum | ApprovalScalarFieldEnum[]
   }
 
   /**
@@ -10811,6 +11104,7 @@ export namespace Prisma {
     maxRetries: number | null
     temperature: Decimal | null
     updatedAt: Date | null
+    createdAt: Date | null
   }
 
   export type AgentConfigMaxAggregateOutputType = {
@@ -10821,6 +11115,7 @@ export namespace Prisma {
     maxRetries: number | null
     temperature: Decimal | null
     updatedAt: Date | null
+    createdAt: Date | null
   }
 
   export type AgentConfigCountAggregateOutputType = {
@@ -10832,6 +11127,7 @@ export namespace Prisma {
     maxRetries: number
     temperature: number
     updatedAt: number
+    createdAt: number
     _all: number
   }
 
@@ -10854,6 +11150,7 @@ export namespace Prisma {
     maxRetries?: true
     temperature?: true
     updatedAt?: true
+    createdAt?: true
   }
 
   export type AgentConfigMaxAggregateInputType = {
@@ -10864,6 +11161,7 @@ export namespace Prisma {
     maxRetries?: true
     temperature?: true
     updatedAt?: true
+    createdAt?: true
   }
 
   export type AgentConfigCountAggregateInputType = {
@@ -10875,6 +11173,7 @@ export namespace Prisma {
     maxRetries?: true
     temperature?: true
     updatedAt?: true
+    createdAt?: true
     _all?: true
   }
 
@@ -10973,6 +11272,7 @@ export namespace Prisma {
     maxRetries: number | null
     temperature: Decimal | null
     updatedAt: Date
+    createdAt: Date
     _count: AgentConfigCountAggregateOutputType | null
     _avg: AgentConfigAvgAggregateOutputType | null
     _sum: AgentConfigSumAggregateOutputType | null
@@ -11003,6 +11303,7 @@ export namespace Prisma {
     maxRetries?: boolean
     temperature?: boolean
     updatedAt?: boolean
+    createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["agentConfig"]>
 
@@ -11015,6 +11316,7 @@ export namespace Prisma {
     maxRetries?: boolean
     temperature?: boolean
     updatedAt?: boolean
+    createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["agentConfig"]>
 
@@ -11027,6 +11329,7 @@ export namespace Prisma {
     maxRetries?: boolean
     temperature?: boolean
     updatedAt?: boolean
+    createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["agentConfig"]>
 
@@ -11039,9 +11342,10 @@ export namespace Prisma {
     maxRetries?: boolean
     temperature?: boolean
     updatedAt?: boolean
+    createdAt?: boolean
   }
 
-  export type AgentConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "agentId" | "primaryModel" | "fallbackModels" | "maxRetries" | "temperature" | "updatedAt", ExtArgs["result"]["agentConfig"]>
+  export type AgentConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "agentId" | "primaryModel" | "fallbackModels" | "maxRetries" | "temperature" | "updatedAt" | "createdAt", ExtArgs["result"]["agentConfig"]>
   export type AgentConfigInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
   }
@@ -11066,6 +11370,7 @@ export namespace Prisma {
       maxRetries: number | null
       temperature: Prisma.Decimal | null
       updatedAt: Date
+      createdAt: Date
     }, ExtArgs["result"]["agentConfig"]>
     composites: {}
   }
@@ -11498,6 +11803,7 @@ export namespace Prisma {
     readonly maxRetries: FieldRef<"AgentConfig", 'Int'>
     readonly temperature: FieldRef<"AgentConfig", 'Decimal'>
     readonly updatedAt: FieldRef<"AgentConfig", 'DateTime'>
+    readonly createdAt: FieldRef<"AgentConfig", 'DateTime'>
   }
     
 
@@ -13109,6 +13415,2181 @@ export namespace Prisma {
 
 
   /**
+   * Model AuditLog
+   */
+
+  export type AggregateAuditLog = {
+    _count: AuditLogCountAggregateOutputType | null
+    _min: AuditLogMinAggregateOutputType | null
+    _max: AuditLogMaxAggregateOutputType | null
+  }
+
+  export type AuditLogMinAggregateOutputType = {
+    id: string | null
+    orgId: string | null
+    userId: string | null
+    action: string | null
+    entityType: string | null
+    entityId: string | null
+    createdAt: Date | null
+  }
+
+  export type AuditLogMaxAggregateOutputType = {
+    id: string | null
+    orgId: string | null
+    userId: string | null
+    action: string | null
+    entityType: string | null
+    entityId: string | null
+    createdAt: Date | null
+  }
+
+  export type AuditLogCountAggregateOutputType = {
+    id: number
+    orgId: number
+    userId: number
+    action: number
+    entityType: number
+    entityId: number
+    metadata: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AuditLogMinAggregateInputType = {
+    id?: true
+    orgId?: true
+    userId?: true
+    action?: true
+    entityType?: true
+    entityId?: true
+    createdAt?: true
+  }
+
+  export type AuditLogMaxAggregateInputType = {
+    id?: true
+    orgId?: true
+    userId?: true
+    action?: true
+    entityType?: true
+    entityId?: true
+    createdAt?: true
+  }
+
+  export type AuditLogCountAggregateInputType = {
+    id?: true
+    orgId?: true
+    userId?: true
+    action?: true
+    entityType?: true
+    entityId?: true
+    metadata?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AuditLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AuditLog to aggregate.
+     */
+    where?: AuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuditLogs to fetch.
+     */
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AuditLogs
+    **/
+    _count?: true | AuditLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AuditLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AuditLogMaxAggregateInputType
+  }
+
+  export type GetAuditLogAggregateType<T extends AuditLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateAuditLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAuditLog[P]>
+      : GetScalarType<T[P], AggregateAuditLog[P]>
+  }
+
+
+
+
+  export type AuditLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AuditLogWhereInput
+    orderBy?: AuditLogOrderByWithAggregationInput | AuditLogOrderByWithAggregationInput[]
+    by: AuditLogScalarFieldEnum[] | AuditLogScalarFieldEnum
+    having?: AuditLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AuditLogCountAggregateInputType | true
+    _min?: AuditLogMinAggregateInputType
+    _max?: AuditLogMaxAggregateInputType
+  }
+
+  export type AuditLogGroupByOutputType = {
+    id: string
+    orgId: string
+    userId: string | null
+    action: string
+    entityType: string
+    entityId: string
+    metadata: JsonValue | null
+    createdAt: Date
+    _count: AuditLogCountAggregateOutputType | null
+    _min: AuditLogMinAggregateOutputType | null
+    _max: AuditLogMaxAggregateOutputType | null
+  }
+
+  type GetAuditLogGroupByPayload<T extends AuditLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AuditLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AuditLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AuditLogGroupByOutputType[P]>
+            : GetScalarType<T[P], AuditLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AuditLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    orgId?: boolean
+    userId?: boolean
+    action?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }, ExtArgs["result"]["auditLog"]>
+
+  export type AuditLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    orgId?: boolean
+    userId?: boolean
+    action?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }, ExtArgs["result"]["auditLog"]>
+
+  export type AuditLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    orgId?: boolean
+    userId?: boolean
+    action?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }, ExtArgs["result"]["auditLog"]>
+
+  export type AuditLogSelectScalar = {
+    id?: boolean
+    orgId?: boolean
+    userId?: boolean
+    action?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    metadata?: boolean
+    createdAt?: boolean
+  }
+
+  export type AuditLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "userId" | "action" | "entityType" | "entityId" | "metadata" | "createdAt", ExtArgs["result"]["auditLog"]>
+  export type AuditLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }
+  export type AuditLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }
+  export type AuditLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | AuditLog$userArgs<ExtArgs>
+  }
+
+  export type $AuditLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AuditLog"
+    objects: {
+      organisation: Prisma.$OrganisationPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      orgId: string
+      userId: string | null
+      action: string
+      entityType: string
+      entityId: string
+      metadata: Prisma.JsonValue | null
+      createdAt: Date
+    }, ExtArgs["result"]["auditLog"]>
+    composites: {}
+  }
+
+  type AuditLogGetPayload<S extends boolean | null | undefined | AuditLogDefaultArgs> = $Result.GetResult<Prisma.$AuditLogPayload, S>
+
+  type AuditLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AuditLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AuditLogCountAggregateInputType | true
+    }
+
+  export interface AuditLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AuditLog'], meta: { name: 'AuditLog' } }
+    /**
+     * Find zero or one AuditLog that matches the filter.
+     * @param {AuditLogFindUniqueArgs} args - Arguments to find a AuditLog
+     * @example
+     * // Get one AuditLog
+     * const auditLog = await prisma.auditLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AuditLogFindUniqueArgs>(args: SelectSubset<T, AuditLogFindUniqueArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AuditLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AuditLogFindUniqueOrThrowArgs} args - Arguments to find a AuditLog
+     * @example
+     * // Get one AuditLog
+     * const auditLog = await prisma.auditLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AuditLogFindUniqueOrThrowArgs>(args: SelectSubset<T, AuditLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AuditLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogFindFirstArgs} args - Arguments to find a AuditLog
+     * @example
+     * // Get one AuditLog
+     * const auditLog = await prisma.auditLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AuditLogFindFirstArgs>(args?: SelectSubset<T, AuditLogFindFirstArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AuditLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogFindFirstOrThrowArgs} args - Arguments to find a AuditLog
+     * @example
+     * // Get one AuditLog
+     * const auditLog = await prisma.auditLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AuditLogFindFirstOrThrowArgs>(args?: SelectSubset<T, AuditLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AuditLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AuditLogs
+     * const auditLogs = await prisma.auditLog.findMany()
+     * 
+     * // Get first 10 AuditLogs
+     * const auditLogs = await prisma.auditLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const auditLogWithIdOnly = await prisma.auditLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AuditLogFindManyArgs>(args?: SelectSubset<T, AuditLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AuditLog.
+     * @param {AuditLogCreateArgs} args - Arguments to create a AuditLog.
+     * @example
+     * // Create one AuditLog
+     * const AuditLog = await prisma.auditLog.create({
+     *   data: {
+     *     // ... data to create a AuditLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends AuditLogCreateArgs>(args: SelectSubset<T, AuditLogCreateArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AuditLogs.
+     * @param {AuditLogCreateManyArgs} args - Arguments to create many AuditLogs.
+     * @example
+     * // Create many AuditLogs
+     * const auditLog = await prisma.auditLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AuditLogCreateManyArgs>(args?: SelectSubset<T, AuditLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AuditLogs and returns the data saved in the database.
+     * @param {AuditLogCreateManyAndReturnArgs} args - Arguments to create many AuditLogs.
+     * @example
+     * // Create many AuditLogs
+     * const auditLog = await prisma.auditLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AuditLogs and only return the `id`
+     * const auditLogWithIdOnly = await prisma.auditLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AuditLogCreateManyAndReturnArgs>(args?: SelectSubset<T, AuditLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AuditLog.
+     * @param {AuditLogDeleteArgs} args - Arguments to delete one AuditLog.
+     * @example
+     * // Delete one AuditLog
+     * const AuditLog = await prisma.auditLog.delete({
+     *   where: {
+     *     // ... filter to delete one AuditLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AuditLogDeleteArgs>(args: SelectSubset<T, AuditLogDeleteArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AuditLog.
+     * @param {AuditLogUpdateArgs} args - Arguments to update one AuditLog.
+     * @example
+     * // Update one AuditLog
+     * const auditLog = await prisma.auditLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AuditLogUpdateArgs>(args: SelectSubset<T, AuditLogUpdateArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AuditLogs.
+     * @param {AuditLogDeleteManyArgs} args - Arguments to filter AuditLogs to delete.
+     * @example
+     * // Delete a few AuditLogs
+     * const { count } = await prisma.auditLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AuditLogDeleteManyArgs>(args?: SelectSubset<T, AuditLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AuditLogs
+     * const auditLog = await prisma.auditLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AuditLogUpdateManyArgs>(args: SelectSubset<T, AuditLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AuditLogs and returns the data updated in the database.
+     * @param {AuditLogUpdateManyAndReturnArgs} args - Arguments to update many AuditLogs.
+     * @example
+     * // Update many AuditLogs
+     * const auditLog = await prisma.auditLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AuditLogs and only return the `id`
+     * const auditLogWithIdOnly = await prisma.auditLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AuditLogUpdateManyAndReturnArgs>(args: SelectSubset<T, AuditLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AuditLog.
+     * @param {AuditLogUpsertArgs} args - Arguments to update or create a AuditLog.
+     * @example
+     * // Update or create a AuditLog
+     * const auditLog = await prisma.auditLog.upsert({
+     *   create: {
+     *     // ... data to create a AuditLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AuditLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AuditLogUpsertArgs>(args: SelectSubset<T, AuditLogUpsertArgs<ExtArgs>>): Prisma__AuditLogClient<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AuditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogCountArgs} args - Arguments to filter AuditLogs to count.
+     * @example
+     * // Count the number of AuditLogs
+     * const count = await prisma.auditLog.count({
+     *   where: {
+     *     // ... the filter for the AuditLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends AuditLogCountArgs>(
+      args?: Subset<T, AuditLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AuditLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AuditLogAggregateArgs>(args: Subset<T, AuditLogAggregateArgs>): Prisma.PrismaPromise<GetAuditLogAggregateType<T>>
+
+    /**
+     * Group by AuditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuditLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AuditLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AuditLogGroupByArgs['orderBy'] }
+        : { orderBy?: AuditLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AuditLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAuditLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AuditLog model
+   */
+  readonly fields: AuditLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AuditLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AuditLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organisation<T extends OrganisationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganisationDefaultArgs<ExtArgs>>): Prisma__OrganisationClient<$Result.GetResult<Prisma.$OrganisationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends AuditLog$userArgs<ExtArgs> = {}>(args?: Subset<T, AuditLog$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AuditLog model
+   */
+  interface AuditLogFieldRefs {
+    readonly id: FieldRef<"AuditLog", 'String'>
+    readonly orgId: FieldRef<"AuditLog", 'String'>
+    readonly userId: FieldRef<"AuditLog", 'String'>
+    readonly action: FieldRef<"AuditLog", 'String'>
+    readonly entityType: FieldRef<"AuditLog", 'String'>
+    readonly entityId: FieldRef<"AuditLog", 'String'>
+    readonly metadata: FieldRef<"AuditLog", 'Json'>
+    readonly createdAt: FieldRef<"AuditLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AuditLog findUnique
+   */
+  export type AuditLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AuditLog to fetch.
+     */
+    where: AuditLogWhereUniqueInput
+  }
+
+  /**
+   * AuditLog findUniqueOrThrow
+   */
+  export type AuditLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AuditLog to fetch.
+     */
+    where: AuditLogWhereUniqueInput
+  }
+
+  /**
+   * AuditLog findFirst
+   */
+  export type AuditLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AuditLog to fetch.
+     */
+    where?: AuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuditLogs to fetch.
+     */
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AuditLogs.
+     */
+    cursor?: AuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AuditLogs.
+     */
+    distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AuditLog findFirstOrThrow
+   */
+  export type AuditLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AuditLog to fetch.
+     */
+    where?: AuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuditLogs to fetch.
+     */
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AuditLogs.
+     */
+    cursor?: AuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AuditLogs.
+     */
+    distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AuditLog findMany
+   */
+  export type AuditLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which AuditLogs to fetch.
+     */
+    where?: AuditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuditLogs to fetch.
+     */
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AuditLogs.
+     */
+    cursor?: AuditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AuditLogs.
+     */
+    distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * AuditLog create
+   */
+  export type AuditLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AuditLog.
+     */
+    data: XOR<AuditLogCreateInput, AuditLogUncheckedCreateInput>
+  }
+
+  /**
+   * AuditLog createMany
+   */
+  export type AuditLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AuditLogs.
+     */
+    data: AuditLogCreateManyInput | AuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AuditLog createManyAndReturn
+   */
+  export type AuditLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many AuditLogs.
+     */
+    data: AuditLogCreateManyInput | AuditLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AuditLog update
+   */
+  export type AuditLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AuditLog.
+     */
+    data: XOR<AuditLogUpdateInput, AuditLogUncheckedUpdateInput>
+    /**
+     * Choose, which AuditLog to update.
+     */
+    where: AuditLogWhereUniqueInput
+  }
+
+  /**
+   * AuditLog updateMany
+   */
+  export type AuditLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AuditLogs.
+     */
+    data: XOR<AuditLogUpdateManyMutationInput, AuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which AuditLogs to update
+     */
+    where?: AuditLogWhereInput
+    /**
+     * Limit how many AuditLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AuditLog updateManyAndReturn
+   */
+  export type AuditLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * The data used to update AuditLogs.
+     */
+    data: XOR<AuditLogUpdateManyMutationInput, AuditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which AuditLogs to update
+     */
+    where?: AuditLogWhereInput
+    /**
+     * Limit how many AuditLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AuditLog upsert
+   */
+  export type AuditLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AuditLog to update in case it exists.
+     */
+    where: AuditLogWhereUniqueInput
+    /**
+     * In case the AuditLog found by the `where` argument doesn't exist, create a new AuditLog with this data.
+     */
+    create: XOR<AuditLogCreateInput, AuditLogUncheckedCreateInput>
+    /**
+     * In case the AuditLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AuditLogUpdateInput, AuditLogUncheckedUpdateInput>
+  }
+
+  /**
+   * AuditLog delete
+   */
+  export type AuditLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+    /**
+     * Filter which AuditLog to delete.
+     */
+    where: AuditLogWhereUniqueInput
+  }
+
+  /**
+   * AuditLog deleteMany
+   */
+  export type AuditLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AuditLogs to delete
+     */
+    where?: AuditLogWhereInput
+    /**
+     * Limit how many AuditLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AuditLog.user
+   */
+  export type AuditLog$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * AuditLog without action
+   */
+  export type AuditLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuditLog
+     */
+    select?: AuditLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuditLog
+     */
+    omit?: AuditLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AuditLogInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Approval
+   */
+
+  export type AggregateApproval = {
+    _count: ApprovalCountAggregateOutputType | null
+    _min: ApprovalMinAggregateOutputType | null
+    _max: ApprovalMaxAggregateOutputType | null
+  }
+
+  export type ApprovalMinAggregateOutputType = {
+    id: string | null
+    runId: string | null
+    userId: string | null
+    createdAt: Date | null
+  }
+
+  export type ApprovalMaxAggregateOutputType = {
+    id: string | null
+    runId: string | null
+    userId: string | null
+    createdAt: Date | null
+  }
+
+  export type ApprovalCountAggregateOutputType = {
+    id: number
+    runId: number
+    userId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ApprovalMinAggregateInputType = {
+    id?: true
+    runId?: true
+    userId?: true
+    createdAt?: true
+  }
+
+  export type ApprovalMaxAggregateInputType = {
+    id?: true
+    runId?: true
+    userId?: true
+    createdAt?: true
+  }
+
+  export type ApprovalCountAggregateInputType = {
+    id?: true
+    runId?: true
+    userId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ApprovalAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Approval to aggregate.
+     */
+    where?: ApprovalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Approvals to fetch.
+     */
+    orderBy?: ApprovalOrderByWithRelationInput | ApprovalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ApprovalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Approvals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Approvals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Approvals
+    **/
+    _count?: true | ApprovalCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ApprovalMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ApprovalMaxAggregateInputType
+  }
+
+  export type GetApprovalAggregateType<T extends ApprovalAggregateArgs> = {
+        [P in keyof T & keyof AggregateApproval]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateApproval[P]>
+      : GetScalarType<T[P], AggregateApproval[P]>
+  }
+
+
+
+
+  export type ApprovalGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApprovalWhereInput
+    orderBy?: ApprovalOrderByWithAggregationInput | ApprovalOrderByWithAggregationInput[]
+    by: ApprovalScalarFieldEnum[] | ApprovalScalarFieldEnum
+    having?: ApprovalScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ApprovalCountAggregateInputType | true
+    _min?: ApprovalMinAggregateInputType
+    _max?: ApprovalMaxAggregateInputType
+  }
+
+  export type ApprovalGroupByOutputType = {
+    id: string
+    runId: string
+    userId: string
+    createdAt: Date
+    _count: ApprovalCountAggregateOutputType | null
+    _min: ApprovalMinAggregateOutputType | null
+    _max: ApprovalMaxAggregateOutputType | null
+  }
+
+  type GetApprovalGroupByPayload<T extends ApprovalGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ApprovalGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ApprovalGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ApprovalGroupByOutputType[P]>
+            : GetScalarType<T[P], ApprovalGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ApprovalSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    runId?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["approval"]>
+
+  export type ApprovalSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    runId?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["approval"]>
+
+  export type ApprovalSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    runId?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["approval"]>
+
+  export type ApprovalSelectScalar = {
+    id?: boolean
+    runId?: boolean
+    userId?: boolean
+    createdAt?: boolean
+  }
+
+  export type ApprovalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "runId" | "userId" | "createdAt", ExtArgs["result"]["approval"]>
+  export type ApprovalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+  }
+  export type ApprovalIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+  }
+  export type ApprovalIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+  }
+
+  export type $ApprovalPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Approval"
+    objects: {
+      pipelineRun: Prisma.$PipelineRunPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      runId: string
+      userId: string
+      createdAt: Date
+    }, ExtArgs["result"]["approval"]>
+    composites: {}
+  }
+
+  type ApprovalGetPayload<S extends boolean | null | undefined | ApprovalDefaultArgs> = $Result.GetResult<Prisma.$ApprovalPayload, S>
+
+  type ApprovalCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ApprovalFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ApprovalCountAggregateInputType | true
+    }
+
+  export interface ApprovalDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Approval'], meta: { name: 'Approval' } }
+    /**
+     * Find zero or one Approval that matches the filter.
+     * @param {ApprovalFindUniqueArgs} args - Arguments to find a Approval
+     * @example
+     * // Get one Approval
+     * const approval = await prisma.approval.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ApprovalFindUniqueArgs>(args: SelectSubset<T, ApprovalFindUniqueArgs<ExtArgs>>): Prisma__ApprovalClient<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Approval that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ApprovalFindUniqueOrThrowArgs} args - Arguments to find a Approval
+     * @example
+     * // Get one Approval
+     * const approval = await prisma.approval.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ApprovalFindUniqueOrThrowArgs>(args: SelectSubset<T, ApprovalFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ApprovalClient<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Approval that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalFindFirstArgs} args - Arguments to find a Approval
+     * @example
+     * // Get one Approval
+     * const approval = await prisma.approval.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ApprovalFindFirstArgs>(args?: SelectSubset<T, ApprovalFindFirstArgs<ExtArgs>>): Prisma__ApprovalClient<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Approval that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalFindFirstOrThrowArgs} args - Arguments to find a Approval
+     * @example
+     * // Get one Approval
+     * const approval = await prisma.approval.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ApprovalFindFirstOrThrowArgs>(args?: SelectSubset<T, ApprovalFindFirstOrThrowArgs<ExtArgs>>): Prisma__ApprovalClient<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Approvals that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Approvals
+     * const approvals = await prisma.approval.findMany()
+     * 
+     * // Get first 10 Approvals
+     * const approvals = await prisma.approval.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const approvalWithIdOnly = await prisma.approval.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ApprovalFindManyArgs>(args?: SelectSubset<T, ApprovalFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Approval.
+     * @param {ApprovalCreateArgs} args - Arguments to create a Approval.
+     * @example
+     * // Create one Approval
+     * const Approval = await prisma.approval.create({
+     *   data: {
+     *     // ... data to create a Approval
+     *   }
+     * })
+     * 
+     */
+    create<T extends ApprovalCreateArgs>(args: SelectSubset<T, ApprovalCreateArgs<ExtArgs>>): Prisma__ApprovalClient<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Approvals.
+     * @param {ApprovalCreateManyArgs} args - Arguments to create many Approvals.
+     * @example
+     * // Create many Approvals
+     * const approval = await prisma.approval.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ApprovalCreateManyArgs>(args?: SelectSubset<T, ApprovalCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Approvals and returns the data saved in the database.
+     * @param {ApprovalCreateManyAndReturnArgs} args - Arguments to create many Approvals.
+     * @example
+     * // Create many Approvals
+     * const approval = await prisma.approval.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Approvals and only return the `id`
+     * const approvalWithIdOnly = await prisma.approval.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ApprovalCreateManyAndReturnArgs>(args?: SelectSubset<T, ApprovalCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Approval.
+     * @param {ApprovalDeleteArgs} args - Arguments to delete one Approval.
+     * @example
+     * // Delete one Approval
+     * const Approval = await prisma.approval.delete({
+     *   where: {
+     *     // ... filter to delete one Approval
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ApprovalDeleteArgs>(args: SelectSubset<T, ApprovalDeleteArgs<ExtArgs>>): Prisma__ApprovalClient<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Approval.
+     * @param {ApprovalUpdateArgs} args - Arguments to update one Approval.
+     * @example
+     * // Update one Approval
+     * const approval = await prisma.approval.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ApprovalUpdateArgs>(args: SelectSubset<T, ApprovalUpdateArgs<ExtArgs>>): Prisma__ApprovalClient<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Approvals.
+     * @param {ApprovalDeleteManyArgs} args - Arguments to filter Approvals to delete.
+     * @example
+     * // Delete a few Approvals
+     * const { count } = await prisma.approval.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ApprovalDeleteManyArgs>(args?: SelectSubset<T, ApprovalDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Approvals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Approvals
+     * const approval = await prisma.approval.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ApprovalUpdateManyArgs>(args: SelectSubset<T, ApprovalUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Approvals and returns the data updated in the database.
+     * @param {ApprovalUpdateManyAndReturnArgs} args - Arguments to update many Approvals.
+     * @example
+     * // Update many Approvals
+     * const approval = await prisma.approval.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Approvals and only return the `id`
+     * const approvalWithIdOnly = await prisma.approval.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ApprovalUpdateManyAndReturnArgs>(args: SelectSubset<T, ApprovalUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Approval.
+     * @param {ApprovalUpsertArgs} args - Arguments to update or create a Approval.
+     * @example
+     * // Update or create a Approval
+     * const approval = await prisma.approval.upsert({
+     *   create: {
+     *     // ... data to create a Approval
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Approval we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ApprovalUpsertArgs>(args: SelectSubset<T, ApprovalUpsertArgs<ExtArgs>>): Prisma__ApprovalClient<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Approvals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalCountArgs} args - Arguments to filter Approvals to count.
+     * @example
+     * // Count the number of Approvals
+     * const count = await prisma.approval.count({
+     *   where: {
+     *     // ... the filter for the Approvals we want to count
+     *   }
+     * })
+    **/
+    count<T extends ApprovalCountArgs>(
+      args?: Subset<T, ApprovalCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ApprovalCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Approval.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ApprovalAggregateArgs>(args: Subset<T, ApprovalAggregateArgs>): Prisma.PrismaPromise<GetApprovalAggregateType<T>>
+
+    /**
+     * Group by Approval.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApprovalGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ApprovalGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ApprovalGroupByArgs['orderBy'] }
+        : { orderBy?: ApprovalGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ApprovalGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetApprovalGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Approval model
+   */
+  readonly fields: ApprovalFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Approval.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ApprovalClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    pipelineRun<T extends PipelineRunDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRunDefaultArgs<ExtArgs>>): Prisma__PipelineRunClient<$Result.GetResult<Prisma.$PipelineRunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Approval model
+   */
+  interface ApprovalFieldRefs {
+    readonly id: FieldRef<"Approval", 'String'>
+    readonly runId: FieldRef<"Approval", 'String'>
+    readonly userId: FieldRef<"Approval", 'String'>
+    readonly createdAt: FieldRef<"Approval", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Approval findUnique
+   */
+  export type ApprovalFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalInclude<ExtArgs> | null
+    /**
+     * Filter, which Approval to fetch.
+     */
+    where: ApprovalWhereUniqueInput
+  }
+
+  /**
+   * Approval findUniqueOrThrow
+   */
+  export type ApprovalFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalInclude<ExtArgs> | null
+    /**
+     * Filter, which Approval to fetch.
+     */
+    where: ApprovalWhereUniqueInput
+  }
+
+  /**
+   * Approval findFirst
+   */
+  export type ApprovalFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalInclude<ExtArgs> | null
+    /**
+     * Filter, which Approval to fetch.
+     */
+    where?: ApprovalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Approvals to fetch.
+     */
+    orderBy?: ApprovalOrderByWithRelationInput | ApprovalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Approvals.
+     */
+    cursor?: ApprovalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Approvals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Approvals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Approvals.
+     */
+    distinct?: ApprovalScalarFieldEnum | ApprovalScalarFieldEnum[]
+  }
+
+  /**
+   * Approval findFirstOrThrow
+   */
+  export type ApprovalFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalInclude<ExtArgs> | null
+    /**
+     * Filter, which Approval to fetch.
+     */
+    where?: ApprovalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Approvals to fetch.
+     */
+    orderBy?: ApprovalOrderByWithRelationInput | ApprovalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Approvals.
+     */
+    cursor?: ApprovalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Approvals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Approvals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Approvals.
+     */
+    distinct?: ApprovalScalarFieldEnum | ApprovalScalarFieldEnum[]
+  }
+
+  /**
+   * Approval findMany
+   */
+  export type ApprovalFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalInclude<ExtArgs> | null
+    /**
+     * Filter, which Approvals to fetch.
+     */
+    where?: ApprovalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Approvals to fetch.
+     */
+    orderBy?: ApprovalOrderByWithRelationInput | ApprovalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Approvals.
+     */
+    cursor?: ApprovalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Approvals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Approvals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Approvals.
+     */
+    distinct?: ApprovalScalarFieldEnum | ApprovalScalarFieldEnum[]
+  }
+
+  /**
+   * Approval create
+   */
+  export type ApprovalCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Approval.
+     */
+    data: XOR<ApprovalCreateInput, ApprovalUncheckedCreateInput>
+  }
+
+  /**
+   * Approval createMany
+   */
+  export type ApprovalCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Approvals.
+     */
+    data: ApprovalCreateManyInput | ApprovalCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Approval createManyAndReturn
+   */
+  export type ApprovalCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * The data used to create many Approvals.
+     */
+    data: ApprovalCreateManyInput | ApprovalCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Approval update
+   */
+  export type ApprovalUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Approval.
+     */
+    data: XOR<ApprovalUpdateInput, ApprovalUncheckedUpdateInput>
+    /**
+     * Choose, which Approval to update.
+     */
+    where: ApprovalWhereUniqueInput
+  }
+
+  /**
+   * Approval updateMany
+   */
+  export type ApprovalUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Approvals.
+     */
+    data: XOR<ApprovalUpdateManyMutationInput, ApprovalUncheckedUpdateManyInput>
+    /**
+     * Filter which Approvals to update
+     */
+    where?: ApprovalWhereInput
+    /**
+     * Limit how many Approvals to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Approval updateManyAndReturn
+   */
+  export type ApprovalUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * The data used to update Approvals.
+     */
+    data: XOR<ApprovalUpdateManyMutationInput, ApprovalUncheckedUpdateManyInput>
+    /**
+     * Filter which Approvals to update
+     */
+    where?: ApprovalWhereInput
+    /**
+     * Limit how many Approvals to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Approval upsert
+   */
+  export type ApprovalUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Approval to update in case it exists.
+     */
+    where: ApprovalWhereUniqueInput
+    /**
+     * In case the Approval found by the `where` argument doesn't exist, create a new Approval with this data.
+     */
+    create: XOR<ApprovalCreateInput, ApprovalUncheckedCreateInput>
+    /**
+     * In case the Approval was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ApprovalUpdateInput, ApprovalUncheckedUpdateInput>
+  }
+
+  /**
+   * Approval delete
+   */
+  export type ApprovalDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalInclude<ExtArgs> | null
+    /**
+     * Filter which Approval to delete.
+     */
+    where: ApprovalWhereUniqueInput
+  }
+
+  /**
+   * Approval deleteMany
+   */
+  export type ApprovalDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Approvals to delete
+     */
+    where?: ApprovalWhereInput
+    /**
+     * Limit how many Approvals to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Approval without action
+   */
+  export type ApprovalDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Approval
+     */
+    select?: ApprovalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Approval
+     */
+    omit?: ApprovalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model FormulaConfiguration
    */
 
@@ -13134,10 +15615,10 @@ export namespace Prisma {
     name: string | null
     version: number | null
     expression: string | null
-    parameters: string | null
     description: string | null
     isActive: boolean | null
     updatedAt: Date | null
+    createdAt: Date | null
   }
 
   export type FormulaConfigurationMaxAggregateOutputType = {
@@ -13146,10 +15627,10 @@ export namespace Prisma {
     name: string | null
     version: number | null
     expression: string | null
-    parameters: string | null
     description: string | null
     isActive: boolean | null
     updatedAt: Date | null
+    createdAt: Date | null
   }
 
   export type FormulaConfigurationCountAggregateOutputType = {
@@ -13162,6 +15643,7 @@ export namespace Prisma {
     description: number
     isActive: number
     updatedAt: number
+    createdAt: number
     _all: number
   }
 
@@ -13180,10 +15662,10 @@ export namespace Prisma {
     name?: true
     version?: true
     expression?: true
-    parameters?: true
     description?: true
     isActive?: true
     updatedAt?: true
+    createdAt?: true
   }
 
   export type FormulaConfigurationMaxAggregateInputType = {
@@ -13192,10 +15674,10 @@ export namespace Prisma {
     name?: true
     version?: true
     expression?: true
-    parameters?: true
     description?: true
     isActive?: true
     updatedAt?: true
+    createdAt?: true
   }
 
   export type FormulaConfigurationCountAggregateInputType = {
@@ -13208,6 +15690,7 @@ export namespace Prisma {
     description?: true
     isActive?: true
     updatedAt?: true
+    createdAt?: true
     _all?: true
   }
 
@@ -13303,10 +15786,11 @@ export namespace Prisma {
     name: string
     version: number
     expression: string
-    parameters: string | null
+    parameters: JsonValue | null
     description: string | null
     isActive: boolean | null
     updatedAt: Date
+    createdAt: Date
     _count: FormulaConfigurationCountAggregateOutputType | null
     _avg: FormulaConfigurationAvgAggregateOutputType | null
     _sum: FormulaConfigurationSumAggregateOutputType | null
@@ -13338,6 +15822,7 @@ export namespace Prisma {
     description?: boolean
     isActive?: boolean
     updatedAt?: boolean
+    createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["formulaConfiguration"]>
 
@@ -13351,6 +15836,7 @@ export namespace Prisma {
     description?: boolean
     isActive?: boolean
     updatedAt?: boolean
+    createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["formulaConfiguration"]>
 
@@ -13364,6 +15850,7 @@ export namespace Prisma {
     description?: boolean
     isActive?: boolean
     updatedAt?: boolean
+    createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["formulaConfiguration"]>
 
@@ -13377,9 +15864,10 @@ export namespace Prisma {
     description?: boolean
     isActive?: boolean
     updatedAt?: boolean
+    createdAt?: boolean
   }
 
-  export type FormulaConfigurationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "name" | "version" | "expression" | "parameters" | "description" | "isActive" | "updatedAt", ExtArgs["result"]["formulaConfiguration"]>
+  export type FormulaConfigurationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "name" | "version" | "expression" | "parameters" | "description" | "isActive" | "updatedAt" | "createdAt", ExtArgs["result"]["formulaConfiguration"]>
   export type FormulaConfigurationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
   }
@@ -13401,10 +15889,11 @@ export namespace Prisma {
       name: string
       version: number
       expression: string
-      parameters: string | null
+      parameters: Prisma.JsonValue | null
       description: string | null
       isActive: boolean | null
       updatedAt: Date
+      createdAt: Date
     }, ExtArgs["result"]["formulaConfiguration"]>
     composites: {}
   }
@@ -13834,10 +16323,11 @@ export namespace Prisma {
     readonly name: FieldRef<"FormulaConfiguration", 'String'>
     readonly version: FieldRef<"FormulaConfiguration", 'Int'>
     readonly expression: FieldRef<"FormulaConfiguration", 'String'>
-    readonly parameters: FieldRef<"FormulaConfiguration", 'String'>
+    readonly parameters: FieldRef<"FormulaConfiguration", 'Json'>
     readonly description: FieldRef<"FormulaConfiguration", 'String'>
     readonly isActive: FieldRef<"FormulaConfiguration", 'Boolean'>
     readonly updatedAt: FieldRef<"FormulaConfiguration", 'DateTime'>
+    readonly createdAt: FieldRef<"FormulaConfiguration", 'DateTime'>
   }
     
 
@@ -14410,7 +16900,8 @@ export namespace Prisma {
     fallbackModels: 'fallbackModels',
     maxRetries: 'maxRetries',
     temperature: 'temperature',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    createdAt: 'createdAt'
   };
 
   export type AgentConfigScalarFieldEnum = (typeof AgentConfigScalarFieldEnum)[keyof typeof AgentConfigScalarFieldEnum]
@@ -14433,6 +16924,30 @@ export namespace Prisma {
   export type AIUsageLogScalarFieldEnum = (typeof AIUsageLogScalarFieldEnum)[keyof typeof AIUsageLogScalarFieldEnum]
 
 
+  export const AuditLogScalarFieldEnum: {
+    id: 'id',
+    orgId: 'orgId',
+    userId: 'userId',
+    action: 'action',
+    entityType: 'entityType',
+    entityId: 'entityId',
+    metadata: 'metadata',
+    createdAt: 'createdAt'
+  };
+
+  export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+  export const ApprovalScalarFieldEnum: {
+    id: 'id',
+    runId: 'runId',
+    userId: 'userId',
+    createdAt: 'createdAt'
+  };
+
+  export type ApprovalScalarFieldEnum = (typeof ApprovalScalarFieldEnum)[keyof typeof ApprovalScalarFieldEnum]
+
+
   export const FormulaConfigurationScalarFieldEnum: {
     id: 'id',
     orgId: 'orgId',
@@ -14442,7 +16957,8 @@ export namespace Prisma {
     parameters: 'parameters',
     description: 'description',
     isActive: 'isActive',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    createdAt: 'createdAt'
   };
 
   export type FormulaConfigurationScalarFieldEnum = (typeof FormulaConfigurationScalarFieldEnum)[keyof typeof FormulaConfigurationScalarFieldEnum]
@@ -14454,6 +16970,14 @@ export namespace Prisma {
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const QueryMode: {
@@ -14470,6 +16994,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -14583,6 +17116,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -14670,6 +17217,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigListRelationFilter
     formulaConfigs?: FormulaConfigurationListRelationFilter
     aiUsageLogs?: AIUsageLogListRelationFilter
+    auditLogs?: AuditLogListRelationFilter
   }
 
   export type OrganisationOrderByWithRelationInput = {
@@ -14688,6 +17236,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigOrderByRelationAggregateInput
     formulaConfigs?: FormulaConfigurationOrderByRelationAggregateInput
     aiUsageLogs?: AIUsageLogOrderByRelationAggregateInput
+    auditLogs?: AuditLogOrderByRelationAggregateInput
   }
 
   export type OrganisationWhereUniqueInput = Prisma.AtLeast<{
@@ -14709,6 +17258,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigListRelationFilter
     formulaConfigs?: FormulaConfigurationListRelationFilter
     aiUsageLogs?: AIUsageLogListRelationFilter
+    auditLogs?: AuditLogListRelationFilter
   }, "id">
 
   export type OrganisationOrderByWithAggregationInput = {
@@ -14760,6 +17310,7 @@ export namespace Prisma {
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
     uploads?: UploadListRelationFilter
     aiUsageLogs?: AIUsageLogListRelationFilter
+    auditLogs?: AuditLogListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -14782,6 +17333,7 @@ export namespace Prisma {
     organisation?: OrganisationOrderByWithRelationInput
     uploads?: UploadOrderByRelationAggregateInput
     aiUsageLogs?: AIUsageLogOrderByRelationAggregateInput
+    auditLogs?: AuditLogOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -14807,6 +17359,7 @@ export namespace Prisma {
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
     uploads?: UploadListRelationFilter
     aiUsageLogs?: AIUsageLogListRelationFilter
+    auditLogs?: AuditLogListRelationFilter
   }, "id" | "email" | "firebaseUid">
 
   export type UserOrderByWithAggregationInput = {
@@ -14876,6 +17429,7 @@ export namespace Prisma {
     uploads?: UploadListRelationFilter
     wcdlLoans?: WCDLLoanListRelationFilter
     forexTrans?: ForexTransactionListRelationFilter
+    approvals?: ApprovalListRelationFilter
   }
 
   export type PipelineRunOrderByWithRelationInput = {
@@ -14898,6 +17452,7 @@ export namespace Prisma {
     uploads?: UploadOrderByRelationAggregateInput
     wcdlLoans?: WCDLLoanOrderByRelationAggregateInput
     forexTrans?: ForexTransactionOrderByRelationAggregateInput
+    approvals?: ApprovalOrderByRelationAggregateInput
   }
 
   export type PipelineRunWhereUniqueInput = Prisma.AtLeast<{
@@ -14923,6 +17478,7 @@ export namespace Prisma {
     uploads?: UploadListRelationFilter
     wcdlLoans?: WCDLLoanListRelationFilter
     forexTrans?: ForexTransactionListRelationFilter
+    approvals?: ApprovalListRelationFilter
   }, "id">
 
   export type PipelineRunOrderByWithAggregationInput = {
@@ -15329,6 +17885,7 @@ export namespace Prisma {
     maxRetries?: IntNullableFilter<"AgentConfig"> | number | null
     temperature?: DecimalNullableFilter<"AgentConfig"> | Decimal | DecimalJsLike | number | string | null
     updatedAt?: DateTimeFilter<"AgentConfig"> | Date | string
+    createdAt?: DateTimeFilter<"AgentConfig"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
   }
 
@@ -15341,6 +17898,7 @@ export namespace Prisma {
     maxRetries?: SortOrderInput | SortOrder
     temperature?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
     organisation?: OrganisationOrderByWithRelationInput
   }
 
@@ -15357,6 +17915,7 @@ export namespace Prisma {
     maxRetries?: IntNullableFilter<"AgentConfig"> | number | null
     temperature?: DecimalNullableFilter<"AgentConfig"> | Decimal | DecimalJsLike | number | string | null
     updatedAt?: DateTimeFilter<"AgentConfig"> | Date | string
+    createdAt?: DateTimeFilter<"AgentConfig"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
   }, "id" | "orgId_agentId">
 
@@ -15369,6 +17928,7 @@ export namespace Prisma {
     maxRetries?: SortOrderInput | SortOrder
     temperature?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
     _count?: AgentConfigCountOrderByAggregateInput
     _avg?: AgentConfigAvgOrderByAggregateInput
     _max?: AgentConfigMaxOrderByAggregateInput
@@ -15388,6 +17948,7 @@ export namespace Prisma {
     maxRetries?: IntNullableWithAggregatesFilter<"AgentConfig"> | number | null
     temperature?: DecimalNullableWithAggregatesFilter<"AgentConfig"> | Decimal | DecimalJsLike | number | string | null
     updatedAt?: DateTimeWithAggregatesFilter<"AgentConfig"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"AgentConfig"> | Date | string
   }
 
   export type AIUsageLogWhereInput = {
@@ -15480,6 +18041,129 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"AIUsageLog"> | Date | string
   }
 
+  export type AuditLogWhereInput = {
+    AND?: AuditLogWhereInput | AuditLogWhereInput[]
+    OR?: AuditLogWhereInput[]
+    NOT?: AuditLogWhereInput | AuditLogWhereInput[]
+    id?: StringFilter<"AuditLog"> | string
+    orgId?: StringFilter<"AuditLog"> | string
+    userId?: StringNullableFilter<"AuditLog"> | string | null
+    action?: StringFilter<"AuditLog"> | string
+    entityType?: StringFilter<"AuditLog"> | string
+    entityId?: StringFilter<"AuditLog"> | string
+    metadata?: JsonNullableFilter<"AuditLog">
+    createdAt?: DateTimeFilter<"AuditLog"> | Date | string
+    organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type AuditLogOrderByWithRelationInput = {
+    id?: SortOrder
+    orgId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    action?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    metadata?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    organisation?: OrganisationOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type AuditLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AuditLogWhereInput | AuditLogWhereInput[]
+    OR?: AuditLogWhereInput[]
+    NOT?: AuditLogWhereInput | AuditLogWhereInput[]
+    orgId?: StringFilter<"AuditLog"> | string
+    userId?: StringNullableFilter<"AuditLog"> | string | null
+    action?: StringFilter<"AuditLog"> | string
+    entityType?: StringFilter<"AuditLog"> | string
+    entityId?: StringFilter<"AuditLog"> | string
+    metadata?: JsonNullableFilter<"AuditLog">
+    createdAt?: DateTimeFilter<"AuditLog"> | Date | string
+    organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type AuditLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    orgId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    action?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    metadata?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: AuditLogCountOrderByAggregateInput
+    _max?: AuditLogMaxOrderByAggregateInput
+    _min?: AuditLogMinOrderByAggregateInput
+  }
+
+  export type AuditLogScalarWhereWithAggregatesInput = {
+    AND?: AuditLogScalarWhereWithAggregatesInput | AuditLogScalarWhereWithAggregatesInput[]
+    OR?: AuditLogScalarWhereWithAggregatesInput[]
+    NOT?: AuditLogScalarWhereWithAggregatesInput | AuditLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AuditLog"> | string
+    orgId?: StringWithAggregatesFilter<"AuditLog"> | string
+    userId?: StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+    action?: StringWithAggregatesFilter<"AuditLog"> | string
+    entityType?: StringWithAggregatesFilter<"AuditLog"> | string
+    entityId?: StringWithAggregatesFilter<"AuditLog"> | string
+    metadata?: JsonNullableWithAggregatesFilter<"AuditLog">
+    createdAt?: DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
+  }
+
+  export type ApprovalWhereInput = {
+    AND?: ApprovalWhereInput | ApprovalWhereInput[]
+    OR?: ApprovalWhereInput[]
+    NOT?: ApprovalWhereInput | ApprovalWhereInput[]
+    id?: StringFilter<"Approval"> | string
+    runId?: StringFilter<"Approval"> | string
+    userId?: StringFilter<"Approval"> | string
+    createdAt?: DateTimeFilter<"Approval"> | Date | string
+    pipelineRun?: XOR<PipelineRunScalarRelationFilter, PipelineRunWhereInput>
+  }
+
+  export type ApprovalOrderByWithRelationInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    pipelineRun?: PipelineRunOrderByWithRelationInput
+  }
+
+  export type ApprovalWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ApprovalWhereInput | ApprovalWhereInput[]
+    OR?: ApprovalWhereInput[]
+    NOT?: ApprovalWhereInput | ApprovalWhereInput[]
+    runId?: StringFilter<"Approval"> | string
+    userId?: StringFilter<"Approval"> | string
+    createdAt?: DateTimeFilter<"Approval"> | Date | string
+    pipelineRun?: XOR<PipelineRunScalarRelationFilter, PipelineRunWhereInput>
+  }, "id">
+
+  export type ApprovalOrderByWithAggregationInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    _count?: ApprovalCountOrderByAggregateInput
+    _max?: ApprovalMaxOrderByAggregateInput
+    _min?: ApprovalMinOrderByAggregateInput
+  }
+
+  export type ApprovalScalarWhereWithAggregatesInput = {
+    AND?: ApprovalScalarWhereWithAggregatesInput | ApprovalScalarWhereWithAggregatesInput[]
+    OR?: ApprovalScalarWhereWithAggregatesInput[]
+    NOT?: ApprovalScalarWhereWithAggregatesInput | ApprovalScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Approval"> | string
+    runId?: StringWithAggregatesFilter<"Approval"> | string
+    userId?: StringWithAggregatesFilter<"Approval"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Approval"> | Date | string
+  }
+
   export type FormulaConfigurationWhereInput = {
     AND?: FormulaConfigurationWhereInput | FormulaConfigurationWhereInput[]
     OR?: FormulaConfigurationWhereInput[]
@@ -15489,10 +18173,11 @@ export namespace Prisma {
     name?: StringFilter<"FormulaConfiguration"> | string
     version?: IntFilter<"FormulaConfiguration"> | number
     expression?: StringFilter<"FormulaConfiguration"> | string
-    parameters?: StringNullableFilter<"FormulaConfiguration"> | string | null
+    parameters?: JsonNullableFilter<"FormulaConfiguration">
     description?: StringNullableFilter<"FormulaConfiguration"> | string | null
     isActive?: BoolNullableFilter<"FormulaConfiguration"> | boolean | null
     updatedAt?: DateTimeFilter<"FormulaConfiguration"> | Date | string
+    createdAt?: DateTimeFilter<"FormulaConfiguration"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
   }
 
@@ -15506,6 +18191,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     isActive?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
     organisation?: OrganisationOrderByWithRelationInput
   }
 
@@ -15518,10 +18204,11 @@ export namespace Prisma {
     name?: StringFilter<"FormulaConfiguration"> | string
     version?: IntFilter<"FormulaConfiguration"> | number
     expression?: StringFilter<"FormulaConfiguration"> | string
-    parameters?: StringNullableFilter<"FormulaConfiguration"> | string | null
+    parameters?: JsonNullableFilter<"FormulaConfiguration">
     description?: StringNullableFilter<"FormulaConfiguration"> | string | null
     isActive?: BoolNullableFilter<"FormulaConfiguration"> | boolean | null
     updatedAt?: DateTimeFilter<"FormulaConfiguration"> | Date | string
+    createdAt?: DateTimeFilter<"FormulaConfiguration"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
   }, "id">
 
@@ -15535,6 +18222,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     isActive?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
     _count?: FormulaConfigurationCountOrderByAggregateInput
     _avg?: FormulaConfigurationAvgOrderByAggregateInput
     _max?: FormulaConfigurationMaxOrderByAggregateInput
@@ -15551,10 +18239,11 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"FormulaConfiguration"> | string
     version?: IntWithAggregatesFilter<"FormulaConfiguration"> | number
     expression?: StringWithAggregatesFilter<"FormulaConfiguration"> | string
-    parameters?: StringNullableWithAggregatesFilter<"FormulaConfiguration"> | string | null
+    parameters?: JsonNullableWithAggregatesFilter<"FormulaConfiguration">
     description?: StringNullableWithAggregatesFilter<"FormulaConfiguration"> | string | null
     isActive?: BoolNullableWithAggregatesFilter<"FormulaConfiguration"> | boolean | null
     updatedAt?: DateTimeWithAggregatesFilter<"FormulaConfiguration"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"FormulaConfiguration"> | Date | string
   }
 
   export type RoleCreateInput = {
@@ -15623,6 +18312,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateInput = {
@@ -15641,6 +18331,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUpdateInput = {
@@ -15659,6 +18350,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateInput = {
@@ -15677,6 +18369,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationCreateManyInput = {
@@ -15727,6 +18420,7 @@ export namespace Prisma {
     organisation: OrganisationCreateNestedOneWithoutUsersInput
     uploads?: UploadCreateNestedManyWithoutUserInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -15747,6 +18441,7 @@ export namespace Prisma {
     createdAt?: Date | string
     uploads?: UploadUncheckedCreateNestedManyWithoutUserInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -15767,6 +18462,7 @@ export namespace Prisma {
     organisation?: OrganisationUpdateOneRequiredWithoutUsersNestedInput
     uploads?: UploadUpdateManyWithoutUserNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -15787,6 +18483,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploads?: UploadUncheckedUpdateManyWithoutUserNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -15860,6 +18557,7 @@ export namespace Prisma {
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateInput = {
@@ -15881,6 +18579,7 @@ export namespace Prisma {
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUpdateInput = {
@@ -15902,6 +18601,7 @@ export namespace Prisma {
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateInput = {
@@ -15923,6 +18623,7 @@ export namespace Prisma {
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunCreateManyInput = {
@@ -16378,6 +19079,7 @@ export namespace Prisma {
     maxRetries?: number | null
     temperature?: Decimal | DecimalJsLike | number | string | null
     updatedAt?: Date | string
+    createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutAgentConfigsInput
   }
 
@@ -16390,6 +19092,7 @@ export namespace Prisma {
     maxRetries?: number | null
     temperature?: Decimal | DecimalJsLike | number | string | null
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
   export type AgentConfigUpdateInput = {
@@ -16400,6 +19103,7 @@ export namespace Prisma {
     maxRetries?: NullableIntFieldUpdateOperationsInput | number | null
     temperature?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutAgentConfigsNestedInput
   }
 
@@ -16412,6 +19116,7 @@ export namespace Prisma {
     maxRetries?: NullableIntFieldUpdateOperationsInput | number | null
     temperature?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AgentConfigCreateManyInput = {
@@ -16423,6 +19128,7 @@ export namespace Prisma {
     maxRetries?: number | null
     temperature?: Decimal | DecimalJsLike | number | string | null
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
   export type AgentConfigUpdateManyMutationInput = {
@@ -16433,6 +19139,7 @@ export namespace Prisma {
     maxRetries?: NullableIntFieldUpdateOperationsInput | number | null
     temperature?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AgentConfigUncheckedUpdateManyInput = {
@@ -16444,6 +19151,7 @@ export namespace Prisma {
     maxRetries?: NullableIntFieldUpdateOperationsInput | number | null
     temperature?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AIUsageLogCreateInput = {
@@ -16542,15 +19250,139 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AuditLogCreateInput = {
+    id?: string
+    action: string
+    entityType: string
+    entityId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    organisation: OrganisationCreateNestedOneWithoutAuditLogsInput
+    user?: UserCreateNestedOneWithoutAuditLogsInput
+  }
+
+  export type AuditLogUncheckedCreateInput = {
+    id?: string
+    orgId: string
+    userId?: string | null
+    action: string
+    entityType: string
+    entityId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AuditLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organisation?: OrganisationUpdateOneRequiredWithoutAuditLogsNestedInput
+    user?: UserUpdateOneWithoutAuditLogsNestedInput
+  }
+
+  export type AuditLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuditLogCreateManyInput = {
+    id?: string
+    orgId: string
+    userId?: string | null
+    action: string
+    entityType: string
+    entityId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AuditLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuditLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApprovalCreateInput = {
+    id?: string
+    userId: string
+    createdAt?: Date | string
+    pipelineRun: PipelineRunCreateNestedOneWithoutApprovalsInput
+  }
+
+  export type ApprovalUncheckedCreateInput = {
+    id?: string
+    runId: string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type ApprovalUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pipelineRun?: PipelineRunUpdateOneRequiredWithoutApprovalsNestedInput
+  }
+
+  export type ApprovalUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    runId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApprovalCreateManyInput = {
+    id?: string
+    runId: string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type ApprovalUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApprovalUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    runId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type FormulaConfigurationCreateInput = {
     id?: string
     name: string
-    version: number
+    version?: number
     expression: string
-    parameters?: string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: string | null
     isActive?: boolean | null
     updatedAt?: Date | string
+    createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutFormulaConfigsInput
   }
 
@@ -16558,12 +19390,13 @@ export namespace Prisma {
     id?: string
     orgId: string
     name: string
-    version: number
+    version?: number
     expression: string
-    parameters?: string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: string | null
     isActive?: boolean | null
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
   export type FormulaConfigurationUpdateInput = {
@@ -16571,10 +19404,11 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     expression?: StringFieldUpdateOperationsInput | string
-    parameters?: NullableStringFieldUpdateOperationsInput | string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: NullableBoolFieldUpdateOperationsInput | boolean | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutFormulaConfigsNestedInput
   }
 
@@ -16584,22 +19418,24 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     expression?: StringFieldUpdateOperationsInput | string
-    parameters?: NullableStringFieldUpdateOperationsInput | string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: NullableBoolFieldUpdateOperationsInput | boolean | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FormulaConfigurationCreateManyInput = {
     id?: string
     orgId: string
     name: string
-    version: number
+    version?: number
     expression: string
-    parameters?: string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: string | null
     isActive?: boolean | null
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
   export type FormulaConfigurationUpdateManyMutationInput = {
@@ -16607,10 +19443,11 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     expression?: StringFieldUpdateOperationsInput | string
-    parameters?: NullableStringFieldUpdateOperationsInput | string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: NullableBoolFieldUpdateOperationsInput | boolean | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FormulaConfigurationUncheckedUpdateManyInput = {
@@ -16619,10 +19456,11 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     expression?: StringFieldUpdateOperationsInput | string
-    parameters?: NullableStringFieldUpdateOperationsInput | string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: NullableBoolFieldUpdateOperationsInput | boolean | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -16821,6 +19659,12 @@ export namespace Prisma {
     none?: AIUsageLogWhereInput
   }
 
+  export type AuditLogListRelationFilter = {
+    every?: AuditLogWhereInput
+    some?: AuditLogWhereInput
+    none?: AuditLogWhereInput
+  }
+
   export type PipelineRunOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -16846,6 +19690,10 @@ export namespace Prisma {
   }
 
   export type AIUsageLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AuditLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -17017,6 +19865,16 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type ApprovalListRelationFilter = {
+    every?: ApprovalWhereInput
+    some?: ApprovalWhereInput
+    none?: ApprovalWhereInput
+  }
+
+  export type ApprovalOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type PipelineRunCountOrderByAggregateInput = {
@@ -17446,6 +20304,7 @@ export namespace Prisma {
     maxRetries?: SortOrder
     temperature?: SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type AgentConfigAvgOrderByAggregateInput = {
@@ -17461,6 +20320,7 @@ export namespace Prisma {
     maxRetries?: SortOrder
     temperature?: SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type AgentConfigMinOrderByAggregateInput = {
@@ -17471,6 +20331,7 @@ export namespace Prisma {
     maxRetries?: SortOrder
     temperature?: SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type AgentConfigSumOrderByAggregateInput = {
@@ -17531,6 +20392,117 @@ export namespace Prisma {
     tokensOut?: SortOrder
     costUsd?: SortOrder
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type AuditLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    orgId?: SortOrder
+    userId?: SortOrder
+    action?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    metadata?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AuditLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    orgId?: SortOrder
+    userId?: SortOrder
+    action?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AuditLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    orgId?: SortOrder
+    userId?: SortOrder
+    action?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    createdAt?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type PipelineRunScalarRelationFilter = {
+    is?: PipelineRunWhereInput
+    isNot?: PipelineRunWhereInput
+  }
+
+  export type ApprovalCountOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ApprovalMaxOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ApprovalMinOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
 
   export type FormulaConfigurationCountOrderByAggregateInput = {
     id?: SortOrder
@@ -17542,6 +20514,7 @@ export namespace Prisma {
     description?: SortOrder
     isActive?: SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type FormulaConfigurationAvgOrderByAggregateInput = {
@@ -17554,10 +20527,10 @@ export namespace Prisma {
     name?: SortOrder
     version?: SortOrder
     expression?: SortOrder
-    parameters?: SortOrder
     description?: SortOrder
     isActive?: SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type FormulaConfigurationMinOrderByAggregateInput = {
@@ -17566,10 +20539,10 @@ export namespace Prisma {
     name?: SortOrder
     version?: SortOrder
     expression?: SortOrder
-    parameters?: SortOrder
     description?: SortOrder
     isActive?: SortOrder
     updatedAt?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type FormulaConfigurationSumOrderByAggregateInput = {
@@ -17703,6 +20676,13 @@ export namespace Prisma {
     connect?: AIUsageLogWhereUniqueInput | AIUsageLogWhereUniqueInput[]
   }
 
+  export type AuditLogCreateNestedManyWithoutOrganisationInput = {
+    create?: XOR<AuditLogCreateWithoutOrganisationInput, AuditLogUncheckedCreateWithoutOrganisationInput> | AuditLogCreateWithoutOrganisationInput[] | AuditLogUncheckedCreateWithoutOrganisationInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutOrganisationInput | AuditLogCreateOrConnectWithoutOrganisationInput[]
+    createMany?: AuditLogCreateManyOrganisationInputEnvelope
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutOrganisationInput = {
     create?: XOR<UserCreateWithoutOrganisationInput, UserUncheckedCreateWithoutOrganisationInput> | UserCreateWithoutOrganisationInput[] | UserUncheckedCreateWithoutOrganisationInput[]
     connectOrCreate?: UserCreateOrConnectWithoutOrganisationInput | UserCreateOrConnectWithoutOrganisationInput[]
@@ -17757,6 +20737,13 @@ export namespace Prisma {
     connectOrCreate?: AIUsageLogCreateOrConnectWithoutOrganisationInput | AIUsageLogCreateOrConnectWithoutOrganisationInput[]
     createMany?: AIUsageLogCreateManyOrganisationInputEnvelope
     connect?: AIUsageLogWhereUniqueInput | AIUsageLogWhereUniqueInput[]
+  }
+
+  export type AuditLogUncheckedCreateNestedManyWithoutOrganisationInput = {
+    create?: XOR<AuditLogCreateWithoutOrganisationInput, AuditLogUncheckedCreateWithoutOrganisationInput> | AuditLogCreateWithoutOrganisationInput[] | AuditLogUncheckedCreateWithoutOrganisationInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutOrganisationInput | AuditLogCreateOrConnectWithoutOrganisationInput[]
+    createMany?: AuditLogCreateManyOrganisationInputEnvelope
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
   }
 
   export type OrganisationUpdatedepartmentsInput = {
@@ -17880,6 +20867,20 @@ export namespace Prisma {
     deleteMany?: AIUsageLogScalarWhereInput | AIUsageLogScalarWhereInput[]
   }
 
+  export type AuditLogUpdateManyWithoutOrganisationNestedInput = {
+    create?: XOR<AuditLogCreateWithoutOrganisationInput, AuditLogUncheckedCreateWithoutOrganisationInput> | AuditLogCreateWithoutOrganisationInput[] | AuditLogUncheckedCreateWithoutOrganisationInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutOrganisationInput | AuditLogCreateOrConnectWithoutOrganisationInput[]
+    upsert?: AuditLogUpsertWithWhereUniqueWithoutOrganisationInput | AuditLogUpsertWithWhereUniqueWithoutOrganisationInput[]
+    createMany?: AuditLogCreateManyOrganisationInputEnvelope
+    set?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    disconnect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    delete?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    update?: AuditLogUpdateWithWhereUniqueWithoutOrganisationInput | AuditLogUpdateWithWhereUniqueWithoutOrganisationInput[]
+    updateMany?: AuditLogUpdateManyWithWhereWithoutOrganisationInput | AuditLogUpdateManyWithWhereWithoutOrganisationInput[]
+    deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+  }
+
   export type UserUncheckedUpdateManyWithoutOrganisationNestedInput = {
     create?: XOR<UserCreateWithoutOrganisationInput, UserUncheckedCreateWithoutOrganisationInput> | UserCreateWithoutOrganisationInput[] | UserUncheckedCreateWithoutOrganisationInput[]
     connectOrCreate?: UserCreateOrConnectWithoutOrganisationInput | UserCreateOrConnectWithoutOrganisationInput[]
@@ -17992,6 +20993,20 @@ export namespace Prisma {
     deleteMany?: AIUsageLogScalarWhereInput | AIUsageLogScalarWhereInput[]
   }
 
+  export type AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput = {
+    create?: XOR<AuditLogCreateWithoutOrganisationInput, AuditLogUncheckedCreateWithoutOrganisationInput> | AuditLogCreateWithoutOrganisationInput[] | AuditLogUncheckedCreateWithoutOrganisationInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutOrganisationInput | AuditLogCreateOrConnectWithoutOrganisationInput[]
+    upsert?: AuditLogUpsertWithWhereUniqueWithoutOrganisationInput | AuditLogUpsertWithWhereUniqueWithoutOrganisationInput[]
+    createMany?: AuditLogCreateManyOrganisationInputEnvelope
+    set?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    disconnect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    delete?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    update?: AuditLogUpdateWithWhereUniqueWithoutOrganisationInput | AuditLogUpdateWithWhereUniqueWithoutOrganisationInput[]
+    updateMany?: AuditLogUpdateManyWithWhereWithoutOrganisationInput | AuditLogUpdateManyWithWhereWithoutOrganisationInput[]
+    deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+  }
+
   export type RoleCreateNestedOneWithoutUsersInput = {
     create?: XOR<RoleCreateWithoutUsersInput, RoleUncheckedCreateWithoutUsersInput>
     connectOrCreate?: RoleCreateOrConnectWithoutUsersInput
@@ -18018,6 +21033,13 @@ export namespace Prisma {
     connect?: AIUsageLogWhereUniqueInput | AIUsageLogWhereUniqueInput[]
   }
 
+  export type AuditLogCreateNestedManyWithoutUserInput = {
+    create?: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput> | AuditLogCreateWithoutUserInput[] | AuditLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutUserInput | AuditLogCreateOrConnectWithoutUserInput[]
+    createMany?: AuditLogCreateManyUserInputEnvelope
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+  }
+
   export type UploadUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<UploadCreateWithoutUserInput, UploadUncheckedCreateWithoutUserInput> | UploadCreateWithoutUserInput[] | UploadUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UploadCreateOrConnectWithoutUserInput | UploadCreateOrConnectWithoutUserInput[]
@@ -18030,6 +21052,13 @@ export namespace Prisma {
     connectOrCreate?: AIUsageLogCreateOrConnectWithoutUserInput | AIUsageLogCreateOrConnectWithoutUserInput[]
     createMany?: AIUsageLogCreateManyUserInputEnvelope
     connect?: AIUsageLogWhereUniqueInput | AIUsageLogWhereUniqueInput[]
+  }
+
+  export type AuditLogUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput> | AuditLogCreateWithoutUserInput[] | AuditLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutUserInput | AuditLogCreateOrConnectWithoutUserInput[]
+    createMany?: AuditLogCreateManyUserInputEnvelope
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
   }
 
   export type NullableBoolFieldUpdateOperationsInput = {
@@ -18084,6 +21113,20 @@ export namespace Prisma {
     deleteMany?: AIUsageLogScalarWhereInput | AIUsageLogScalarWhereInput[]
   }
 
+  export type AuditLogUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput> | AuditLogCreateWithoutUserInput[] | AuditLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutUserInput | AuditLogCreateOrConnectWithoutUserInput[]
+    upsert?: AuditLogUpsertWithWhereUniqueWithoutUserInput | AuditLogUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AuditLogCreateManyUserInputEnvelope
+    set?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    disconnect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    delete?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    update?: AuditLogUpdateWithWhereUniqueWithoutUserInput | AuditLogUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AuditLogUpdateManyWithWhereWithoutUserInput | AuditLogUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+  }
+
   export type UploadUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UploadCreateWithoutUserInput, UploadUncheckedCreateWithoutUserInput> | UploadCreateWithoutUserInput[] | UploadUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UploadCreateOrConnectWithoutUserInput | UploadCreateOrConnectWithoutUserInput[]
@@ -18110,6 +21153,20 @@ export namespace Prisma {
     update?: AIUsageLogUpdateWithWhereUniqueWithoutUserInput | AIUsageLogUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: AIUsageLogUpdateManyWithWhereWithoutUserInput | AIUsageLogUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: AIUsageLogScalarWhereInput | AIUsageLogScalarWhereInput[]
+  }
+
+  export type AuditLogUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput> | AuditLogCreateWithoutUserInput[] | AuditLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutUserInput | AuditLogCreateOrConnectWithoutUserInput[]
+    upsert?: AuditLogUpsertWithWhereUniqueWithoutUserInput | AuditLogUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AuditLogCreateManyUserInputEnvelope
+    set?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    disconnect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    delete?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    update?: AuditLogUpdateWithWhereUniqueWithoutUserInput | AuditLogUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AuditLogUpdateManyWithWhereWithoutUserInput | AuditLogUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
   export type OrganisationCreateNestedOneWithoutPipelineRunsInput = {
@@ -18139,6 +21196,13 @@ export namespace Prisma {
     connect?: ForexTransactionWhereUniqueInput | ForexTransactionWhereUniqueInput[]
   }
 
+  export type ApprovalCreateNestedManyWithoutPipelineRunInput = {
+    create?: XOR<ApprovalCreateWithoutPipelineRunInput, ApprovalUncheckedCreateWithoutPipelineRunInput> | ApprovalCreateWithoutPipelineRunInput[] | ApprovalUncheckedCreateWithoutPipelineRunInput[]
+    connectOrCreate?: ApprovalCreateOrConnectWithoutPipelineRunInput | ApprovalCreateOrConnectWithoutPipelineRunInput[]
+    createMany?: ApprovalCreateManyPipelineRunInputEnvelope
+    connect?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
+  }
+
   export type UploadUncheckedCreateNestedManyWithoutPipelineRunInput = {
     create?: XOR<UploadCreateWithoutPipelineRunInput, UploadUncheckedCreateWithoutPipelineRunInput> | UploadCreateWithoutPipelineRunInput[] | UploadUncheckedCreateWithoutPipelineRunInput[]
     connectOrCreate?: UploadCreateOrConnectWithoutPipelineRunInput | UploadCreateOrConnectWithoutPipelineRunInput[]
@@ -18158,6 +21222,13 @@ export namespace Prisma {
     connectOrCreate?: ForexTransactionCreateOrConnectWithoutPipelineRunInput | ForexTransactionCreateOrConnectWithoutPipelineRunInput[]
     createMany?: ForexTransactionCreateManyPipelineRunInputEnvelope
     connect?: ForexTransactionWhereUniqueInput | ForexTransactionWhereUniqueInput[]
+  }
+
+  export type ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput = {
+    create?: XOR<ApprovalCreateWithoutPipelineRunInput, ApprovalUncheckedCreateWithoutPipelineRunInput> | ApprovalCreateWithoutPipelineRunInput[] | ApprovalUncheckedCreateWithoutPipelineRunInput[]
+    connectOrCreate?: ApprovalCreateOrConnectWithoutPipelineRunInput | ApprovalCreateOrConnectWithoutPipelineRunInput[]
+    createMany?: ApprovalCreateManyPipelineRunInputEnvelope
+    connect?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
   }
 
   export type NullableEnumRunStatusFieldUpdateOperationsInput = {
@@ -18222,6 +21293,20 @@ export namespace Prisma {
     deleteMany?: ForexTransactionScalarWhereInput | ForexTransactionScalarWhereInput[]
   }
 
+  export type ApprovalUpdateManyWithoutPipelineRunNestedInput = {
+    create?: XOR<ApprovalCreateWithoutPipelineRunInput, ApprovalUncheckedCreateWithoutPipelineRunInput> | ApprovalCreateWithoutPipelineRunInput[] | ApprovalUncheckedCreateWithoutPipelineRunInput[]
+    connectOrCreate?: ApprovalCreateOrConnectWithoutPipelineRunInput | ApprovalCreateOrConnectWithoutPipelineRunInput[]
+    upsert?: ApprovalUpsertWithWhereUniqueWithoutPipelineRunInput | ApprovalUpsertWithWhereUniqueWithoutPipelineRunInput[]
+    createMany?: ApprovalCreateManyPipelineRunInputEnvelope
+    set?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
+    disconnect?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
+    delete?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
+    connect?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
+    update?: ApprovalUpdateWithWhereUniqueWithoutPipelineRunInput | ApprovalUpdateWithWhereUniqueWithoutPipelineRunInput[]
+    updateMany?: ApprovalUpdateManyWithWhereWithoutPipelineRunInput | ApprovalUpdateManyWithWhereWithoutPipelineRunInput[]
+    deleteMany?: ApprovalScalarWhereInput | ApprovalScalarWhereInput[]
+  }
+
   export type UploadUncheckedUpdateManyWithoutPipelineRunNestedInput = {
     create?: XOR<UploadCreateWithoutPipelineRunInput, UploadUncheckedCreateWithoutPipelineRunInput> | UploadCreateWithoutPipelineRunInput[] | UploadUncheckedCreateWithoutPipelineRunInput[]
     connectOrCreate?: UploadCreateOrConnectWithoutPipelineRunInput | UploadCreateOrConnectWithoutPipelineRunInput[]
@@ -18262,6 +21347,20 @@ export namespace Prisma {
     update?: ForexTransactionUpdateWithWhereUniqueWithoutPipelineRunInput | ForexTransactionUpdateWithWhereUniqueWithoutPipelineRunInput[]
     updateMany?: ForexTransactionUpdateManyWithWhereWithoutPipelineRunInput | ForexTransactionUpdateManyWithWhereWithoutPipelineRunInput[]
     deleteMany?: ForexTransactionScalarWhereInput | ForexTransactionScalarWhereInput[]
+  }
+
+  export type ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput = {
+    create?: XOR<ApprovalCreateWithoutPipelineRunInput, ApprovalUncheckedCreateWithoutPipelineRunInput> | ApprovalCreateWithoutPipelineRunInput[] | ApprovalUncheckedCreateWithoutPipelineRunInput[]
+    connectOrCreate?: ApprovalCreateOrConnectWithoutPipelineRunInput | ApprovalCreateOrConnectWithoutPipelineRunInput[]
+    upsert?: ApprovalUpsertWithWhereUniqueWithoutPipelineRunInput | ApprovalUpsertWithWhereUniqueWithoutPipelineRunInput[]
+    createMany?: ApprovalCreateManyPipelineRunInputEnvelope
+    set?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
+    disconnect?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
+    delete?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
+    connect?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
+    update?: ApprovalUpdateWithWhereUniqueWithoutPipelineRunInput | ApprovalUpdateWithWhereUniqueWithoutPipelineRunInput[]
+    updateMany?: ApprovalUpdateManyWithWhereWithoutPipelineRunInput | ApprovalUpdateManyWithWhereWithoutPipelineRunInput[]
+    deleteMany?: ApprovalScalarWhereInput | ApprovalScalarWhereInput[]
   }
 
   export type OrganisationCreateNestedOneWithoutUploadsInput = {
@@ -18445,6 +21544,50 @@ export namespace Prisma {
     upsert?: OrganisationUpsertWithoutAiUsageLogsInput
     connect?: OrganisationWhereUniqueInput
     update?: XOR<XOR<OrganisationUpdateToOneWithWhereWithoutAiUsageLogsInput, OrganisationUpdateWithoutAiUsageLogsInput>, OrganisationUncheckedUpdateWithoutAiUsageLogsInput>
+  }
+
+  export type OrganisationCreateNestedOneWithoutAuditLogsInput = {
+    create?: XOR<OrganisationCreateWithoutAuditLogsInput, OrganisationUncheckedCreateWithoutAuditLogsInput>
+    connectOrCreate?: OrganisationCreateOrConnectWithoutAuditLogsInput
+    connect?: OrganisationWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutAuditLogsInput = {
+    create?: XOR<UserCreateWithoutAuditLogsInput, UserUncheckedCreateWithoutAuditLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuditLogsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type OrganisationUpdateOneRequiredWithoutAuditLogsNestedInput = {
+    create?: XOR<OrganisationCreateWithoutAuditLogsInput, OrganisationUncheckedCreateWithoutAuditLogsInput>
+    connectOrCreate?: OrganisationCreateOrConnectWithoutAuditLogsInput
+    upsert?: OrganisationUpsertWithoutAuditLogsInput
+    connect?: OrganisationWhereUniqueInput
+    update?: XOR<XOR<OrganisationUpdateToOneWithWhereWithoutAuditLogsInput, OrganisationUpdateWithoutAuditLogsInput>, OrganisationUncheckedUpdateWithoutAuditLogsInput>
+  }
+
+  export type UserUpdateOneWithoutAuditLogsNestedInput = {
+    create?: XOR<UserCreateWithoutAuditLogsInput, UserUncheckedCreateWithoutAuditLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuditLogsInput
+    upsert?: UserUpsertWithoutAuditLogsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuditLogsInput, UserUpdateWithoutAuditLogsInput>, UserUncheckedUpdateWithoutAuditLogsInput>
+  }
+
+  export type PipelineRunCreateNestedOneWithoutApprovalsInput = {
+    create?: XOR<PipelineRunCreateWithoutApprovalsInput, PipelineRunUncheckedCreateWithoutApprovalsInput>
+    connectOrCreate?: PipelineRunCreateOrConnectWithoutApprovalsInput
+    connect?: PipelineRunWhereUniqueInput
+  }
+
+  export type PipelineRunUpdateOneRequiredWithoutApprovalsNestedInput = {
+    create?: XOR<PipelineRunCreateWithoutApprovalsInput, PipelineRunUncheckedCreateWithoutApprovalsInput>
+    connectOrCreate?: PipelineRunCreateOrConnectWithoutApprovalsInput
+    upsert?: PipelineRunUpsertWithoutApprovalsInput
+    connect?: PipelineRunWhereUniqueInput
+    update?: XOR<XOR<PipelineRunUpdateToOneWithWhereWithoutApprovalsInput, PipelineRunUpdateWithoutApprovalsInput>, PipelineRunUncheckedUpdateWithoutApprovalsInput>
   }
 
   export type OrganisationCreateNestedOneWithoutFormulaConfigsInput = {
@@ -18776,6 +21919,29 @@ export namespace Prisma {
     _min?: NestedDecimalNullableFilter<$PrismaModel>
     _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type UserCreateWithoutRoleInput = {
     id?: string
@@ -18794,6 +21960,7 @@ export namespace Prisma {
     organisation: OrganisationCreateNestedOneWithoutUsersInput
     uploads?: UploadCreateNestedManyWithoutUserInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRoleInput = {
@@ -18813,6 +21980,7 @@ export namespace Prisma {
     createdAt?: Date | string
     uploads?: UploadUncheckedCreateNestedManyWithoutUserInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRoleInput = {
@@ -18879,6 +22047,7 @@ export namespace Prisma {
     role?: RoleCreateNestedOneWithoutUsersInput
     uploads?: UploadCreateNestedManyWithoutUserInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutOrganisationInput = {
@@ -18898,6 +22067,7 @@ export namespace Prisma {
     createdAt?: Date | string
     uploads?: UploadUncheckedCreateNestedManyWithoutUserInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutOrganisationInput = {
@@ -18928,6 +22098,7 @@ export namespace Prisma {
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateWithoutOrganisationInput = {
@@ -18948,6 +22119,7 @@ export namespace Prisma {
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunCreateOrConnectWithoutOrganisationInput = {
@@ -19106,6 +22278,7 @@ export namespace Prisma {
     maxRetries?: number | null
     temperature?: Decimal | DecimalJsLike | number | string | null
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
   export type AgentConfigUncheckedCreateWithoutOrganisationInput = {
@@ -19116,6 +22289,7 @@ export namespace Prisma {
     maxRetries?: number | null
     temperature?: Decimal | DecimalJsLike | number | string | null
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
   export type AgentConfigCreateOrConnectWithoutOrganisationInput = {
@@ -19131,23 +22305,25 @@ export namespace Prisma {
   export type FormulaConfigurationCreateWithoutOrganisationInput = {
     id?: string
     name: string
-    version: number
+    version?: number
     expression: string
-    parameters?: string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: string | null
     isActive?: boolean | null
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
   export type FormulaConfigurationUncheckedCreateWithoutOrganisationInput = {
     id?: string
     name: string
-    version: number
+    version?: number
     expression: string
-    parameters?: string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: string | null
     isActive?: boolean | null
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
   export type FormulaConfigurationCreateOrConnectWithoutOrganisationInput = {
@@ -19193,6 +22369,36 @@ export namespace Prisma {
 
   export type AIUsageLogCreateManyOrganisationInputEnvelope = {
     data: AIUsageLogCreateManyOrganisationInput | AIUsageLogCreateManyOrganisationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AuditLogCreateWithoutOrganisationInput = {
+    id?: string
+    action: string
+    entityType: string
+    entityId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    user?: UserCreateNestedOneWithoutAuditLogsInput
+  }
+
+  export type AuditLogUncheckedCreateWithoutOrganisationInput = {
+    id?: string
+    userId?: string | null
+    action: string
+    entityType: string
+    entityId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AuditLogCreateOrConnectWithoutOrganisationInput = {
+    where: AuditLogWhereUniqueInput
+    create: XOR<AuditLogCreateWithoutOrganisationInput, AuditLogUncheckedCreateWithoutOrganisationInput>
+  }
+
+  export type AuditLogCreateManyOrganisationInputEnvelope = {
+    data: AuditLogCreateManyOrganisationInput | AuditLogCreateManyOrganisationInput[]
     skipDuplicates?: boolean
   }
 
@@ -19391,6 +22597,7 @@ export namespace Prisma {
     maxRetries?: IntNullableFilter<"AgentConfig"> | number | null
     temperature?: DecimalNullableFilter<"AgentConfig"> | Decimal | DecimalJsLike | number | string | null
     updatedAt?: DateTimeFilter<"AgentConfig"> | Date | string
+    createdAt?: DateTimeFilter<"AgentConfig"> | Date | string
   }
 
   export type FormulaConfigurationUpsertWithWhereUniqueWithoutOrganisationInput = {
@@ -19418,10 +22625,11 @@ export namespace Prisma {
     name?: StringFilter<"FormulaConfiguration"> | string
     version?: IntFilter<"FormulaConfiguration"> | number
     expression?: StringFilter<"FormulaConfiguration"> | string
-    parameters?: StringNullableFilter<"FormulaConfiguration"> | string | null
+    parameters?: JsonNullableFilter<"FormulaConfiguration">
     description?: StringNullableFilter<"FormulaConfiguration"> | string | null
     isActive?: BoolNullableFilter<"FormulaConfiguration"> | boolean | null
     updatedAt?: DateTimeFilter<"FormulaConfiguration"> | Date | string
+    createdAt?: DateTimeFilter<"FormulaConfiguration"> | Date | string
   }
 
   export type AIUsageLogUpsertWithWhereUniqueWithoutOrganisationInput = {
@@ -19457,6 +22665,36 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"AIUsageLog"> | Date | string
   }
 
+  export type AuditLogUpsertWithWhereUniqueWithoutOrganisationInput = {
+    where: AuditLogWhereUniqueInput
+    update: XOR<AuditLogUpdateWithoutOrganisationInput, AuditLogUncheckedUpdateWithoutOrganisationInput>
+    create: XOR<AuditLogCreateWithoutOrganisationInput, AuditLogUncheckedCreateWithoutOrganisationInput>
+  }
+
+  export type AuditLogUpdateWithWhereUniqueWithoutOrganisationInput = {
+    where: AuditLogWhereUniqueInput
+    data: XOR<AuditLogUpdateWithoutOrganisationInput, AuditLogUncheckedUpdateWithoutOrganisationInput>
+  }
+
+  export type AuditLogUpdateManyWithWhereWithoutOrganisationInput = {
+    where: AuditLogScalarWhereInput
+    data: XOR<AuditLogUpdateManyMutationInput, AuditLogUncheckedUpdateManyWithoutOrganisationInput>
+  }
+
+  export type AuditLogScalarWhereInput = {
+    AND?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+    OR?: AuditLogScalarWhereInput[]
+    NOT?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+    id?: StringFilter<"AuditLog"> | string
+    orgId?: StringFilter<"AuditLog"> | string
+    userId?: StringNullableFilter<"AuditLog"> | string | null
+    action?: StringFilter<"AuditLog"> | string
+    entityType?: StringFilter<"AuditLog"> | string
+    entityId?: StringFilter<"AuditLog"> | string
+    metadata?: JsonNullableFilter<"AuditLog">
+    createdAt?: DateTimeFilter<"AuditLog"> | Date | string
+  }
+
   export type RoleCreateWithoutUsersInput = {
     name: string
     description?: string | null
@@ -19490,6 +22728,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutUsersInput = {
@@ -19507,6 +22746,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutUsersInput = {
@@ -19590,6 +22830,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type AuditLogCreateWithoutUserInput = {
+    id?: string
+    action: string
+    entityType: string
+    entityId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    organisation: OrganisationCreateNestedOneWithoutAuditLogsInput
+  }
+
+  export type AuditLogUncheckedCreateWithoutUserInput = {
+    id?: string
+    orgId: string
+    action: string
+    entityType: string
+    entityId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type AuditLogCreateOrConnectWithoutUserInput = {
+    where: AuditLogWhereUniqueInput
+    create: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput>
+  }
+
+  export type AuditLogCreateManyUserInputEnvelope = {
+    data: AuditLogCreateManyUserInput | AuditLogCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type RoleUpsertWithoutUsersInput = {
     update: XOR<RoleUpdateWithoutUsersInput, RoleUncheckedUpdateWithoutUsersInput>
     create: XOR<RoleCreateWithoutUsersInput, RoleUncheckedCreateWithoutUsersInput>
@@ -19640,6 +22910,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutUsersInput = {
@@ -19657,6 +22928,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type UploadUpsertWithWhereUniqueWithoutUserInput = {
@@ -19691,6 +22963,22 @@ export namespace Prisma {
     data: XOR<AIUsageLogUpdateManyMutationInput, AIUsageLogUncheckedUpdateManyWithoutUserInput>
   }
 
+  export type AuditLogUpsertWithWhereUniqueWithoutUserInput = {
+    where: AuditLogWhereUniqueInput
+    update: XOR<AuditLogUpdateWithoutUserInput, AuditLogUncheckedUpdateWithoutUserInput>
+    create: XOR<AuditLogCreateWithoutUserInput, AuditLogUncheckedCreateWithoutUserInput>
+  }
+
+  export type AuditLogUpdateWithWhereUniqueWithoutUserInput = {
+    where: AuditLogWhereUniqueInput
+    data: XOR<AuditLogUpdateWithoutUserInput, AuditLogUncheckedUpdateWithoutUserInput>
+  }
+
+  export type AuditLogUpdateManyWithWhereWithoutUserInput = {
+    where: AuditLogScalarWhereInput
+    data: XOR<AuditLogUpdateManyMutationInput, AuditLogUncheckedUpdateManyWithoutUserInput>
+  }
+
   export type OrganisationCreateWithoutPipelineRunsInput = {
     id?: string
     name: string
@@ -19706,6 +22994,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutPipelineRunsInput = {
@@ -19723,6 +23012,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutPipelineRunsInput = {
@@ -19868,6 +23158,28 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ApprovalCreateWithoutPipelineRunInput = {
+    id?: string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type ApprovalUncheckedCreateWithoutPipelineRunInput = {
+    id?: string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type ApprovalCreateOrConnectWithoutPipelineRunInput = {
+    where: ApprovalWhereUniqueInput
+    create: XOR<ApprovalCreateWithoutPipelineRunInput, ApprovalUncheckedCreateWithoutPipelineRunInput>
+  }
+
+  export type ApprovalCreateManyPipelineRunInputEnvelope = {
+    data: ApprovalCreateManyPipelineRunInput | ApprovalCreateManyPipelineRunInput[]
+    skipDuplicates?: boolean
+  }
+
   export type OrganisationUpsertWithoutPipelineRunsInput = {
     update: XOR<OrganisationUpdateWithoutPipelineRunsInput, OrganisationUncheckedUpdateWithoutPipelineRunsInput>
     create: XOR<OrganisationCreateWithoutPipelineRunsInput, OrganisationUncheckedCreateWithoutPipelineRunsInput>
@@ -19894,6 +23206,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutPipelineRunsInput = {
@@ -19911,6 +23224,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type UploadUpsertWithWhereUniqueWithoutPipelineRunInput = {
@@ -19961,6 +23275,32 @@ export namespace Prisma {
     data: XOR<ForexTransactionUpdateManyMutationInput, ForexTransactionUncheckedUpdateManyWithoutPipelineRunInput>
   }
 
+  export type ApprovalUpsertWithWhereUniqueWithoutPipelineRunInput = {
+    where: ApprovalWhereUniqueInput
+    update: XOR<ApprovalUpdateWithoutPipelineRunInput, ApprovalUncheckedUpdateWithoutPipelineRunInput>
+    create: XOR<ApprovalCreateWithoutPipelineRunInput, ApprovalUncheckedCreateWithoutPipelineRunInput>
+  }
+
+  export type ApprovalUpdateWithWhereUniqueWithoutPipelineRunInput = {
+    where: ApprovalWhereUniqueInput
+    data: XOR<ApprovalUpdateWithoutPipelineRunInput, ApprovalUncheckedUpdateWithoutPipelineRunInput>
+  }
+
+  export type ApprovalUpdateManyWithWhereWithoutPipelineRunInput = {
+    where: ApprovalScalarWhereInput
+    data: XOR<ApprovalUpdateManyMutationInput, ApprovalUncheckedUpdateManyWithoutPipelineRunInput>
+  }
+
+  export type ApprovalScalarWhereInput = {
+    AND?: ApprovalScalarWhereInput | ApprovalScalarWhereInput[]
+    OR?: ApprovalScalarWhereInput[]
+    NOT?: ApprovalScalarWhereInput | ApprovalScalarWhereInput[]
+    id?: StringFilter<"Approval"> | string
+    runId?: StringFilter<"Approval"> | string
+    userId?: StringFilter<"Approval"> | string
+    createdAt?: DateTimeFilter<"Approval"> | Date | string
+  }
+
   export type OrganisationCreateWithoutUploadsInput = {
     id?: string
     name: string
@@ -19976,6 +23316,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutUploadsInput = {
@@ -19993,6 +23334,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutUploadsInput = {
@@ -20017,6 +23359,7 @@ export namespace Prisma {
     role?: RoleCreateNestedOneWithoutUsersInput
     organisation: OrganisationCreateNestedOneWithoutUsersInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUploadsInput = {
@@ -20036,6 +23379,7 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     createdAt?: Date | string
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUploadsInput = {
@@ -20061,6 +23405,7 @@ export namespace Prisma {
     organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateWithoutUploadsInput = {
@@ -20081,6 +23426,7 @@ export namespace Prisma {
     createdAt?: Date | string
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunCreateOrConnectWithoutUploadsInput = {
@@ -20114,6 +23460,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutUploadsInput = {
@@ -20131,6 +23478,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type UserUpsertWithoutUploadsInput = {
@@ -20161,6 +23509,7 @@ export namespace Prisma {
     role?: RoleUpdateOneRequiredWithoutUsersNestedInput
     organisation?: OrganisationUpdateOneRequiredWithoutUsersNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUploadsInput = {
@@ -20180,6 +23529,7 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PipelineRunUpsertWithoutUploadsInput = {
@@ -20211,6 +23561,7 @@ export namespace Prisma {
     organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutUploadsInput = {
@@ -20231,6 +23582,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type OrganisationCreateWithoutWcdlLoansInput = {
@@ -20248,6 +23600,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutWcdlLoansInput = {
@@ -20265,6 +23618,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutWcdlLoansInput = {
@@ -20290,6 +23644,7 @@ export namespace Prisma {
     organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateWithoutWcdlLoansInput = {
@@ -20310,6 +23665,7 @@ export namespace Prisma {
     createdAt?: Date | string
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunCreateOrConnectWithoutWcdlLoansInput = {
@@ -20343,6 +23699,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutWcdlLoansInput = {
@@ -20360,6 +23717,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type PipelineRunUpsertWithoutWcdlLoansInput = {
@@ -20391,6 +23749,7 @@ export namespace Prisma {
     organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutWcdlLoansInput = {
@@ -20411,6 +23770,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type OrganisationCreateWithoutForexTransInput = {
@@ -20428,6 +23788,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutForexTransInput = {
@@ -20445,6 +23806,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutForexTransInput = {
@@ -20470,6 +23832,7 @@ export namespace Prisma {
     organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateWithoutForexTransInput = {
@@ -20490,6 +23853,7 @@ export namespace Prisma {
     createdAt?: Date | string
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunCreateOrConnectWithoutForexTransInput = {
@@ -20523,6 +23887,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutForexTransInput = {
@@ -20540,6 +23905,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type PipelineRunUpsertWithoutForexTransInput = {
@@ -20571,6 +23937,7 @@ export namespace Prisma {
     organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutForexTransInput = {
@@ -20591,6 +23958,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type OrganisationCreateWithoutAgentConfigsInput = {
@@ -20608,6 +23976,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutAgentConfigsInput = {
@@ -20625,6 +23994,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutAgentConfigsInput = {
@@ -20658,6 +24028,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutAgentConfigsInput = {
@@ -20675,6 +24046,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type UserCreateWithoutAiUsageLogsInput = {
@@ -20694,6 +24066,7 @@ export namespace Prisma {
     role?: RoleCreateNestedOneWithoutUsersInput
     organisation: OrganisationCreateNestedOneWithoutUsersInput
     uploads?: UploadCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAiUsageLogsInput = {
@@ -20713,6 +24086,7 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     createdAt?: Date | string
     uploads?: UploadUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAiUsageLogsInput = {
@@ -20735,6 +24109,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionCreateNestedManyWithoutOrganisationInput
     agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutAiUsageLogsInput = {
@@ -20752,6 +24127,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutOrganisationInput
     agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutAiUsageLogsInput = {
@@ -20787,6 +24163,7 @@ export namespace Prisma {
     role?: RoleUpdateOneRequiredWithoutUsersNestedInput
     organisation?: OrganisationUpdateOneRequiredWithoutUsersNestedInput
     uploads?: UploadUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAiUsageLogsInput = {
@@ -20806,6 +24183,7 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploads?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type OrganisationUpsertWithoutAiUsageLogsInput = {
@@ -20834,6 +24212,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionUpdateManyWithoutOrganisationNestedInput
     agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutAiUsageLogsInput = {
@@ -20851,6 +24230,291 @@ export namespace Prisma {
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutOrganisationNestedInput
     agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
+  }
+
+  export type OrganisationCreateWithoutAuditLogsInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    departments?: OrganisationCreatedepartmentsInput | string[]
+    createdAt?: Date | string
+    users?: UserCreateNestedManyWithoutOrganisationInput
+    pipelineRuns?: PipelineRunCreateNestedManyWithoutOrganisationInput
+    uploads?: UploadCreateNestedManyWithoutOrganisationInput
+    wcdlLoans?: WCDLLoanCreateNestedManyWithoutOrganisationInput
+    forexTrans?: ForexTransactionCreateNestedManyWithoutOrganisationInput
+    agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
+    formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
+    aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
+  }
+
+  export type OrganisationUncheckedCreateWithoutAuditLogsInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    departments?: OrganisationCreatedepartmentsInput | string[]
+    createdAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutOrganisationInput
+    pipelineRuns?: PipelineRunUncheckedCreateNestedManyWithoutOrganisationInput
+    uploads?: UploadUncheckedCreateNestedManyWithoutOrganisationInput
+    wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutOrganisationInput
+    forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutOrganisationInput
+    agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
+    formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
+    aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
+  }
+
+  export type OrganisationCreateOrConnectWithoutAuditLogsInput = {
+    where: OrganisationWhereUniqueInput
+    create: XOR<OrganisationCreateWithoutAuditLogsInput, OrganisationUncheckedCreateWithoutAuditLogsInput>
+  }
+
+  export type UserCreateWithoutAuditLogsInput = {
+    id?: string
+    email: string
+    name?: string | null
+    title?: string | null
+    phone?: string | null
+    photoUrl?: string | null
+    firebaseUid?: string | null
+    theme?: string | null
+    timezone?: string | null
+    dateFormat?: string | null
+    emailAlerts?: boolean | null
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    role?: RoleCreateNestedOneWithoutUsersInput
+    organisation: OrganisationCreateNestedOneWithoutUsersInput
+    uploads?: UploadCreateNestedManyWithoutUserInput
+    aiUsageLogs?: AIUsageLogCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutAuditLogsInput = {
+    id?: string
+    email: string
+    name?: string | null
+    title?: string | null
+    phone?: string | null
+    photoUrl?: string | null
+    roleId?: number
+    orgId: string
+    firebaseUid?: string | null
+    theme?: string | null
+    timezone?: string | null
+    dateFormat?: string | null
+    emailAlerts?: boolean | null
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    uploads?: UploadUncheckedCreateNestedManyWithoutUserInput
+    aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutAuditLogsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAuditLogsInput, UserUncheckedCreateWithoutAuditLogsInput>
+  }
+
+  export type OrganisationUpsertWithoutAuditLogsInput = {
+    update: XOR<OrganisationUpdateWithoutAuditLogsInput, OrganisationUncheckedUpdateWithoutAuditLogsInput>
+    create: XOR<OrganisationCreateWithoutAuditLogsInput, OrganisationUncheckedCreateWithoutAuditLogsInput>
+    where?: OrganisationWhereInput
+  }
+
+  export type OrganisationUpdateToOneWithWhereWithoutAuditLogsInput = {
+    where?: OrganisationWhereInput
+    data: XOR<OrganisationUpdateWithoutAuditLogsInput, OrganisationUncheckedUpdateWithoutAuditLogsInput>
+  }
+
+  export type OrganisationUpdateWithoutAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    departments?: OrganisationUpdatedepartmentsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutOrganisationNestedInput
+    pipelineRuns?: PipelineRunUpdateManyWithoutOrganisationNestedInput
+    uploads?: UploadUpdateManyWithoutOrganisationNestedInput
+    wcdlLoans?: WCDLLoanUpdateManyWithoutOrganisationNestedInput
+    forexTrans?: ForexTransactionUpdateManyWithoutOrganisationNestedInput
+    agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
+    formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
+    aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
+  }
+
+  export type OrganisationUncheckedUpdateWithoutAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    departments?: OrganisationUpdatedepartmentsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutOrganisationNestedInput
+    pipelineRuns?: PipelineRunUncheckedUpdateManyWithoutOrganisationNestedInput
+    uploads?: UploadUncheckedUpdateManyWithoutOrganisationNestedInput
+    wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutOrganisationNestedInput
+    forexTrans?: ForexTransactionUncheckedUpdateManyWithoutOrganisationNestedInput
+    agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
+    formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
+    aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
+  }
+
+  export type UserUpsertWithoutAuditLogsInput = {
+    update: XOR<UserUpdateWithoutAuditLogsInput, UserUncheckedUpdateWithoutAuditLogsInput>
+    create: XOR<UserCreateWithoutAuditLogsInput, UserUncheckedCreateWithoutAuditLogsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAuditLogsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAuditLogsInput, UserUncheckedUpdateWithoutAuditLogsInput>
+  }
+
+  export type UserUpdateWithoutAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    photoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    firebaseUid?: NullableStringFieldUpdateOperationsInput | string | null
+    theme?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateFormat?: NullableStringFieldUpdateOperationsInput | string | null
+    emailAlerts?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: RoleUpdateOneRequiredWithoutUsersNestedInput
+    organisation?: OrganisationUpdateOneRequiredWithoutUsersNestedInput
+    uploads?: UploadUpdateManyWithoutUserNestedInput
+    aiUsageLogs?: AIUsageLogUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAuditLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    photoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    roleId?: IntFieldUpdateOperationsInput | number
+    orgId?: StringFieldUpdateOperationsInput | string
+    firebaseUid?: NullableStringFieldUpdateOperationsInput | string | null
+    theme?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: NullableStringFieldUpdateOperationsInput | string | null
+    dateFormat?: NullableStringFieldUpdateOperationsInput | string | null
+    emailAlerts?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploads?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type PipelineRunCreateWithoutApprovalsInput = {
+    id?: string
+    statementMonth: string
+    status?: $Enums.RunStatus | null
+    stage?: number | null
+    statementExcelKey?: string | null
+    workingSheetKey?: string | null
+    bankingReportKey?: string | null
+    validationResult?: string | null
+    errorMessage?: string | null
+    reportSummary?: string | null
+    checksum?: string | null
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
+    uploads?: UploadCreateNestedManyWithoutPipelineRunInput
+    wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
+    forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
+  }
+
+  export type PipelineRunUncheckedCreateWithoutApprovalsInput = {
+    id?: string
+    orgId: string
+    statementMonth: string
+    status?: $Enums.RunStatus | null
+    stage?: number | null
+    statementExcelKey?: string | null
+    workingSheetKey?: string | null
+    bankingReportKey?: string | null
+    validationResult?: string | null
+    errorMessage?: string | null
+    reportSummary?: string | null
+    checksum?: string | null
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
+    wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
+    forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
+  }
+
+  export type PipelineRunCreateOrConnectWithoutApprovalsInput = {
+    where: PipelineRunWhereUniqueInput
+    create: XOR<PipelineRunCreateWithoutApprovalsInput, PipelineRunUncheckedCreateWithoutApprovalsInput>
+  }
+
+  export type PipelineRunUpsertWithoutApprovalsInput = {
+    update: XOR<PipelineRunUpdateWithoutApprovalsInput, PipelineRunUncheckedUpdateWithoutApprovalsInput>
+    create: XOR<PipelineRunCreateWithoutApprovalsInput, PipelineRunUncheckedCreateWithoutApprovalsInput>
+    where?: PipelineRunWhereInput
+  }
+
+  export type PipelineRunUpdateToOneWithWhereWithoutApprovalsInput = {
+    where?: PipelineRunWhereInput
+    data: XOR<PipelineRunUpdateWithoutApprovalsInput, PipelineRunUncheckedUpdateWithoutApprovalsInput>
+  }
+
+  export type PipelineRunUpdateWithoutApprovalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    statementMonth?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumRunStatusFieldUpdateOperationsInput | $Enums.RunStatus | null
+    stage?: NullableIntFieldUpdateOperationsInput | number | null
+    statementExcelKey?: NullableStringFieldUpdateOperationsInput | string | null
+    workingSheetKey?: NullableStringFieldUpdateOperationsInput | string | null
+    bankingReportKey?: NullableStringFieldUpdateOperationsInput | string | null
+    validationResult?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    reportSummary?: NullableStringFieldUpdateOperationsInput | string | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
+    uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
+    wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
+    forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
+  }
+
+  export type PipelineRunUncheckedUpdateWithoutApprovalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    statementMonth?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumRunStatusFieldUpdateOperationsInput | $Enums.RunStatus | null
+    stage?: NullableIntFieldUpdateOperationsInput | number | null
+    statementExcelKey?: NullableStringFieldUpdateOperationsInput | string | null
+    workingSheetKey?: NullableStringFieldUpdateOperationsInput | string | null
+    bankingReportKey?: NullableStringFieldUpdateOperationsInput | string | null
+    validationResult?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    reportSummary?: NullableStringFieldUpdateOperationsInput | string | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
+    wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
+    forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type OrganisationCreateWithoutFormulaConfigsInput = {
@@ -20868,6 +24532,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionCreateNestedManyWithoutOrganisationInput
     agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutFormulaConfigsInput = {
@@ -20885,6 +24550,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutOrganisationInput
     agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutFormulaConfigsInput = {
@@ -20918,6 +24584,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionUpdateManyWithoutOrganisationNestedInput
     agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutFormulaConfigsInput = {
@@ -20935,6 +24602,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutOrganisationNestedInput
     agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type UserCreateManyRoleInput = {
@@ -20971,6 +24639,7 @@ export namespace Prisma {
     organisation?: OrganisationUpdateOneRequiredWithoutUsersNestedInput
     uploads?: UploadUpdateManyWithoutUserNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRoleInput = {
@@ -20990,6 +24659,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploads?: UploadUncheckedUpdateManyWithoutUserNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutRoleInput = {
@@ -21105,17 +24775,19 @@ export namespace Prisma {
     maxRetries?: number | null
     temperature?: Decimal | DecimalJsLike | number | string | null
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
   export type FormulaConfigurationCreateManyOrganisationInput = {
     id?: string
     name: string
-    version: number
+    version?: number
     expression: string
-    parameters?: string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: string | null
     isActive?: boolean | null
     updatedAt?: Date | string
+    createdAt?: Date | string
   }
 
   export type AIUsageLogCreateManyOrganisationInput = {
@@ -21128,6 +24800,16 @@ export namespace Prisma {
     costUsd?: Decimal | DecimalJsLike | number | string | null
     action?: string | null
     sessionId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AuditLogCreateManyOrganisationInput = {
+    id?: string
+    userId?: string | null
+    action: string
+    entityType: string
+    entityId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
 
@@ -21148,6 +24830,7 @@ export namespace Prisma {
     role?: RoleUpdateOneRequiredWithoutUsersNestedInput
     uploads?: UploadUpdateManyWithoutUserNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrganisationInput = {
@@ -21167,6 +24850,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploads?: UploadUncheckedUpdateManyWithoutUserNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutOrganisationInput = {
@@ -21204,6 +24888,7 @@ export namespace Prisma {
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutOrganisationInput = {
@@ -21224,6 +24909,7 @@ export namespace Prisma {
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateManyWithoutOrganisationInput = {
@@ -21413,6 +25099,7 @@ export namespace Prisma {
     maxRetries?: NullableIntFieldUpdateOperationsInput | number | null
     temperature?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AgentConfigUncheckedUpdateWithoutOrganisationInput = {
@@ -21423,6 +25110,7 @@ export namespace Prisma {
     maxRetries?: NullableIntFieldUpdateOperationsInput | number | null
     temperature?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AgentConfigUncheckedUpdateManyWithoutOrganisationInput = {
@@ -21433,6 +25121,7 @@ export namespace Prisma {
     maxRetries?: NullableIntFieldUpdateOperationsInput | number | null
     temperature?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FormulaConfigurationUpdateWithoutOrganisationInput = {
@@ -21440,10 +25129,11 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     expression?: StringFieldUpdateOperationsInput | string
-    parameters?: NullableStringFieldUpdateOperationsInput | string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: NullableBoolFieldUpdateOperationsInput | boolean | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FormulaConfigurationUncheckedUpdateWithoutOrganisationInput = {
@@ -21451,10 +25141,11 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     expression?: StringFieldUpdateOperationsInput | string
-    parameters?: NullableStringFieldUpdateOperationsInput | string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: NullableBoolFieldUpdateOperationsInput | boolean | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FormulaConfigurationUncheckedUpdateManyWithoutOrganisationInput = {
@@ -21462,10 +25153,11 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     version?: IntFieldUpdateOperationsInput | number
     expression?: StringFieldUpdateOperationsInput | string
-    parameters?: NullableStringFieldUpdateOperationsInput | string | null
+    parameters?: NullableJsonNullValueInput | InputJsonValue
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: NullableBoolFieldUpdateOperationsInput | boolean | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AIUsageLogUpdateWithoutOrganisationInput = {
@@ -21507,6 +25199,36 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AuditLogUpdateWithoutOrganisationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutAuditLogsNestedInput
+  }
+
+  export type AuditLogUncheckedUpdateWithoutOrganisationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuditLogUncheckedUpdateManyWithoutOrganisationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    action?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UploadCreateManyUserInput = {
     id?: string
     orgId: string
@@ -21532,6 +25254,16 @@ export namespace Prisma {
     costUsd?: Decimal | DecimalJsLike | number | string | null
     action?: string | null
     sessionId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AuditLogCreateManyUserInput = {
+    id?: string
+    orgId: string
+    action: string
+    entityType: string
+    entityId: string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
   }
 
@@ -21619,6 +25351,36 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AuditLogUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organisation?: OrganisationUpdateOneRequiredWithoutAuditLogsNestedInput
+  }
+
+  export type AuditLogUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuditLogUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UploadCreateManyPipelineRunInput = {
     id?: string
     orgId: string
@@ -21670,6 +25432,12 @@ export namespace Prisma {
     billCommission?: Decimal | DecimalJsLike | number | string | null
     swiftCharges?: Decimal | DecimalJsLike | number | string | null
     totalAmtINR?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+  }
+
+  export type ApprovalCreateManyPipelineRunInput = {
+    id?: string
+    userId: string
     createdAt?: Date | string
   }
 
@@ -21832,6 +25600,24 @@ export namespace Prisma {
     billCommission?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     swiftCharges?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     totalAmtINR?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApprovalUpdateWithoutPipelineRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApprovalUncheckedUpdateWithoutPipelineRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApprovalUncheckedUpdateManyWithoutPipelineRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

@@ -238,7 +238,8 @@ exports.Prisma.AgentConfigScalarFieldEnum = {
   fallbackModels: 'fallbackModels',
   maxRetries: 'maxRetries',
   temperature: 'temperature',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.AIUsageLogScalarFieldEnum = {
@@ -255,6 +256,24 @@ exports.Prisma.AIUsageLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  orgId: 'orgId',
+  userId: 'userId',
+  action: 'action',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ApprovalScalarFieldEnum = {
+  id: 'id',
+  runId: 'runId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.FormulaConfigurationScalarFieldEnum = {
   id: 'id',
   orgId: 'orgId',
@@ -264,12 +283,18 @@ exports.Prisma.FormulaConfigurationScalarFieldEnum = {
   parameters: 'parameters',
   description: 'description',
   isActive: 'isActive',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -280,6 +305,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.RunStatus = exports.$Enums.RunStatus = {
   PENDING: 'PENDING',
@@ -311,6 +342,8 @@ exports.Prisma.ModelName = {
   ForexTransaction: 'ForexTransaction',
   AgentConfig: 'AgentConfig',
   AIUsageLog: 'AIUsageLog',
+  AuditLog: 'AuditLog',
+  Approval: 'Approval',
   FormulaConfiguration: 'FormulaConfiguration'
 };
 

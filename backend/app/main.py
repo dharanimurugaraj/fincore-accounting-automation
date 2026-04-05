@@ -16,10 +16,36 @@ from app.core.config import settings
 from app.api.v1.router import api_v1_router
 from app.services.s3_service import get_storage
 
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup logic — Resilient initialization for Vercel functions
+    try:
+        from app.core.security import _init_firebase
+        _init_firebase()
+    except Exception as e:
+        print(f"CRITICAL: Firebase init failed: {e}")
+
+    try:
+        from app.core.database import get_pool
+        get_pool() 
+    except Exception as e:
+        print(f"CRITICAL: Database pool warmup failed: {e}")
+    
+    yield
+    # Shutdown logic
+    try:
+        from app.core.database import close_pool
+        close_pool()
+    except:
+        pass
+
 app = FastAPI(
     title="FinCore API",
     description="AI-powered banking intelligence platform — backend service",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(

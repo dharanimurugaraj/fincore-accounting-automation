@@ -57,7 +57,7 @@ def _init_firebase():
         print(f"WARN: Firebase credentials NOT FOUND. Auth will fail in Production.")
         print(f"DEBUG: Checked JSON env (empty) and path: {_cred_path}")
 
-_init_firebase()
+# _init_firebase()  <-- Moved to app lifespan in main.py for faster startup
 
 security = HTTPBearer()
 

@@ -7,9 +7,9 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load .env from project root
+# Load .env from backend folder (where the environment-specific config lives)
 _env_path = Path(__file__).parent.parent.parent / ".env"
-load_dotenv(_env_path)
+load_dotenv(_env_path, override=True)
 
 
 class Settings:

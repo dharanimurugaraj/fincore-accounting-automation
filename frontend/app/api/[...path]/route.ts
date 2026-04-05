@@ -8,14 +8,34 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
+// Auto-detect backend URL based on environment
+const getBackendUrl = () => {
+  if (process.env.BACKEND_URL) return process.env.BACKEND_URL;
+  
+  // Local development fallback
+  if (process.env.NODE_ENV === "development") {
+    return "http://127.0.0.1:8000";
+  }
+  
+  // Vercel Production — using the experimentalServices routePrefix
+  // We use VERCEL_PROJECT_PRODUCTION_URL if available, or fallback to relative routing if possible (though fetch needs absolute)
+  const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+  if (vercelUrl) {
+    return `https://${vercelUrl}/_/backend`;
+  }
+  
+  return "http://127.0.0.1:8000";
+};
+
+const BACKEND_URL = getBackendUrl();
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const { path: pathSegments } = await params;
-  let path = pathSegments.join("/");
+  const { path: segments } = await params;
+  let path = segments.join("/");
+  
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
 
@@ -23,7 +43,6 @@ export async function GET(
   if (path === "documents") {
     path = "uploads";
   } else if (path === "pipeline/status") {
-    // Convert /api/pipeline/status?runId=xxx -> /api/v1/pipeline/status/xxx
     const runId = searchParams.get("runId");
     if (runId) {
       path = `pipeline/status/${runId}`;
@@ -31,7 +50,7 @@ export async function GET(
     }
   }
 
-  // 2. Convert common CamelCase parameters to snake_case
+  // 2. Normalize parameters to snake_case for the Python backend
   if (searchParams.has("orgId")) {
     searchParams.set("org_id", searchParams.get("orgId")!);
     searchParams.delete("orgId");
@@ -40,48 +59,39 @@ export async function GET(
     searchParams.set("statement_month", searchParams.get("month")!);
     searchParams.delete("month");
   }
-  if (searchParams.has("runId")) {
-    searchParams.set("run_id", searchParams.get("runId")!);
-    searchParams.delete("runId");
-  }
 
-  const backendUrl = `${BACKEND_URL}/api/v1/${path}?${searchParams.toString()}`;
+  const backendUrl = `${BACKEND_URL}/api/v1/${path}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 
   try {
     const response = await fetch(backendUrl, {
+      method: "GET",
       headers: {
-        Authorization: request.headers.get("Authorization") || "",
+        "Authorization": request.headers.get("Authorization") || "",
         "Content-Type": "application/json",
       },
-      next: { revalidate: 0 }, // Disable caching in Next.js Router Cache
+      next: { revalidate: 0 },
     });
-    
+
     if (!response.ok) {
       const errorText = await response.text().catch(() => "Unknown error");
-      console.error(`Proxy GET ${path} failed with status ${response.status}:`, errorText);
+      console.error(`Backend error [${response.status}] at ${path}:`, errorText);
       
-      // If we got an HTML error page, the backend is likely crashing or misconfigured on its hosting platform
-      if (errorText.includes("<!DOCTYPE html>") || errorText.includes("<html>")) {
-        return NextResponse.json({ 
-          error: `Backend at ${BACKEND_URL} returned an HTML error (status ${response.status}). Check backend process logs.`,
-          status: response.status 
-        }, { status: 502 });
-      }
-
       return NextResponse.json({ 
-        error: `Backend returned status ${response.status}`,
-        detail: errorText
+        error: `Backend error ${response.status}`,
+        detail: errorText,
+        path: path
       }, { status: response.status });
     }
 
     const data = await response.json();
-    return NextResponse.json(data, { status: response.status });
+    return NextResponse.json(data);
   } catch (error: any) {
-    console.error(`Proxy GET ${path} failed to reach ${backendUrl}:`, error.message);
+    console.error(`Proxy failure connecting to ${backendUrl}:`, error.message);
     return NextResponse.json({ 
-      error: "Backend unreachable from Frontend",
-      backend_url: backendUrl,
-      message: error.message
+      error: "Backend Connection Failed",
+      message: error.message,
+      target: backendUrl,
+      hint: "Ensure BACKEND_URL is correctly set in your environment."
     }, { status: 502 });
   }
 }

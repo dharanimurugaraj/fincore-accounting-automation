@@ -160,6 +160,26 @@ CREATE TABLE IF NOT EXISTS "AIUsageLog" (
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Audit Logs (Immutable history)
+CREATE TABLE IF NOT EXISTS "AuditLog" (
+    id           TEXT PRIMARY KEY,
+    "orgId"      TEXT NOT NULL REFERENCES "Organisation"(id) ON DELETE CASCADE,
+    "userId"     TEXT REFERENCES "User"(id) ON DELETE SET NULL,
+    action       TEXT NOT NULL,
+    "entityType" TEXT NOT NULL,
+    "entityId"   TEXT NOT NULL,
+    metadata     JSONB,
+    "createdAt"  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Human Approvals
+CREATE TABLE IF NOT EXISTS "Approval" (
+    id           TEXT PRIMARY KEY,
+    "runId"      TEXT NOT NULL REFERENCES "PipelineRun"(id) ON DELETE CASCADE,
+    "userId"     TEXT NOT NULL REFERENCES "User"(id) ON DELETE CASCADE,
+    "createdAt"  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Formulas (Managed by Admins)
 CREATE TABLE IF NOT EXISTS "FormulaConfiguration" (
     id          TEXT PRIMARY KEY,
@@ -167,7 +187,7 @@ CREATE TABLE IF NOT EXISTS "FormulaConfiguration" (
     name        TEXT NOT NULL,
     version     INTEGER NOT NULL,
     expression  TEXT NOT NULL,
-    parameters  TEXT,
+    parameters  JSONB,
     description TEXT,
     "isActive"  BOOLEAN DEFAULT TRUE,
     "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

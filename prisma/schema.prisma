@@ -60,6 +60,7 @@ model Organisation {
   agentConfigs     AgentConfig[]
   formulaConfigs   FormulaConfiguration[]
   aiUsageLogs      AIUsageLog[]
+  auditLogs        AuditLog[]
 
   @@map("Organisation")
 }
@@ -84,6 +85,7 @@ model User {
   createdAt     DateTime     @default(now()) @map("createdAt")
   uploads       Upload[]
   aiUsageLogs   AIUsageLog[]
+  auditLogs     AuditLog[]
 
   @@map("User")
 }
@@ -108,6 +110,7 @@ model PipelineRun {
   uploads           Upload[]
   wcdlLoans         WCDLLoan[]
   forexTrans        ForexTransaction[]
+  approvals         Approval[]
 
   @@map("PipelineRun")
 }
@@ -216,6 +219,31 @@ model AIUsageLog {
   @@map("AIUsageLog")
 }
 
+model AuditLog {
+  id           String       @id @default(uuid())
+  orgId        String       @map("orgId")
+  organisation Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  userId       String?      @map("userId")
+  user         User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action       String
+  entityType   String       @map("entityType")
+  entityId     String       @map("entityId")
+  metadata     Json?
+  createdAt    DateTime     @default(now()) @map("createdAt")
+
+  @@map("AuditLog")
+}
+
+model Approval {
+  id           String       @id @default(uuid())
+  runId        String       @map("runId")
+  pipelineRun  PipelineRun  @relation(fields: [runId], references: [id], onDelete: Cascade)
+  userId       String       @map("userId")
+  createdAt    DateTime     @default(now()) @map("createdAt")
+
+  @@map("Approval")
+}
+
 model FormulaConfiguration {
   id          String       @id @default(uuid())
   orgId       String       @map("orgId")
@@ -226,7 +254,6 @@ model FormulaConfiguration {
   parameters  Json?        @map("parameters")
   description String?
   isActive    Boolean?     @default(true) @map("isActive")
-  updatedBy   String?      @map("updatedBy")
   updatedAt   DateTime     @default(now()) @updatedAt @map("updatedAt")
   createdAt   DateTime     @default(now()) @map("createdAt")
 
