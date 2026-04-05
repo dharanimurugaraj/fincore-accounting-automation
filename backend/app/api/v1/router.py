@@ -20,10 +20,19 @@ from app.api.v1.audit import router as audit_router
 
 api_v1_router = APIRouter()
 
-# Health check — inline
+# Health check — inline (debug mode)
 @api_v1_router.get("/health", tags=["Health"])
 async def health_check():
-    return {"status": "ok", "version": "1.0.0", "service": "fincore-api"}
+    import firebase_admin, os
+    from app.core.config import settings
+    fb_keys = [k for k in os.environ.keys() if "FIREBASE" in k]
+    return {
+        "status": "ok",
+        "firebase_initialized": bool(firebase_admin._apps),
+        "fb_keys_found": fb_keys,
+        "fb_json_len": len(settings.FIREBASE_SERVICE_ACCOUNT_JSON) if settings.FIREBASE_SERVICE_ACCOUNT_JSON else 0,
+        "env_vercel": bool(os.getenv("VERCEL")),
+    }
 
 
 api_v1_router.include_router(auth_router,     prefix="/auth",      tags=["Auth"])
