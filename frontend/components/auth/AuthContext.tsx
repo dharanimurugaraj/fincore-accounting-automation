@@ -52,6 +52,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [idToken]);
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const token = await user.getIdToken();
@@ -71,7 +75,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const logout = async () => {
-    await signOut(auth);
+    if (auth) {
+      await signOut(auth);
+    }
   };
 
   return (

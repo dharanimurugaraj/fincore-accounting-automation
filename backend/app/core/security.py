@@ -20,32 +20,58 @@ _CURRENT_DIR = Path(__file__).resolve().parent
 _BACKEND_ROOT = _CURRENT_DIR.parent.parent # app -> core -> root
 
 # Initialize Firebase Admin SDK
-_cred_path = settings.FIREBASE_SERVICE_ACCOUNT
-if not _cred_path:
-    # Use default filename if not set in .env
-    _cred_path = "fincore-d419d-firebase-adminsdk-fbsvc-b6ab364cfd.json"
+def _init_firebase():
+    if firebase_admin._apps:
+        return
+    
+    # 1. Robust search for JSON in ENV (Fixes Vercel/Docker whitespace issues)
+    json_str = None
+    fb_keys = []
+    for k, v in os.environ.items():
+        if "FIREBASE" in k:
+            fb_keys.append(k)
+        if k.strip() == "FIREBASE_SERVICE_ACCOUNT_JSON":
+            json_str = v
+            break
+            
+    if json_str:
+        print(f"INFO: Firebase JSON found (len={len(json_str)})")
+        try:
+            import json
+            cred_dict = json.loads(json_str.strip())
+            _cred = credentials.Certificate(cred_dict)
+            firebase_admin.initialize_app(_cred)
+            print("INFO: Firebase initialized successfully.")
+            return
+        except Exception as e:
+            print(f"ERROR: Firebase JSON parse/init failed: {e}")
+    else:
+        print(f"WARN: 'FIREBASE_SERVICE_ACCOUNT_JSON' not found. Found relate: {fb_keys}")
 
-# Resolve correctly relative to root if not already absolute
-if not os.path.isabs(_cred_path):
-    _cred_path = str(_BACKEND_ROOT / _cred_path)
+    # 2. Fallback to file path
+    _cred_path = os.getenv("FIREBASE_SERVICE_ACCOUNT") or "fincore-d419d-firebase-adminsdk-fbsvc-b6ab364cfd.json"
+    if not os.path.isabs(_cred_path):
+        _cred_path = str(_BACKEND_ROOT / _cred_path)
 
-if os.path.exists(_cred_path):
-    if not firebase_admin._apps:
+    if os.path.exists(_cred_path):
         try:
             _cred = credentials.Certificate(_cred_path)
             firebase_admin.initialize_app(_cred)
-            print(f"INFO: Firebase initialized successfully with: {os.path.basename(_cred_path)}")
+            print(f"INFO: Firebase initialized with file: {os.path.basename(_cred_path)}")
         except Exception as e:
-            print(f"ERROR: Failed to init Firebase with {_cred_path}: {e}")
-else:
-    print(f"WARN: Firebase service account key NOT FOUND at {_cred_path}")
-    print(f"DEBUG: Current Root was resolved to {_BACKEND_ROOT}")
+            print(f"ERROR: File init failed: {e}")
+    else:
+        print(f"WARN: No Firebase credentials found. Checked path: {_cred_path}")
 
 security = HTTPBearer()
 
 
 async def get_current_user(res: HTTPAuthorizationCredentials = Security(security)):
     """Dependency to get the currently authenticated user based on Firebase Token."""
+    # ENSURE FIREBASE IS INITIALIZED (Critical for Vercel Serverless)
+    if not firebase_admin._apps:
+        _init_firebase()
+    
     token = res.credentials
     try:
         # 1. Verify Firebase Token

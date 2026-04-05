@@ -23,6 +23,9 @@ export default function LoginPage() {
     setIsSigningIn(true);
     setError("");
     try {
+      if (!auth) {
+        throw new Error("Firebase Auth is not initialized. Please check your environment variables.");
+      }
       await signInWithPopup(auth, googleProvider);
     } catch (err: any) {
       setError(err.message || "Failed to sign in with Google.");

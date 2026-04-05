@@ -7,9 +7,11 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load .env from project root
-_env_path = Path(__file__).parent.parent.parent / ".env"
-load_dotenv(_env_path)
+# Load .env only for local development. Vercel provides these via the Dashboard.
+if not os.getenv("VERCEL"):
+    _env_path = Path(__file__).parent.parent.parent / ".env"
+    if _env_path.exists():
+        load_dotenv(_env_path, override=True)
 
 
 class Settings:
@@ -26,10 +28,9 @@ class Settings:
     S3_REGION: str = os.getenv("S3_REGION", "ap-south-1")
     AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
     AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
-    LOCAL_STORAGE_PATH: str = os.getenv(
-        "LOCAL_STORAGE_PATH",
-        str(Path(__file__).parent.parent.parent / "storage" / "data"),
-    )
+    # In Vercel, the filesystem is read-only except /tmp
+    _default_stor = "/tmp/fincore" if os.getenv("VERCEL") else str(Path(__file__).parent.parent.parent / "storage" / "data")
+    LOCAL_STORAGE_PATH: str = os.getenv("LOCAL_STORAGE_PATH", _default_stor)
     USE_LOCAL_STORAGE: bool = os.getenv("USE_LOCAL_STORAGE", "true").lower() == "true"
 
     # ── AI / LLM ───────────────────────────────────────────────────────────
@@ -40,6 +41,10 @@ class Settings:
     # ── Firebase ────────────────────────────────────────────────────────────
     FIREBASE_PROJECT_ID: str = os.getenv("FIREBASE_PROJECT_ID", "")
     FIREBASE_SERVICE_ACCOUNT: str = os.getenv("FIREBASE_SERVICE_ACCOUNT", "")
+    
+    # Pre-process the JSON string to fix escaped newlines common in Vercel/Docker
+    _raw_fb_json = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON", "")
+    FIREBASE_SERVICE_ACCOUNT_JSON: str = _raw_fb_json.replace("\\n", "\n") if _raw_fb_json else ""
 
     # ── Frontend ────────────────────────────────────────────────────────────
     FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:3000")
