@@ -38,9 +38,7 @@ def _init_firebase():
         print(f"INFO: Firebase JSON found (len={len(json_str)})")
         try:
             import json
-            # Final cleanup: ensure no extra quotes or double escapes
-            clean_str = json_str.strip().replace("\\n", "\n")
-            cred_dict = json.loads(clean_str)
+            cred_dict = json.loads(json_str.strip())
             _cred = credentials.Certificate(cred_dict)
             firebase_admin.initialize_app(_cred)
             print("INFO: Firebase initialized successfully.")
