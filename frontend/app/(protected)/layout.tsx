@@ -1,5 +1,6 @@
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
+import Footer from "@/components/layout/Footer";
 import ProtectedGuard from "@/components/auth/ProtectedGuard";
 
 export default function DashboardLayout({
@@ -14,6 +15,7 @@ export default function DashboardLayout({
         <div className="ml-64 flex min-h-screen flex-col">
           <TopBar />
           <main className="flex-1 p-8">{children}</main>
+          <Footer />
         </div>
       </div>
     </ProtectedGuard>

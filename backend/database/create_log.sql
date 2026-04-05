@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS "AIUsageLog" (
+    id TEXT PRIMARY KEY,
+    "userId" TEXT NOT NULL REFERENCES "User"(id) ON DELETE CASCADE,
+    "userEmail" TEXT NOT NULL,
+    "orgId" TEXT NOT NULL REFERENCES "Organisation"(id) ON DELETE CASCADE,
+    model TEXT NOT NULL,
+    "tokensIn" INTEGER DEFAULT 0,
+    "tokensOut" INTEGER DEFAULT 0,
+    "costUsd" NUMERIC(15, 6) DEFAULT 0.0,
+    action TEXT,
+    "sessionId" TEXT,
+    "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

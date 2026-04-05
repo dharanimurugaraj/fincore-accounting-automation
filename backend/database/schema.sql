@@ -3,11 +3,23 @@
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Enums
-DO $$ BEGIN
-    CREATE TYPE "Role" AS ENUM ('ADMIN', 'ANALYST', 'VIEWER');
-EXCEPTION WHEN duplicate_object THEN null; END $$;
+-- Roles Table (Numeric RBAC)
+-- 0: SUPER_ADMIN, 1: ADMIN, 2: ANALYST, 3: VIEWER
+CREATE TABLE IF NOT EXISTS "Role" (
+    id             SERIAL PRIMARY KEY,
+    name           TEXT UNIQUE NOT NULL,
+    description    TEXT,
+    "allowedPages" TEXT[] DEFAULT '{"*"}'
+);
 
+INSERT INTO "Role" (id, name, description) VALUES 
+(0, 'SUPER_ADMIN', 'Platform-wide total access'),
+(1, 'ADMIN', 'Organization-level administration'),
+(2, 'ANALYST', 'Standard organization user'),
+(3, 'VIEWER', 'Read-only organization access')
+ON CONFLICT DO NOTHING;
+
+-- Enums
 DO $$ BEGIN
     CREATE TYPE "UploadStatus" AS ENUM ('UPLOADED', 'OCR_RUNNING', 'OCR_COMPLETE', 'OCR_FAILED', 'NEEDS_REVIEW');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
@@ -20,19 +32,29 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 CREATE TABLE IF NOT EXISTS "Organisation" (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
+    "legalName" TEXT,
+    "address" TEXT,
+    "logoUrl" TEXT,
+    "departments" TEXT[] DEFAULT '{}',
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS "User" (
-    id TEXT PRIMARY KEY,
-    email TEXT UNIQUE NOT NULL,
-    name TEXT,
-    "photoUrl" TEXT,
-    role "Role" DEFAULT 'ANALYST',
-    "orgId" TEXT NOT NULL REFERENCES "Organisation"(id) ON DELETE CASCADE,
+    id           TEXT PRIMARY KEY,
+    email        TEXT UNIQUE NOT NULL,
+    name         TEXT,
+    title        TEXT,
+    phone        TEXT,
+    "photoUrl"   TEXT,
+    "roleId"     INTEGER NOT NULL DEFAULT 2 REFERENCES "Role"(id),
+    "orgId"      TEXT NOT NULL REFERENCES "Organisation"(id) ON DELETE CASCADE,
     "firebaseUid" TEXT UNIQUE,
-    "lastLogin" TIMESTAMP WITH TIME ZONE,
-    "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    theme        TEXT DEFAULT 'dark',
+    timezone     TEXT DEFAULT 'UTC',
+    "dateFormat" TEXT DEFAULT 'MM/DD/YYYY',
+    "emailAlerts" BOOLEAN DEFAULT TRUE,
+    "lastLogin"  TIMESTAMP WITH TIME ZONE,
+    "createdAt"  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS "PipelineRun" (
@@ -46,43 +68,109 @@ CREATE TABLE IF NOT EXISTS "PipelineRun" (
     "bankingReportKey" TEXT,
     "validationResult" TEXT,
     "errorMessage" TEXT,
+    "reportSummary" TEXT,
+    "checksum" TEXT,
     "startedAt" TIMESTAMP WITH TIME ZONE,
     "completedAt" TIMESTAMP WITH TIME ZONE,
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS "Upload" (
+    id               TEXT PRIMARY KEY,
+    "orgId"          TEXT NOT NULL REFERENCES "Organisation"(id) ON DELETE CASCADE,
+    "uploadedById"   TEXT NOT NULL REFERENCES "User"(id) ON DELETE SET NULL,
+    filename         TEXT NOT NULL,
+    "s3Key"          TEXT UNIQUE NOT NULL,
+    "bankName"       TEXT,
+    "accountType"    TEXT,
+    "accountId"      TEXT,
+    "statementMonth" TEXT,
+    "fileSizeBytes"  BIGINT,
+    status "UploadStatus" DEFAULT 'UPLOADED',
+    "runId"          TEXT REFERENCES "PipelineRun"(id) ON DELETE SET NULL,
+    "createdAt"      TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "WCDLLoan" (
+    id                TEXT PRIMARY KEY,
+    "orgId"           TEXT NOT NULL REFERENCES "Organisation"(id) ON DELETE CASCADE,
+    "runId"           TEXT REFERENCES "PipelineRun"(id) ON DELETE SET NULL,
+    "statementMonth"  TEXT NOT NULL,
+    "loanNumber"      TEXT NOT NULL,
+    "bankName"        TEXT NOT NULL,
+    "principalAmount" NUMERIC(15, 2) NOT NULL,
+    "roi"             NUMERIC(8, 6) NOT NULL,
+    "startDate"       DATE NOT NULL,
+    "maturityDate"    DATE NOT NULL,
+    "prepaymentDate"  DATE,
+    "status"          TEXT DEFAULT 'ACTIVE',
+    "createdAt"       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt"       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "ForexTransaction" (
     id TEXT PRIMARY KEY,
     "orgId" TEXT NOT NULL REFERENCES "Organisation"(id) ON DELETE CASCADE,
-    "uploadedById" TEXT NOT NULL REFERENCES "User"(id) ON DELETE SET NULL,
-    filename TEXT NOT NULL,
-    "s3Key" TEXT UNIQUE NOT NULL,
-    "bankName" TEXT,
-    "accountType" TEXT,
-    "accountId" TEXT,
-    "statementMonth" TEXT,
-    "fileSizeBytes" BIGINT,
-    status "UploadStatus" DEFAULT 'UPLOADED',
     "runId" TEXT REFERENCES "PipelineRun"(id) ON DELETE SET NULL,
+    "statementMonth" TEXT NOT NULL,
+    "srNo" INTEGER,
+    "boeDate" DATE,
+    "valueDate" DATE,
+    "drawerName" TEXT,
+    "billReference" TEXT,
+    currency TEXT,
+    "fcAmount" NUMERIC(18, 4),
+    "bankRate" NUMERIC(10, 4),
+    "marketAvgRate" NUMERIC(10, 4),
+    "dayHighRate" NUMERIC(10, 4),
+    "excessVsAvg" NUMERIC(18, 2),
+    "excessVsHigh" NUMERIC(18, 2),
+    "billAmtINR" NUMERIC(18, 2),
+    "billCommission" NUMERIC(18, 2),
+    "swiftCharges" NUMERIC(18, 2),
+    "totalAmtINR" NUMERIC(18, 2),
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS "Approval" (
+-- AI Configuration (Managed by Admins)
+CREATE TABLE IF NOT EXISTS "AgentConfig" (
+    id               TEXT PRIMARY KEY,
+    "orgId"          TEXT NOT NULL REFERENCES "Organisation"(id),
+    "agentId"        TEXT NOT NULL,
+    "primaryModel"   TEXT NOT NULL,
+    "fallbackModels" TEXT[],
+    "maxRetries"     INTEGER DEFAULT 3,
+    "temperature"    NUMERIC(3, 2) DEFAULT 0.0,
+    "updatedAt"      TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE("orgId", "agentId")
+);
+
+-- AI Usage Logs (For Activity Rendering)
+CREATE TABLE IF NOT EXISTS "AIUsageLog" (
     id TEXT PRIMARY KEY,
-    "runId" TEXT NOT NULL REFERENCES "PipelineRun"(id) ON DELETE CASCADE,
     "userId" TEXT NOT NULL REFERENCES "User"(id) ON DELETE CASCADE,
+    "userEmail" TEXT NOT NULL,
+    "orgId" TEXT NOT NULL REFERENCES "Organisation"(id) ON DELETE CASCADE,
+    model TEXT NOT NULL,
+    "tokensIn" INTEGER DEFAULT 0,
+    "tokensOut" INTEGER DEFAULT 0,
+    "costUsd" NUMERIC(15, 6) DEFAULT 0.0,
+    action TEXT,
+    "sessionId" TEXT,
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS "AuditLog" (
-    id TEXT PRIMARY KEY,
-    "orgId" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    action TEXT NOT NULL,
-    "entityType" TEXT NOT NULL,
-    "entityId" TEXT NOT NULL,
-    metadata TEXT,
-    "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+-- Formulas (Managed by Admins)
+CREATE TABLE IF NOT EXISTS "FormulaConfiguration" (
+    id          TEXT PRIMARY KEY,
+    "orgId"     TEXT NOT NULL REFERENCES "Organisation"(id),
+    name        TEXT NOT NULL,
+    version     INTEGER NOT NULL,
+    expression  TEXT NOT NULL,
+    parameters  TEXT,
+    description TEXT,
+    "isActive"  BOOLEAN DEFAULT TRUE,
+    "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Seed Initial Organisation

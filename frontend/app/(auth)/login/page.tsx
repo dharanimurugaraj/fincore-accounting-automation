@@ -90,11 +90,16 @@ export default function LoginPage() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
 
             <div className="flex flex-col items-center text-center mb-12">
-              <div className="h-20 w-20 bg-blue-500/10 rounded-3xl flex items-center justify-center mb-6 border border-blue-500/20 group-hover:rotate-6 transition-transform">
-                <ShieldCheck className="h-10 w-10 text-blue-500" />
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="relative flex items-center justify-center">
+                    <img src="/logo.png" alt="Vyrenzo Logo" className="h-8 object-contain" />
+                </div>
               </div>
               <h2 className="text-3xl font-black text-white tracking-tight mb-2">Welcome Back</h2>
-              <p className="text-slate-500 font-medium">Verify your identity to enter the Core</p>
+              <p className="text-slate-500 font-medium mb-2">Verify your identity to enter the Core</p>
+              <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px] bg-slate-800/50 px-3 py-1 rounded-full border border-slate-700/50">
+                Powered by Vyrenzo.ai
+              </p>
             </div>
 
             {error && (
