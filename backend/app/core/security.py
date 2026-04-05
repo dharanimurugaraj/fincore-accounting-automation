@@ -27,6 +27,7 @@ def _init_firebase():
     # 1. Try raw JSON string from environment variable (Ideal for Vercel)
     json_str = settings.FIREBASE_SERVICE_ACCOUNT_JSON
     if json_str:
+        print(f"INFO: Attempting Firebase init with JSON string (len={len(json_str)})")
         try:
             import json
             # Handle potential JSON escaped strings and newlines
@@ -37,6 +38,8 @@ def _init_firebase():
             return
         except Exception as e:
             print(f"ERROR: Firebase JSON parse failed: {e}")
+    else:
+        print("DEBUG: Firebase JSON string is EMPTY in settings.")
 
     # 2. Fallback to file path
     _cred_path = settings.FIREBASE_SERVICE_ACCOUNT or "fincore-d419d-firebase-adminsdk-fbsvc-b6ab364cfd.json"
@@ -58,6 +61,10 @@ security = HTTPBearer()
 
 async def get_current_user(res: HTTPAuthorizationCredentials = Security(security)):
     """Dependency to get the currently authenticated user based on Firebase Token."""
+    # ENSURE FIREBASE IS INITIALIZED (Critical for Vercel Serverless)
+    if not firebase_admin._apps:
+        _init_firebase()
+    
     token = res.credentials
     try:
         # 1. Verify Firebase Token

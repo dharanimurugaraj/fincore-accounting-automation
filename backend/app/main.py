@@ -56,6 +56,17 @@ if not os.getenv("VERCEL"):
 app.mount("/files", StaticFiles(directory=str(storage_path)), name="local-files")
 
 
+@app.get("/api/v1/health")
+async def health():
+    import firebase_admin
+    from app.core.config import settings
+    return {
+        "status": "healthy",
+        "firebase_initialized": bool(firebase_admin._apps),
+        "db_url_configured": bool(settings.DATABASE_URL),
+        "fb_json_configured": bool(settings.FIREBASE_SERVICE_ACCOUNT_JSON)
+    }
+
 @app.get("/")
 async def root():
     return {
