@@ -27,10 +27,10 @@ async function handle(request: NextRequest, context: any, method: string) {
     
     // 2. Discover Backend URL
     const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
-    const protocol = vercelUrl?.includes("localhost") ? "http" : "https";
+    let host = vercelUrl || "127.0.0.1:8000";
+    const protocol = host.includes("127.0.0.1") || host.includes("localhost") ? "http" : "https";
     
     // Special handling for Vercel's internal experimentalServices routing
-    let host = vercelUrl || "127.0.0.1:8000";
     if (!host.includes("_/backend") && !host.includes("127.0.0.1")) {
         host = `${host}/_/backend`;
     }

@@ -26,20 +26,9 @@ async def lifespan(app: FastAPI):
         _init_firebase()
     except Exception as e:
         print(f"CRITICAL: Firebase init failed: {e}")
-
-    try:
-        from app.core.database import get_pool
-        get_pool() 
-    except Exception as e:
-        print(f"CRITICAL: Database pool warmup failed: {e}")
     
     yield
-    # Shutdown logic
-    try:
-        from app.core.database import close_pool
-        close_pool()
-    except:
-        pass
+    # No explicit pool shutdown needed for direct connections
 
 app = FastAPI(
     title="FinCore API",
@@ -50,19 +39,20 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL],
+    allow_origins=["*"], # Allow all for proxy-based communication
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount all v1 routes under /api/v1
+# ... routes ...
 app.include_router(api_v1_router, prefix="/api/v1")
 
-# Static file serving for local storage
-storage = get_storage()
+# Static file serving for local storage (Safe for Vercel)
+import os
 storage_path = Path(settings.LOCAL_STORAGE_PATH)
-storage_path.mkdir(parents=True, exist_ok=True)
+if not os.getenv("VERCEL"):
+    storage_path.mkdir(parents=True, exist_ok=True)
 app.mount("/files", StaticFiles(directory=str(storage_path)), name="local-files")
 
 

@@ -6,6 +6,8 @@ from app.core.config import settings
 
 logger = logging.getLogger("fincore.db")
 
+from contextlib import contextmanager
+
 def get_db_connection():
     """Create a new direct connection to the database (Best for Serverless)."""
     url = settings.DATABASE_URL
@@ -21,6 +23,19 @@ def get_db_connection():
         sslmode=ssl,
         connect_timeout=5
     )
+
+@contextmanager
+def get_db():
+    """Context manager for DB connections — for legacy compatibility."""
+    conn = get_db_connection()
+    try:
+        yield conn
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
 
 def execute_query(query: str, params: tuple = None):
     """Execute a query and close connection immediately."""

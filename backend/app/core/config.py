@@ -26,10 +26,9 @@ class Settings:
     S3_REGION: str = os.getenv("S3_REGION", "ap-south-1")
     AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
     AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
-    LOCAL_STORAGE_PATH: str = os.getenv(
-        "LOCAL_STORAGE_PATH",
-        str(Path(__file__).parent.parent.parent / "storage" / "data"),
-    )
+    # In Vercel, the filesystem is read-only except /tmp
+    _default_stor = "/tmp/fincore" if os.getenv("VERCEL") else str(Path(__file__).parent.parent.parent / "storage" / "data")
+    LOCAL_STORAGE_PATH: str = os.getenv("LOCAL_STORAGE_PATH", _default_stor)
     USE_LOCAL_STORAGE: bool = os.getenv("USE_LOCAL_STORAGE", "true").lower() == "true"
 
     # ── AI / LLM ───────────────────────────────────────────────────────────
