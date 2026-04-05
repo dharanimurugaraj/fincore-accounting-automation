@@ -18,20 +18,30 @@ DATABASE_URL = settings.DATABASE_URL
 
 
 def get_connection():
-    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    if not DATABASE_URL:
+        raise ValueError("DATABASE_URL is not set in environment variables.")
+    try:
+        return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    except Exception as e:
+        print(f"DATABASE_ERROR: Failed to connect to PostgreSQL: {e}")
+        raise
 
 
 @contextmanager
 def get_db():
-    conn = get_connection()
+    conn = None
     try:
+        conn = get_connection()
         yield conn
         conn.commit()
-    except Exception:
-        conn.rollback()
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print(f"DATABASE_ERROR: Session failed: {e}")
         raise
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 
 def execute_query(query: str, params: tuple = None) -> list[dict]:

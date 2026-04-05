@@ -53,19 +53,36 @@ export async function GET(
         Authorization: request.headers.get("Authorization") || "",
         "Content-Type": "application/json",
       },
+      next: { revalidate: 0 }, // Disable caching in Next.js Router Cache
     });
     
     if (!response.ok) {
       const errorText = await response.text().catch(() => "Unknown error");
       console.error(`Proxy GET ${path} failed with status ${response.status}:`, errorText);
-      return NextResponse.json({ error: `Backend returned status ${response.status}` }, { status: response.status });
+      
+      // If we got an HTML error page, the backend is likely crashing or misconfigured on its hosting platform
+      if (errorText.includes("<!DOCTYPE html>") || errorText.includes("<html>")) {
+        return NextResponse.json({ 
+          error: `Backend at ${BACKEND_URL} returned an HTML error (status ${response.status}). Check backend process logs.`,
+          status: response.status 
+        }, { status: 502 });
+      }
+
+      return NextResponse.json({ 
+        error: `Backend returned status ${response.status}`,
+        detail: errorText
+      }, { status: response.status });
     }
 
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
-  } catch (error) {
-    console.error(`Proxy GET ${path} failed to reach ${backendUrl}:`, error);
-    return NextResponse.json({ error: "Backend unreachable" }, { status: 502 });
+  } catch (error: any) {
+    console.error(`Proxy GET ${path} failed to reach ${backendUrl}:`, error.message);
+    return NextResponse.json({ 
+      error: "Backend unreachable from Frontend",
+      backend_url: backendUrl,
+      message: error.message
+    }, { status: 502 });
   }
 }
 

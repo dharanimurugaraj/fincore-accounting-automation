@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: "FinCore — Banking Intelligence Platform",
   description:
     "AI-powered banking report automation for working capital management",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({
