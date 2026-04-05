@@ -24,25 +24,22 @@ def _init_firebase():
     if firebase_admin._apps:
         return
     
-    # 1. Try raw JSON from environment variable (Best for Vercel/Production)
-    if settings.FIREBASE_SERVICE_ACCOUNT_JSON:
+    # 1. Try raw JSON string from environment variable (Ideal for Vercel)
+    json_str = settings.FIREBASE_SERVICE_ACCOUNT_JSON
+    if json_str:
         try:
             import json
-            cred_dict = json.loads(settings.FIREBASE_SERVICE_ACCOUNT_JSON)
+            # Handle potential JSON escaped strings and newlines
+            cred_dict = json.loads(json_str)
             _cred = credentials.Certificate(cred_dict)
             firebase_admin.initialize_app(_cred)
-            print("INFO: Firebase initialized successfully using FIREBASE_SERVICE_ACCOUNT_JSON")
+            print("INFO: Firebase initialized via FIREBASE_SERVICE_ACCOUNT_JSON")
             return
         except Exception as e:
-            print(f"ERROR: Failed to init Firebase with JSON from env: {e}")
+            print(f"ERROR: Firebase JSON parse failed: {e}")
 
     # 2. Fallback to file path
-    _cred_path = settings.FIREBASE_SERVICE_ACCOUNT
-    if not _cred_path:
-        # Use default filename if not set in .env
-        _cred_path = "fincore-d419d-firebase-adminsdk-fbsvc-b6ab364cfd.json"
-
-    # Resolve correctly relative to root if not already absolute
+    _cred_path = settings.FIREBASE_SERVICE_ACCOUNT or "fincore-d419d-firebase-adminsdk-fbsvc-b6ab364cfd.json"
     if not os.path.isabs(_cred_path):
         _cred_path = str(_BACKEND_ROOT / _cred_path)
 
@@ -50,14 +47,11 @@ def _init_firebase():
         try:
             _cred = credentials.Certificate(_cred_path)
             firebase_admin.initialize_app(_cred)
-            print(f"INFO: Firebase initialized successfully with: {os.path.basename(_cred_path)}")
+            print(f"INFO: Firebase initialized with file: {os.path.basename(_cred_path)}")
         except Exception as e:
-            print(f"ERROR: Failed to init Firebase with {_msg_path}: {e}")
+            print(f"ERROR: File init failed: {e}")
     else:
-        print(f"WARN: Firebase credentials NOT FOUND. Auth will fail in Production.")
-        print(f"DEBUG: Checked JSON env (empty) and path: {_cred_path}")
-
-# _init_firebase()  <-- Moved to app lifespan in main.py for faster startup
+        print(f"WARN: No Firebase credentials found. Checked ENV and path: {_cred_path}")
 
 security = HTTPBearer()
 

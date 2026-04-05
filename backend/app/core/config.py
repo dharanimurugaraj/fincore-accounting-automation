@@ -40,7 +40,10 @@ class Settings:
     # ── Firebase ────────────────────────────────────────────────────────────
     FIREBASE_PROJECT_ID: str = os.getenv("FIREBASE_PROJECT_ID", "")
     FIREBASE_SERVICE_ACCOUNT: str = os.getenv("FIREBASE_SERVICE_ACCOUNT", "")
-    FIREBASE_SERVICE_ACCOUNT_JSON: str = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON", "")
+    
+    # Pre-process the JSON string to fix escaped newlines common in Vercel/Docker
+    _raw_fb_json = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON", "")
+    FIREBASE_SERVICE_ACCOUNT_JSON: str = _raw_fb_json.replace("\\n", "\n") if _raw_fb_json else ""
 
     # ── Frontend ────────────────────────────────────────────────────────────
     FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:3000")
