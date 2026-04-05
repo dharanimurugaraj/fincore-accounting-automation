@@ -80,7 +80,9 @@ export interface KPI {
 }
 
 export interface WCDLLoan {
+  id: string;
   loanNumber: string;
+  bankName: string;
   startDate: string;
   maturityDate: string;
   prepaymentDate?: string;
@@ -105,7 +107,8 @@ export interface TrendDataPoint {
 }
 
 export interface ForexTransaction {
-  srNo: number;
+  id: string;
+  srNo?: number;
   boeDate: string;
   valueDate: string;
   drawerName: string;

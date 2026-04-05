@@ -11,6 +11,7 @@ import {
   Loader2,
   Eye,
 } from "lucide-react";
+import { api } from "@/lib/api";
 import type { PipelineRun, RunStatus, ValidationCheck } from "@/types";
 
 const STATUS_CONFIG: Record<
@@ -104,23 +105,24 @@ const SAMPLE_RUNS: PipelineRun[] = [
 ];
 
 export default function ReportsPage() {
-  const [runs, setRuns] = useState<PipelineRun[]>(SAMPLE_RUNS);
+  const [runs, setRuns] = useState<PipelineRun[]>([]);
+  const [loading, setLoading] = useState(true);
   const [expandedRunId, setExpandedRunId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchRuns = async () => {
-      try {
-        const res = await fetch("/api/documents?orgId=default-org&type=runs");
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setRuns(data);
-          }
-        }
-      } catch {
-        // Use sample data
+  const fetchRuns = async () => {
+    setLoading(true);
+    try {
+      const data = await api.get<{ reports: PipelineRun[] }>("reports");
+      if (data && data.reports) {
+        setRuns(data.reports);
       }
-    };
+    } catch (err) {
+      console.error("Failed to fetch reports:", err);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
     fetchRuns();
   }, []);
 

@@ -12,9 +12,10 @@ const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  let path = params.path.join("/");
+  const { path: pathSegments } = await params;
+  let path = pathSegments.join("/");
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
 
@@ -54,24 +55,51 @@ export async function GET(
       },
     });
     
-    if (response.status === 404) {
-      return NextResponse.json({ error: "Endpoint not found on backend" }, { status: 404 });
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => "Unknown error");
+      console.error(`Proxy GET ${path} failed with status ${response.status}:`, errorText);
+      return NextResponse.json({ error: `Backend returned status ${response.status}` }, { status: response.status });
     }
 
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error(`Proxy GET ${path} failed:`, error);
+    console.error(`Proxy GET ${path} failed to reach ${backendUrl}:`, error);
     return NextResponse.json({ error: "Backend unreachable" }, { status: 502 });
   }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  let path = params.path.join("/");
-  const backendUrl = `${BACKEND_URL}/api/v1/${path}`;
+  const { path: pathSegments } = await params;
+  let path = pathSegments.join("/");
+  const contentType = request.headers.get("content-type") || "";
+
+  // 0. Handle multi-part form data (uploads)
+  if (contentType.includes("multipart/form-data")) {
+    const backendUrl = `${BACKEND_URL}/api/v1/${path}`;
+    try {
+      const formData = await request.formData();
+      const response = await fetch(backendUrl, {
+        method: "POST",
+        headers: {
+          Authorization: request.headers.get("Authorization") || "",
+        },
+        body: formData,
+      });
+      if (!response.ok) {
+        const text = await response.text().catch(() => "Upload failed");
+        return NextResponse.json({ error: text }, { status: response.status });
+      }
+      const data = await response.json();
+      return NextResponse.json(data, { status: response.status });
+    } catch (error) {
+      console.error(`Proxy POST ${path} (multipart) failed:`, error);
+      return NextResponse.json({ error: "Upload failed" }, { status: 502 });
+    }
+  }
 
   try {
     const body = await request.json();
@@ -109,10 +137,16 @@ export async function POST(
       },
       body: JSON.stringify(snakeBody),
     });
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => "Backend error");
+      return NextResponse.json({ error: text }, { status: response.status });
+    }
+
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error(`Proxy POST ${path} failed:`, error);
+    console.error(`Proxy POST ${path} failed to reach ${BACKEND_URL}/api/v1/${path}:`, error);
     return NextResponse.json({ error: "Backend unreachable" }, { status: 502 });
   }
 }
@@ -126,6 +160,10 @@ async function _forward(req: NextRequest, url: string, body: any) {
     },
     body: JSON.stringify(body),
   });
+  if (!response.ok) {
+    const text = await response.text().catch(() => "Forward failed");
+    return NextResponse.json({ error: text }, { status: response.status });
+  }
   const data = await response.json();
   return NextResponse.json(data, { status: response.status });
 }
