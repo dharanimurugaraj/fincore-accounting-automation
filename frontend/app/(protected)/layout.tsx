@@ -10,11 +10,11 @@ export default function DashboardLayout({
 }) {
   return (
     <ProtectedGuard>
-      <div className="min-h-screen bg-[#0F172A] text-slate-200">
+      <div className="min-h-screen bg-neutral-app transition-colors duration-300">
         <Sidebar />
         <div className="ml-64 flex min-h-screen flex-col">
           <TopBar />
-          <main className="flex-1 p-8">{children}</main>
+          <main className="flex-1 p-8 text-t-body">{children}</main>
           <Footer />
         </div>
       </div>

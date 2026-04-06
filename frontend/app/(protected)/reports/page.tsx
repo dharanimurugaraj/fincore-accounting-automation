@@ -21,47 +21,47 @@ const STATUS_CONFIG: Record<
   PENDING: {
     label: "Pending",
     icon: <Clock className="h-4 w-4" />,
-    classes: "bg-slate-700 text-slate-300",
+    classes: "bg-neutral-border text-t-body",
   },
   STAGE1_RUNNING: {
     label: "Extracting",
     icon: <Loader2 className="h-4 w-4 animate-spin" />,
-    classes: "bg-cyan-500/10 text-cyan-400",
+    classes: "bg-primary/10 text-primary",
   },
   STAGE1_REVIEW: {
     label: "Review",
     icon: <AlertTriangle className="h-4 w-4" />,
-    classes: "bg-amber-500/10 text-amber-400",
+    classes: "bg-status-medium-bg text-status-medium",
   },
   STAGE2_RUNNING: {
     label: "Working Sheet",
     icon: <Loader2 className="h-4 w-4 animate-spin" />,
-    classes: "bg-cyan-500/10 text-cyan-400",
+    classes: "bg-primary/10 text-primary",
   },
   STAGE3_RUNNING: {
     label: "Report",
     icon: <Loader2 className="h-4 w-4 animate-spin" />,
-    classes: "bg-cyan-500/10 text-cyan-400",
+    classes: "bg-primary/10 text-primary",
   },
   VALIDATION_FAILED: {
     label: "Validation Failed",
     icon: <XCircle className="h-4 w-4" />,
-    classes: "bg-red-500/10 text-red-400",
+    classes: "bg-red-500/10 text-status-critical",
   },
   AWAITING_APPROVAL: {
     label: "Awaiting Approval",
     icon: <AlertTriangle className="h-4 w-4" />,
-    classes: "bg-amber-500/10 text-amber-400",
+    classes: "bg-status-medium-bg text-status-medium",
   },
   APPROVED: {
     label: "Approved",
     icon: <CheckCircle className="h-4 w-4" />,
-    classes: "bg-emerald-500/10 text-emerald-400",
+    classes: "bg-status-success-bg text-status-success",
   },
   FAILED: {
     label: "Failed",
     icon: <XCircle className="h-4 w-4" />,
-    classes: "bg-red-500/10 text-red-400",
+    classes: "bg-red-500/10 text-status-critical",
   },
 };
 
@@ -129,8 +129,8 @@ export default function ReportsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-100">Reports</h1>
-        <p className="text-sm text-slate-400">
+        <h1 className="text-2xl font-bold text-t-heading">Reports</h1>
+        <p className="text-sm text-t-muted">
           Generated banking reports and pipeline runs
         </p>
       </div>
@@ -144,17 +144,17 @@ export default function ReportsPage() {
           return (
             <div
               key={run.runId}
-              className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900"
+              className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-card"
             >
               {/* Run Header */}
               <div className="flex items-center justify-between p-5">
                 <div className="flex items-center gap-4">
-                  <FileSpreadsheet className="h-8 w-8 text-slate-600" />
+                  <FileSpreadsheet className="h-8 w-8 text-t-muted" />
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-200">
+                    <h3 className="text-sm font-semibold text-t-heading">
                       Banking Report — {run.statementMonth}
                     </h3>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-t-muted">
                       {run.uploadCount} PDF{run.uploadCount !== 1 ? "s" : ""} processed
                       {run.completedAt && (
                         <> &middot; Completed{" "}
@@ -184,7 +184,7 @@ export default function ReportsPage() {
                       onClick={() =>
                         setExpandedRunId(expanded ? null : run.runId)
                       }
-                      className="flex items-center gap-1 rounded-lg border border-slate-700 px-2.5 py-1 text-xs text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                      className="flex items-center gap-1 rounded-lg border border-neutral-border px-2.5 py-1 text-xs text-t-muted hover:bg-neutral-row hover:text-t-heading"
                     >
                       <Eye className="h-3.5 w-3.5" />
                       Validation
@@ -195,12 +195,12 @@ export default function ReportsPage() {
 
               {/* Download Links */}
               {canDownload && (
-                <div className="border-t border-slate-800 bg-slate-950/30 px-5 py-3">
+                <div className="border-t border-neutral-border bg-neutral-app/30 px-5 py-3">
                   <div className="flex flex-wrap gap-2">
                     {run.statementExcelKey && (
                       <a
                         href={`/api/documents?action=download&key=${encodeURIComponent(run.statementExcelKey)}`}
-                        className="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-300 hover:border-cyan-500/50 hover:text-cyan-400"
+                        className="flex items-center gap-1.5 rounded-lg border border-neutral-border bg-neutral-row px-3 py-1.5 text-xs text-t-body hover:border-primary/50 hover:text-primary"
                       >
                         <Download className="h-3.5 w-3.5" />
                         Statement Excel
@@ -209,7 +209,7 @@ export default function ReportsPage() {
                     {run.workingSheetKey && (
                       <a
                         href={`/api/documents?action=download&key=${encodeURIComponent(run.workingSheetKey)}`}
-                        className="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-300 hover:border-cyan-500/50 hover:text-cyan-400"
+                        className="flex items-center gap-1.5 rounded-lg border border-neutral-border bg-neutral-row px-3 py-1.5 text-xs text-t-body hover:border-primary/50 hover:text-primary"
                       >
                         <Download className="h-3.5 w-3.5" />
                         Working Sheet
@@ -218,7 +218,7 @@ export default function ReportsPage() {
                     {run.bankingReportKey && (
                       <a
                         href={`/api/documents?action=download&key=${encodeURIComponent(run.bankingReportKey)}`}
-                        className="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-300 hover:border-cyan-500/50 hover:text-cyan-400"
+                        className="flex items-center gap-1.5 rounded-lg border border-neutral-border bg-neutral-row px-3 py-1.5 text-xs text-t-body hover:border-primary/50 hover:text-primary"
                       >
                         <Download className="h-3.5 w-3.5" />
                         Banking Report
@@ -230,8 +230,8 @@ export default function ReportsPage() {
 
               {/* Validation Details (expandable) */}
               {expanded && run.validationResult && (
-                <div className="border-t border-slate-800 bg-slate-950/50 p-5">
-                  <h4 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <div className="border-t border-neutral-border bg-neutral-app/50 p-5">
+                  <h4 className="mb-3 text-xs font-semibold uppercase tracking-wide text-t-muted">
                     Validation Checks
                   </h4>
                   <div className="space-y-2">
@@ -247,10 +247,10 @@ export default function ReportsPage() {
       </div>
 
       {runs.length === 0 && (
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-12 text-center">
-          <FileSpreadsheet className="mx-auto h-10 w-10 text-slate-700" />
-          <p className="mt-3 text-sm text-slate-500">No reports generated yet</p>
-          <p className="text-xs text-slate-600">
+        <div className="rounded-xl border border-neutral-border bg-neutral-card p-12 text-center">
+          <FileSpreadsheet className="mx-auto h-10 w-10 text-t-muted" />
+          <p className="mt-3 text-sm text-t-muted">No reports generated yet</p>
+          <p className="text-xs text-t-muted">
             Upload bank statements and run the pipeline to generate reports
           </p>
         </div>
@@ -261,28 +261,28 @@ export default function ReportsPage() {
 
 function ValidationRow({ check }: { check: ValidationCheck }) {
   const statusColors = {
-    PASS: "text-emerald-400",
-    WARN: "text-amber-400",
-    FAIL: "text-red-400",
+    PASS: "text-status-success",
+    WARN: "text-status-medium",
+    FAIL: "text-status-critical",
   };
 
   const statusIcons = {
-    PASS: <CheckCircle className="h-4 w-4 text-emerald-400" />,
-    WARN: <AlertTriangle className="h-4 w-4 text-amber-400" />,
-    FAIL: <XCircle className="h-4 w-4 text-red-400" />,
+    PASS: <CheckCircle className="h-4 w-4 text-status-success" />,
+    WARN: <AlertTriangle className="h-4 w-4 text-status-medium" />,
+    FAIL: <XCircle className="h-4 w-4 text-status-critical" />,
   };
 
   return (
-    <div className="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-900 px-4 py-2.5">
+    <div className="flex items-center justify-between rounded-lg border border-neutral-border bg-neutral-card px-4 py-2.5">
       <div className="flex items-center gap-2.5">
         {statusIcons[check.status]}
-        <span className="text-sm text-slate-300">{check.name}</span>
+        <span className="text-sm text-t-body">{check.name}</span>
       </div>
       <div className="flex items-center gap-4 text-xs">
-        <span className="text-slate-500">
+        <span className="text-t-muted">
           Computed: ₹{check.computed.toLocaleString("en-IN", { maximumFractionDigits: 2 })}
         </span>
-        <span className="text-slate-500">
+        <span className="text-t-muted">
           Stated: ₹{check.bank_stated.toLocaleString("en-IN", { maximumFractionDigits: 2 })}
         </span>
         {check.difference > 0 && (

@@ -21,6 +21,7 @@ class PipelineRunRequest(BaseModel):
     statement_month: str = Field(..., pattern=r"^\d{4}-\d{2}$", examples=["2026-02"])
     upload_ids: Optional[list[str]] = None
     pdf_s3_keys: Optional[list[str]] = None
+    customer_id: Optional[str] = None
 
 
 class PipelineConfirmReviewRequest(BaseModel):

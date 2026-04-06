@@ -48,6 +48,7 @@ def execute_query(query: str, params: tuple = None):
             conn.commit()
             return []
     except Exception as e:
+        print(f"DB Query Failed: {e}")
         logger.error(f"DB Query Failed: {e}")
         raise
     finally:

@@ -22,28 +22,28 @@ export default function FileCard({
   onUpdateAccount,
 }: FileCardProps) {
   const statusIcon = file.uploaded ? (
-    <Check className="h-4 w-4 text-emerald-500" />
+    <Check className="h-4 w-4 text-status-success" />
   ) : file.uploading ? (
-    <Loader2 className="h-4 w-4 animate-spin text-cyan-500" />
+    <Loader2 className="h-4 w-4 animate-spin text-primary" />
   ) : file.error ? (
-    <AlertTriangle className="h-4 w-4 text-red-500" />
+    <AlertTriangle className="h-4 w-4 text-status-critical" />
   ) : null;
 
   const sizeKB = (file.file.size / 1024).toFixed(0);
 
   return (
-    <div className="flex items-center gap-4 rounded-lg border border-slate-800 bg-slate-900 p-4">
-      <FileText className="h-8 w-8 shrink-0 text-slate-500" />
+    <div className="flex items-center gap-4 rounded-lg border border-neutral-border bg-neutral-card p-4">
+      <FileText className="h-8 w-8 shrink-0 text-t-muted" />
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-slate-200">
+        <p className="truncate text-sm font-medium text-t-heading">
           {file.filename}
         </p>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-t-muted">
           {sizeKB} KB &middot; {file.bankName} &middot; {file.accountType} &middot;{" "}
           {file.accountId}
           {file.detectedFrom === "filename" && (
-            <span className="ml-1 text-cyan-500">(auto-detected)</span>
+            <span className="ml-1 text-primary">(auto-detected)</span>
           )}
         </p>
       </div>
@@ -53,7 +53,7 @@ export default function FileCard({
         {!file.uploading && !file.uploaded && (
           <button
             onClick={() => onRemove(index)}
-            className="rounded p-1 text-slate-500 hover:bg-slate-800 hover:text-slate-300"
+            className="rounded p-1 text-t-muted hover:bg-neutral-row hover:text-t-body"
           >
             <X className="h-4 w-4" />
           </button>

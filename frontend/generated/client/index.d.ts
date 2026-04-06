@@ -24,6 +24,11 @@ export type Role = $Result.DefaultSelection<Prisma.$RolePayload>
  */
 export type Organisation = $Result.DefaultSelection<Prisma.$OrganisationPayload>
 /**
+ * Model Customer
+ * 
+ */
+export type Customer = $Result.DefaultSelection<Prisma.$CustomerPayload>
+/**
  * Model User
  * 
  */
@@ -253,6 +258,16 @@ export class PrismaClient<
     * ```
     */
   get organisation(): Prisma.OrganisationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.customer`: Exposes CRUD operations for the **Customer** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Customers
+    * const customers = await prisma.customer.findMany()
+    * ```
+    */
+  get customer(): Prisma.CustomerDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
@@ -789,6 +804,7 @@ export namespace Prisma {
   export const ModelName: {
     Role: 'Role',
     Organisation: 'Organisation',
+    Customer: 'Customer',
     User: 'User',
     PipelineRun: 'PipelineRun',
     Upload: 'Upload',
@@ -814,7 +830,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "role" | "organisation" | "user" | "pipelineRun" | "upload" | "wCDLLoan" | "forexTransaction" | "agentConfig" | "aIUsageLog" | "auditLog" | "approval" | "formulaConfiguration"
+      modelProps: "role" | "organisation" | "customer" | "user" | "pipelineRun" | "upload" | "wCDLLoan" | "forexTransaction" | "agentConfig" | "aIUsageLog" | "auditLog" | "approval" | "formulaConfiguration"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -963,6 +979,80 @@ export namespace Prisma {
           count: {
             args: Prisma.OrganisationCountArgs<ExtArgs>
             result: $Utils.Optional<OrganisationCountAggregateOutputType> | number
+          }
+        }
+      }
+      Customer: {
+        payload: Prisma.$CustomerPayload<ExtArgs>
+        fields: Prisma.CustomerFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CustomerFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CustomerFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          findFirst: {
+            args: Prisma.CustomerFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CustomerFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          findMany: {
+            args: Prisma.CustomerFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>[]
+          }
+          create: {
+            args: Prisma.CustomerCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          createMany: {
+            args: Prisma.CustomerCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CustomerCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>[]
+          }
+          delete: {
+            args: Prisma.CustomerDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          update: {
+            args: Prisma.CustomerUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          deleteMany: {
+            args: Prisma.CustomerDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CustomerUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CustomerUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>[]
+          }
+          upsert: {
+            args: Prisma.CustomerUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerPayload>
+          }
+          aggregate: {
+            args: Prisma.CustomerAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCustomer>
+          }
+          groupBy: {
+            args: Prisma.CustomerGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CustomerGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CustomerCountArgs<ExtArgs>
+            result: $Utils.Optional<CustomerCountAggregateOutputType> | number
           }
         }
       }
@@ -1816,6 +1906,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     role?: RoleOmit
     organisation?: OrganisationOmit
+    customer?: CustomerOmit
     user?: UserOmit
     pipelineRun?: PipelineRunOmit
     upload?: UploadOmit
@@ -1946,6 +2037,7 @@ export namespace Prisma {
     formulaConfigs: number
     aiUsageLogs: number
     auditLogs: number
+    customers: number
   }
 
   export type OrganisationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1958,6 +2050,7 @@ export namespace Prisma {
     formulaConfigs?: boolean | OrganisationCountOutputTypeCountFormulaConfigsArgs
     aiUsageLogs?: boolean | OrganisationCountOutputTypeCountAiUsageLogsArgs
     auditLogs?: boolean | OrganisationCountOutputTypeCountAuditLogsArgs
+    customers?: boolean | OrganisationCountOutputTypeCountCustomersArgs
   }
 
   // Custom InputTypes
@@ -2032,6 +2125,62 @@ export namespace Prisma {
    */
   export type OrganisationCountOutputTypeCountAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AuditLogWhereInput
+  }
+
+  /**
+   * OrganisationCountOutputType without action
+   */
+  export type OrganisationCountOutputTypeCountCustomersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CustomerWhereInput
+  }
+
+
+  /**
+   * Count Type CustomerCountOutputType
+   */
+
+  export type CustomerCountOutputType = {
+    uploads: number
+    pipelineRuns: number
+    wcdlLoans: number
+  }
+
+  export type CustomerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    uploads?: boolean | CustomerCountOutputTypeCountUploadsArgs
+    pipelineRuns?: boolean | CustomerCountOutputTypeCountPipelineRunsArgs
+    wcdlLoans?: boolean | CustomerCountOutputTypeCountWcdlLoansArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CustomerCountOutputType without action
+   */
+  export type CustomerCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerCountOutputType
+     */
+    select?: CustomerCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CustomerCountOutputType without action
+   */
+  export type CustomerCountOutputTypeCountUploadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UploadWhereInput
+  }
+
+  /**
+   * CustomerCountOutputType without action
+   */
+  export type CustomerCountOutputTypeCountPipelineRunsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PipelineRunWhereInput
+  }
+
+  /**
+   * CustomerCountOutputType without action
+   */
+  export type CustomerCountOutputTypeCountWcdlLoansArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WCDLLoanWhereInput
   }
 
 
@@ -3423,6 +3572,7 @@ export namespace Prisma {
     formulaConfigs?: boolean | Organisation$formulaConfigsArgs<ExtArgs>
     aiUsageLogs?: boolean | Organisation$aiUsageLogsArgs<ExtArgs>
     auditLogs?: boolean | Organisation$auditLogsArgs<ExtArgs>
+    customers?: boolean | Organisation$customersArgs<ExtArgs>
     _count?: boolean | OrganisationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organisation"]>
 
@@ -3467,6 +3617,7 @@ export namespace Prisma {
     formulaConfigs?: boolean | Organisation$formulaConfigsArgs<ExtArgs>
     aiUsageLogs?: boolean | Organisation$aiUsageLogsArgs<ExtArgs>
     auditLogs?: boolean | Organisation$auditLogsArgs<ExtArgs>
+    customers?: boolean | Organisation$customersArgs<ExtArgs>
     _count?: boolean | OrganisationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrganisationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3484,6 +3635,7 @@ export namespace Prisma {
       formulaConfigs: Prisma.$FormulaConfigurationPayload<ExtArgs>[]
       aiUsageLogs: Prisma.$AIUsageLogPayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+      customers: Prisma.$CustomerPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3896,6 +4048,7 @@ export namespace Prisma {
     formulaConfigs<T extends Organisation$formulaConfigsArgs<ExtArgs> = {}>(args?: Subset<T, Organisation$formulaConfigsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FormulaConfigurationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     aiUsageLogs<T extends Organisation$aiUsageLogsArgs<ExtArgs> = {}>(args?: Subset<T, Organisation$aiUsageLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIUsageLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends Organisation$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Organisation$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    customers<T extends Organisation$customersArgs<ExtArgs> = {}>(args?: Subset<T, Organisation$customersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4541,6 +4694,30 @@ export namespace Prisma {
   }
 
   /**
+   * Organisation.customers
+   */
+  export type Organisation$customersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    where?: CustomerWhereInput
+    orderBy?: CustomerOrderByWithRelationInput | CustomerOrderByWithRelationInput[]
+    cursor?: CustomerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CustomerScalarFieldEnum | CustomerScalarFieldEnum[]
+  }
+
+  /**
    * Organisation without action
    */
   export type OrganisationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4556,6 +4733,1294 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: OrganisationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Customer
+   */
+
+  export type AggregateCustomer = {
+    _count: CustomerCountAggregateOutputType | null
+    _min: CustomerMinAggregateOutputType | null
+    _max: CustomerMaxAggregateOutputType | null
+  }
+
+  export type CustomerMinAggregateOutputType = {
+    id: string | null
+    customId: string | null
+    companyName: string | null
+    contactName: string | null
+    pan: string | null
+    cin: string | null
+    email: string | null
+    phone: string | null
+    industry: string | null
+    address: string | null
+    status: string | null
+    risk: string | null
+    orgId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CustomerMaxAggregateOutputType = {
+    id: string | null
+    customId: string | null
+    companyName: string | null
+    contactName: string | null
+    pan: string | null
+    cin: string | null
+    email: string | null
+    phone: string | null
+    industry: string | null
+    address: string | null
+    status: string | null
+    risk: string | null
+    orgId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CustomerCountAggregateOutputType = {
+    id: number
+    customId: number
+    companyName: number
+    contactName: number
+    pan: number
+    cin: number
+    email: number
+    phone: number
+    industry: number
+    address: number
+    tags: number
+    status: number
+    risk: number
+    orgId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CustomerMinAggregateInputType = {
+    id?: true
+    customId?: true
+    companyName?: true
+    contactName?: true
+    pan?: true
+    cin?: true
+    email?: true
+    phone?: true
+    industry?: true
+    address?: true
+    status?: true
+    risk?: true
+    orgId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CustomerMaxAggregateInputType = {
+    id?: true
+    customId?: true
+    companyName?: true
+    contactName?: true
+    pan?: true
+    cin?: true
+    email?: true
+    phone?: true
+    industry?: true
+    address?: true
+    status?: true
+    risk?: true
+    orgId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CustomerCountAggregateInputType = {
+    id?: true
+    customId?: true
+    companyName?: true
+    contactName?: true
+    pan?: true
+    cin?: true
+    email?: true
+    phone?: true
+    industry?: true
+    address?: true
+    tags?: true
+    status?: true
+    risk?: true
+    orgId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CustomerAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Customer to aggregate.
+     */
+    where?: CustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Customers to fetch.
+     */
+    orderBy?: CustomerOrderByWithRelationInput | CustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Customers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Customers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Customers
+    **/
+    _count?: true | CustomerCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CustomerMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CustomerMaxAggregateInputType
+  }
+
+  export type GetCustomerAggregateType<T extends CustomerAggregateArgs> = {
+        [P in keyof T & keyof AggregateCustomer]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCustomer[P]>
+      : GetScalarType<T[P], AggregateCustomer[P]>
+  }
+
+
+
+
+  export type CustomerGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CustomerWhereInput
+    orderBy?: CustomerOrderByWithAggregationInput | CustomerOrderByWithAggregationInput[]
+    by: CustomerScalarFieldEnum[] | CustomerScalarFieldEnum
+    having?: CustomerScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CustomerCountAggregateInputType | true
+    _min?: CustomerMinAggregateInputType
+    _max?: CustomerMaxAggregateInputType
+  }
+
+  export type CustomerGroupByOutputType = {
+    id: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin: string | null
+    email: string | null
+    phone: string | null
+    industry: string | null
+    address: string | null
+    tags: string[]
+    status: string | null
+    risk: string | null
+    orgId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: CustomerCountAggregateOutputType | null
+    _min: CustomerMinAggregateOutputType | null
+    _max: CustomerMaxAggregateOutputType | null
+  }
+
+  type GetCustomerGroupByPayload<T extends CustomerGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CustomerGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CustomerGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CustomerGroupByOutputType[P]>
+            : GetScalarType<T[P], CustomerGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CustomerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customId?: boolean
+    companyName?: boolean
+    contactName?: boolean
+    pan?: boolean
+    cin?: boolean
+    email?: boolean
+    phone?: boolean
+    industry?: boolean
+    address?: boolean
+    tags?: boolean
+    status?: boolean
+    risk?: boolean
+    orgId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    uploads?: boolean | Customer$uploadsArgs<ExtArgs>
+    pipelineRuns?: boolean | Customer$pipelineRunsArgs<ExtArgs>
+    wcdlLoans?: boolean | Customer$wcdlLoansArgs<ExtArgs>
+    _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["customer"]>
+
+  export type CustomerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customId?: boolean
+    companyName?: boolean
+    contactName?: boolean
+    pan?: boolean
+    cin?: boolean
+    email?: boolean
+    phone?: boolean
+    industry?: boolean
+    address?: boolean
+    tags?: boolean
+    status?: boolean
+    risk?: boolean
+    orgId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["customer"]>
+
+  export type CustomerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customId?: boolean
+    companyName?: boolean
+    contactName?: boolean
+    pan?: boolean
+    cin?: boolean
+    email?: boolean
+    phone?: boolean
+    industry?: boolean
+    address?: boolean
+    tags?: boolean
+    status?: boolean
+    risk?: boolean
+    orgId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["customer"]>
+
+  export type CustomerSelectScalar = {
+    id?: boolean
+    customId?: boolean
+    companyName?: boolean
+    contactName?: boolean
+    pan?: boolean
+    cin?: boolean
+    email?: boolean
+    phone?: boolean
+    industry?: boolean
+    address?: boolean
+    tags?: boolean
+    status?: boolean
+    risk?: boolean
+    orgId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CustomerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customId" | "companyName" | "contactName" | "pan" | "cin" | "email" | "phone" | "industry" | "address" | "tags" | "status" | "risk" | "orgId" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
+  export type CustomerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    uploads?: boolean | Customer$uploadsArgs<ExtArgs>
+    pipelineRuns?: boolean | Customer$pipelineRunsArgs<ExtArgs>
+    wcdlLoans?: boolean | Customer$wcdlLoansArgs<ExtArgs>
+    _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type CustomerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+  }
+  export type CustomerIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+  }
+
+  export type $CustomerPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Customer"
+    objects: {
+      organisation: Prisma.$OrganisationPayload<ExtArgs>
+      uploads: Prisma.$UploadPayload<ExtArgs>[]
+      pipelineRuns: Prisma.$PipelineRunPayload<ExtArgs>[]
+      wcdlLoans: Prisma.$WCDLLoanPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      customId: string
+      companyName: string
+      contactName: string
+      pan: string
+      cin: string | null
+      email: string | null
+      phone: string | null
+      industry: string | null
+      address: string | null
+      tags: string[]
+      status: string | null
+      risk: string | null
+      orgId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["customer"]>
+    composites: {}
+  }
+
+  type CustomerGetPayload<S extends boolean | null | undefined | CustomerDefaultArgs> = $Result.GetResult<Prisma.$CustomerPayload, S>
+
+  type CustomerCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CustomerFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CustomerCountAggregateInputType | true
+    }
+
+  export interface CustomerDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Customer'], meta: { name: 'Customer' } }
+    /**
+     * Find zero or one Customer that matches the filter.
+     * @param {CustomerFindUniqueArgs} args - Arguments to find a Customer
+     * @example
+     * // Get one Customer
+     * const customer = await prisma.customer.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CustomerFindUniqueArgs>(args: SelectSubset<T, CustomerFindUniqueArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Customer that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CustomerFindUniqueOrThrowArgs} args - Arguments to find a Customer
+     * @example
+     * // Get one Customer
+     * const customer = await prisma.customer.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CustomerFindUniqueOrThrowArgs>(args: SelectSubset<T, CustomerFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Customer that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerFindFirstArgs} args - Arguments to find a Customer
+     * @example
+     * // Get one Customer
+     * const customer = await prisma.customer.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CustomerFindFirstArgs>(args?: SelectSubset<T, CustomerFindFirstArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Customer that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerFindFirstOrThrowArgs} args - Arguments to find a Customer
+     * @example
+     * // Get one Customer
+     * const customer = await prisma.customer.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CustomerFindFirstOrThrowArgs>(args?: SelectSubset<T, CustomerFindFirstOrThrowArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Customers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Customers
+     * const customers = await prisma.customer.findMany()
+     * 
+     * // Get first 10 Customers
+     * const customers = await prisma.customer.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const customerWithIdOnly = await prisma.customer.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CustomerFindManyArgs>(args?: SelectSubset<T, CustomerFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Customer.
+     * @param {CustomerCreateArgs} args - Arguments to create a Customer.
+     * @example
+     * // Create one Customer
+     * const Customer = await prisma.customer.create({
+     *   data: {
+     *     // ... data to create a Customer
+     *   }
+     * })
+     * 
+     */
+    create<T extends CustomerCreateArgs>(args: SelectSubset<T, CustomerCreateArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Customers.
+     * @param {CustomerCreateManyArgs} args - Arguments to create many Customers.
+     * @example
+     * // Create many Customers
+     * const customer = await prisma.customer.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CustomerCreateManyArgs>(args?: SelectSubset<T, CustomerCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Customers and returns the data saved in the database.
+     * @param {CustomerCreateManyAndReturnArgs} args - Arguments to create many Customers.
+     * @example
+     * // Create many Customers
+     * const customer = await prisma.customer.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Customers and only return the `id`
+     * const customerWithIdOnly = await prisma.customer.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CustomerCreateManyAndReturnArgs>(args?: SelectSubset<T, CustomerCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Customer.
+     * @param {CustomerDeleteArgs} args - Arguments to delete one Customer.
+     * @example
+     * // Delete one Customer
+     * const Customer = await prisma.customer.delete({
+     *   where: {
+     *     // ... filter to delete one Customer
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CustomerDeleteArgs>(args: SelectSubset<T, CustomerDeleteArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Customer.
+     * @param {CustomerUpdateArgs} args - Arguments to update one Customer.
+     * @example
+     * // Update one Customer
+     * const customer = await prisma.customer.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CustomerUpdateArgs>(args: SelectSubset<T, CustomerUpdateArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Customers.
+     * @param {CustomerDeleteManyArgs} args - Arguments to filter Customers to delete.
+     * @example
+     * // Delete a few Customers
+     * const { count } = await prisma.customer.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CustomerDeleteManyArgs>(args?: SelectSubset<T, CustomerDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Customers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Customers
+     * const customer = await prisma.customer.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CustomerUpdateManyArgs>(args: SelectSubset<T, CustomerUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Customers and returns the data updated in the database.
+     * @param {CustomerUpdateManyAndReturnArgs} args - Arguments to update many Customers.
+     * @example
+     * // Update many Customers
+     * const customer = await prisma.customer.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Customers and only return the `id`
+     * const customerWithIdOnly = await prisma.customer.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CustomerUpdateManyAndReturnArgs>(args: SelectSubset<T, CustomerUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Customer.
+     * @param {CustomerUpsertArgs} args - Arguments to update or create a Customer.
+     * @example
+     * // Update or create a Customer
+     * const customer = await prisma.customer.upsert({
+     *   create: {
+     *     // ... data to create a Customer
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Customer we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CustomerUpsertArgs>(args: SelectSubset<T, CustomerUpsertArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Customers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerCountArgs} args - Arguments to filter Customers to count.
+     * @example
+     * // Count the number of Customers
+     * const count = await prisma.customer.count({
+     *   where: {
+     *     // ... the filter for the Customers we want to count
+     *   }
+     * })
+    **/
+    count<T extends CustomerCountArgs>(
+      args?: Subset<T, CustomerCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CustomerCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Customer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CustomerAggregateArgs>(args: Subset<T, CustomerAggregateArgs>): Prisma.PrismaPromise<GetCustomerAggregateType<T>>
+
+    /**
+     * Group by Customer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CustomerGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CustomerGroupByArgs['orderBy'] }
+        : { orderBy?: CustomerGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CustomerGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCustomerGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Customer model
+   */
+  readonly fields: CustomerFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Customer.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organisation<T extends OrganisationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganisationDefaultArgs<ExtArgs>>): Prisma__OrganisationClient<$Result.GetResult<Prisma.$OrganisationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    uploads<T extends Customer$uploadsArgs<ExtArgs> = {}>(args?: Subset<T, Customer$uploadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    pipelineRuns<T extends Customer$pipelineRunsArgs<ExtArgs> = {}>(args?: Subset<T, Customer$pipelineRunsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PipelineRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    wcdlLoans<T extends Customer$wcdlLoansArgs<ExtArgs> = {}>(args?: Subset<T, Customer$wcdlLoansArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WCDLLoanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Customer model
+   */
+  interface CustomerFieldRefs {
+    readonly id: FieldRef<"Customer", 'String'>
+    readonly customId: FieldRef<"Customer", 'String'>
+    readonly companyName: FieldRef<"Customer", 'String'>
+    readonly contactName: FieldRef<"Customer", 'String'>
+    readonly pan: FieldRef<"Customer", 'String'>
+    readonly cin: FieldRef<"Customer", 'String'>
+    readonly email: FieldRef<"Customer", 'String'>
+    readonly phone: FieldRef<"Customer", 'String'>
+    readonly industry: FieldRef<"Customer", 'String'>
+    readonly address: FieldRef<"Customer", 'String'>
+    readonly tags: FieldRef<"Customer", 'String[]'>
+    readonly status: FieldRef<"Customer", 'String'>
+    readonly risk: FieldRef<"Customer", 'String'>
+    readonly orgId: FieldRef<"Customer", 'String'>
+    readonly createdAt: FieldRef<"Customer", 'DateTime'>
+    readonly updatedAt: FieldRef<"Customer", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Customer findUnique
+   */
+  export type CustomerFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which Customer to fetch.
+     */
+    where: CustomerWhereUniqueInput
+  }
+
+  /**
+   * Customer findUniqueOrThrow
+   */
+  export type CustomerFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which Customer to fetch.
+     */
+    where: CustomerWhereUniqueInput
+  }
+
+  /**
+   * Customer findFirst
+   */
+  export type CustomerFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which Customer to fetch.
+     */
+    where?: CustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Customers to fetch.
+     */
+    orderBy?: CustomerOrderByWithRelationInput | CustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Customers.
+     */
+    cursor?: CustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Customers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Customers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Customers.
+     */
+    distinct?: CustomerScalarFieldEnum | CustomerScalarFieldEnum[]
+  }
+
+  /**
+   * Customer findFirstOrThrow
+   */
+  export type CustomerFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which Customer to fetch.
+     */
+    where?: CustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Customers to fetch.
+     */
+    orderBy?: CustomerOrderByWithRelationInput | CustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Customers.
+     */
+    cursor?: CustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Customers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Customers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Customers.
+     */
+    distinct?: CustomerScalarFieldEnum | CustomerScalarFieldEnum[]
+  }
+
+  /**
+   * Customer findMany
+   */
+  export type CustomerFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter, which Customers to fetch.
+     */
+    where?: CustomerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Customers to fetch.
+     */
+    orderBy?: CustomerOrderByWithRelationInput | CustomerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Customers.
+     */
+    cursor?: CustomerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Customers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Customers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Customers.
+     */
+    distinct?: CustomerScalarFieldEnum | CustomerScalarFieldEnum[]
+  }
+
+  /**
+   * Customer create
+   */
+  export type CustomerCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Customer.
+     */
+    data: XOR<CustomerCreateInput, CustomerUncheckedCreateInput>
+  }
+
+  /**
+   * Customer createMany
+   */
+  export type CustomerCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Customers.
+     */
+    data: CustomerCreateManyInput | CustomerCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Customer createManyAndReturn
+   */
+  export type CustomerCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * The data used to create many Customers.
+     */
+    data: CustomerCreateManyInput | CustomerCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Customer update
+   */
+  export type CustomerUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Customer.
+     */
+    data: XOR<CustomerUpdateInput, CustomerUncheckedUpdateInput>
+    /**
+     * Choose, which Customer to update.
+     */
+    where: CustomerWhereUniqueInput
+  }
+
+  /**
+   * Customer updateMany
+   */
+  export type CustomerUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Customers.
+     */
+    data: XOR<CustomerUpdateManyMutationInput, CustomerUncheckedUpdateManyInput>
+    /**
+     * Filter which Customers to update
+     */
+    where?: CustomerWhereInput
+    /**
+     * Limit how many Customers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Customer updateManyAndReturn
+   */
+  export type CustomerUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * The data used to update Customers.
+     */
+    data: XOR<CustomerUpdateManyMutationInput, CustomerUncheckedUpdateManyInput>
+    /**
+     * Filter which Customers to update
+     */
+    where?: CustomerWhereInput
+    /**
+     * Limit how many Customers to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Customer upsert
+   */
+  export type CustomerUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Customer to update in case it exists.
+     */
+    where: CustomerWhereUniqueInput
+    /**
+     * In case the Customer found by the `where` argument doesn't exist, create a new Customer with this data.
+     */
+    create: XOR<CustomerCreateInput, CustomerUncheckedCreateInput>
+    /**
+     * In case the Customer was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CustomerUpdateInput, CustomerUncheckedUpdateInput>
+  }
+
+  /**
+   * Customer delete
+   */
+  export type CustomerDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    /**
+     * Filter which Customer to delete.
+     */
+    where: CustomerWhereUniqueInput
+  }
+
+  /**
+   * Customer deleteMany
+   */
+  export type CustomerDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Customers to delete
+     */
+    where?: CustomerWhereInput
+    /**
+     * Limit how many Customers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Customer.uploads
+   */
+  export type Customer$uploadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Upload
+     */
+    select?: UploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Upload
+     */
+    omit?: UploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UploadInclude<ExtArgs> | null
+    where?: UploadWhereInput
+    orderBy?: UploadOrderByWithRelationInput | UploadOrderByWithRelationInput[]
+    cursor?: UploadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UploadScalarFieldEnum | UploadScalarFieldEnum[]
+  }
+
+  /**
+   * Customer.pipelineRuns
+   */
+  export type Customer$pipelineRunsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PipelineRun
+     */
+    select?: PipelineRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PipelineRun
+     */
+    omit?: PipelineRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PipelineRunInclude<ExtArgs> | null
+    where?: PipelineRunWhereInput
+    orderBy?: PipelineRunOrderByWithRelationInput | PipelineRunOrderByWithRelationInput[]
+    cursor?: PipelineRunWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PipelineRunScalarFieldEnum | PipelineRunScalarFieldEnum[]
+  }
+
+  /**
+   * Customer.wcdlLoans
+   */
+  export type Customer$wcdlLoansArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WCDLLoan
+     */
+    select?: WCDLLoanSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WCDLLoan
+     */
+    omit?: WCDLLoanOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WCDLLoanInclude<ExtArgs> | null
+    where?: WCDLLoanWhereInput
+    orderBy?: WCDLLoanOrderByWithRelationInput | WCDLLoanOrderByWithRelationInput[]
+    cursor?: WCDLLoanWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WCDLLoanScalarFieldEnum | WCDLLoanScalarFieldEnum[]
+  }
+
+  /**
+   * Customer without action
+   */
+  export type CustomerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
   }
 
 
@@ -5916,6 +7381,7 @@ export namespace Prisma {
     startedAt: Date | null
     completedAt: Date | null
     createdAt: Date | null
+    customerId: string | null
   }
 
   export type PipelineRunMaxAggregateOutputType = {
@@ -5934,6 +7400,7 @@ export namespace Prisma {
     startedAt: Date | null
     completedAt: Date | null
     createdAt: Date | null
+    customerId: string | null
   }
 
   export type PipelineRunCountAggregateOutputType = {
@@ -5952,6 +7419,7 @@ export namespace Prisma {
     startedAt: number
     completedAt: number
     createdAt: number
+    customerId: number
     _all: number
   }
 
@@ -5980,6 +7448,7 @@ export namespace Prisma {
     startedAt?: true
     completedAt?: true
     createdAt?: true
+    customerId?: true
   }
 
   export type PipelineRunMaxAggregateInputType = {
@@ -5998,6 +7467,7 @@ export namespace Prisma {
     startedAt?: true
     completedAt?: true
     createdAt?: true
+    customerId?: true
   }
 
   export type PipelineRunCountAggregateInputType = {
@@ -6016,6 +7486,7 @@ export namespace Prisma {
     startedAt?: true
     completedAt?: true
     createdAt?: true
+    customerId?: true
     _all?: true
   }
 
@@ -6121,6 +7592,7 @@ export namespace Prisma {
     startedAt: Date | null
     completedAt: Date | null
     createdAt: Date
+    customerId: string | null
     _count: PipelineRunCountAggregateOutputType | null
     _avg: PipelineRunAvgAggregateOutputType | null
     _sum: PipelineRunSumAggregateOutputType | null
@@ -6158,11 +7630,13 @@ export namespace Prisma {
     startedAt?: boolean
     completedAt?: boolean
     createdAt?: boolean
+    customerId?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     uploads?: boolean | PipelineRun$uploadsArgs<ExtArgs>
     wcdlLoans?: boolean | PipelineRun$wcdlLoansArgs<ExtArgs>
     forexTrans?: boolean | PipelineRun$forexTransArgs<ExtArgs>
     approvals?: boolean | PipelineRun$approvalsArgs<ExtArgs>
+    customer?: boolean | PipelineRun$customerArgs<ExtArgs>
     _count?: boolean | PipelineRunCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pipelineRun"]>
 
@@ -6182,7 +7656,9 @@ export namespace Prisma {
     startedAt?: boolean
     completedAt?: boolean
     createdAt?: boolean
+    customerId?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    customer?: boolean | PipelineRun$customerArgs<ExtArgs>
   }, ExtArgs["result"]["pipelineRun"]>
 
   export type PipelineRunSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6201,7 +7677,9 @@ export namespace Prisma {
     startedAt?: boolean
     completedAt?: boolean
     createdAt?: boolean
+    customerId?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    customer?: boolean | PipelineRun$customerArgs<ExtArgs>
   }, ExtArgs["result"]["pipelineRun"]>
 
   export type PipelineRunSelectScalar = {
@@ -6220,22 +7698,26 @@ export namespace Prisma {
     startedAt?: boolean
     completedAt?: boolean
     createdAt?: boolean
+    customerId?: boolean
   }
 
-  export type PipelineRunOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "statementMonth" | "status" | "stage" | "statementExcelKey" | "workingSheetKey" | "bankingReportKey" | "validationResult" | "errorMessage" | "reportSummary" | "checksum" | "startedAt" | "completedAt" | "createdAt", ExtArgs["result"]["pipelineRun"]>
+  export type PipelineRunOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "statementMonth" | "status" | "stage" | "statementExcelKey" | "workingSheetKey" | "bankingReportKey" | "validationResult" | "errorMessage" | "reportSummary" | "checksum" | "startedAt" | "completedAt" | "createdAt" | "customerId", ExtArgs["result"]["pipelineRun"]>
   export type PipelineRunInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     uploads?: boolean | PipelineRun$uploadsArgs<ExtArgs>
     wcdlLoans?: boolean | PipelineRun$wcdlLoansArgs<ExtArgs>
     forexTrans?: boolean | PipelineRun$forexTransArgs<ExtArgs>
     approvals?: boolean | PipelineRun$approvalsArgs<ExtArgs>
+    customer?: boolean | PipelineRun$customerArgs<ExtArgs>
     _count?: boolean | PipelineRunCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PipelineRunIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    customer?: boolean | PipelineRun$customerArgs<ExtArgs>
   }
   export type PipelineRunIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    customer?: boolean | PipelineRun$customerArgs<ExtArgs>
   }
 
   export type $PipelineRunPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6246,6 +7728,7 @@ export namespace Prisma {
       wcdlLoans: Prisma.$WCDLLoanPayload<ExtArgs>[]
       forexTrans: Prisma.$ForexTransactionPayload<ExtArgs>[]
       approvals: Prisma.$ApprovalPayload<ExtArgs>[]
+      customer: Prisma.$CustomerPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6263,6 +7746,7 @@ export namespace Prisma {
       startedAt: Date | null
       completedAt: Date | null
       createdAt: Date
+      customerId: string | null
     }, ExtArgs["result"]["pipelineRun"]>
     composites: {}
   }
@@ -6662,6 +8146,7 @@ export namespace Prisma {
     wcdlLoans<T extends PipelineRun$wcdlLoansArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$wcdlLoansArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WCDLLoanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     forexTrans<T extends PipelineRun$forexTransArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$forexTransArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ForexTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     approvals<T extends PipelineRun$approvalsArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$approvalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    customer<T extends PipelineRun$customerArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$customerArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6706,6 +8191,7 @@ export namespace Prisma {
     readonly startedAt: FieldRef<"PipelineRun", 'DateTime'>
     readonly completedAt: FieldRef<"PipelineRun", 'DateTime'>
     readonly createdAt: FieldRef<"PipelineRun", 'DateTime'>
+    readonly customerId: FieldRef<"PipelineRun", 'String'>
   }
     
 
@@ -7203,6 +8689,25 @@ export namespace Prisma {
   }
 
   /**
+   * PipelineRun.customer
+   */
+  export type PipelineRun$customerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    where?: CustomerWhereInput
+  }
+
+  /**
    * PipelineRun without action
    */
   export type PipelineRunDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7254,6 +8759,7 @@ export namespace Prisma {
     fileSizeBytes: bigint | null
     status: $Enums.UploadStatus | null
     runId: string | null
+    customerId: string | null
     createdAt: Date | null
   }
 
@@ -7270,6 +8776,7 @@ export namespace Prisma {
     fileSizeBytes: bigint | null
     status: $Enums.UploadStatus | null
     runId: string | null
+    customerId: string | null
     createdAt: Date | null
   }
 
@@ -7286,6 +8793,7 @@ export namespace Prisma {
     fileSizeBytes: number
     status: number
     runId: number
+    customerId: number
     createdAt: number
     _all: number
   }
@@ -7312,6 +8820,7 @@ export namespace Prisma {
     fileSizeBytes?: true
     status?: true
     runId?: true
+    customerId?: true
     createdAt?: true
   }
 
@@ -7328,6 +8837,7 @@ export namespace Prisma {
     fileSizeBytes?: true
     status?: true
     runId?: true
+    customerId?: true
     createdAt?: true
   }
 
@@ -7344,6 +8854,7 @@ export namespace Prisma {
     fileSizeBytes?: true
     status?: true
     runId?: true
+    customerId?: true
     createdAt?: true
     _all?: true
   }
@@ -7447,6 +8958,7 @@ export namespace Prisma {
     fileSizeBytes: bigint | null
     status: $Enums.UploadStatus | null
     runId: string | null
+    customerId: string | null
     createdAt: Date
     _count: UploadCountAggregateOutputType | null
     _avg: UploadAvgAggregateOutputType | null
@@ -7482,10 +8994,12 @@ export namespace Prisma {
     fileSizeBytes?: boolean
     status?: boolean
     runId?: boolean
+    customerId?: boolean
     createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     pipelineRun?: boolean | Upload$pipelineRunArgs<ExtArgs>
+    customer?: boolean | Upload$customerArgs<ExtArgs>
   }, ExtArgs["result"]["upload"]>
 
   export type UploadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7501,10 +9015,12 @@ export namespace Prisma {
     fileSizeBytes?: boolean
     status?: boolean
     runId?: boolean
+    customerId?: boolean
     createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     pipelineRun?: boolean | Upload$pipelineRunArgs<ExtArgs>
+    customer?: boolean | Upload$customerArgs<ExtArgs>
   }, ExtArgs["result"]["upload"]>
 
   export type UploadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7520,10 +9036,12 @@ export namespace Prisma {
     fileSizeBytes?: boolean
     status?: boolean
     runId?: boolean
+    customerId?: boolean
     createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     pipelineRun?: boolean | Upload$pipelineRunArgs<ExtArgs>
+    customer?: boolean | Upload$customerArgs<ExtArgs>
   }, ExtArgs["result"]["upload"]>
 
   export type UploadSelectScalar = {
@@ -7539,24 +9057,28 @@ export namespace Prisma {
     fileSizeBytes?: boolean
     status?: boolean
     runId?: boolean
+    customerId?: boolean
     createdAt?: boolean
   }
 
-  export type UploadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "uploadedById" | "filename" | "s3Key" | "bankName" | "accountType" | "accountId" | "statementMonth" | "fileSizeBytes" | "status" | "runId" | "createdAt", ExtArgs["result"]["upload"]>
+  export type UploadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "uploadedById" | "filename" | "s3Key" | "bankName" | "accountType" | "accountId" | "statementMonth" | "fileSizeBytes" | "status" | "runId" | "customerId" | "createdAt", ExtArgs["result"]["upload"]>
   export type UploadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     pipelineRun?: boolean | Upload$pipelineRunArgs<ExtArgs>
+    customer?: boolean | Upload$customerArgs<ExtArgs>
   }
   export type UploadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     pipelineRun?: boolean | Upload$pipelineRunArgs<ExtArgs>
+    customer?: boolean | Upload$customerArgs<ExtArgs>
   }
   export type UploadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     pipelineRun?: boolean | Upload$pipelineRunArgs<ExtArgs>
+    customer?: boolean | Upload$customerArgs<ExtArgs>
   }
 
   export type $UploadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7565,6 +9087,7 @@ export namespace Prisma {
       organisation: Prisma.$OrganisationPayload<ExtArgs>
       user: Prisma.$UserPayload<ExtArgs>
       pipelineRun: Prisma.$PipelineRunPayload<ExtArgs> | null
+      customer: Prisma.$CustomerPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7579,6 +9102,7 @@ export namespace Prisma {
       fileSizeBytes: bigint | null
       status: $Enums.UploadStatus | null
       runId: string | null
+      customerId: string | null
       createdAt: Date
     }, ExtArgs["result"]["upload"]>
     composites: {}
@@ -7977,6 +9501,7 @@ export namespace Prisma {
     organisation<T extends OrganisationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganisationDefaultArgs<ExtArgs>>): Prisma__OrganisationClient<$Result.GetResult<Prisma.$OrganisationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     pipelineRun<T extends Upload$pipelineRunArgs<ExtArgs> = {}>(args?: Subset<T, Upload$pipelineRunArgs<ExtArgs>>): Prisma__PipelineRunClient<$Result.GetResult<Prisma.$PipelineRunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    customer<T extends Upload$customerArgs<ExtArgs> = {}>(args?: Subset<T, Upload$customerArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8018,6 +9543,7 @@ export namespace Prisma {
     readonly fileSizeBytes: FieldRef<"Upload", 'BigInt'>
     readonly status: FieldRef<"Upload", 'UploadStatus'>
     readonly runId: FieldRef<"Upload", 'String'>
+    readonly customerId: FieldRef<"Upload", 'String'>
     readonly createdAt: FieldRef<"Upload", 'DateTime'>
   }
     
@@ -8439,6 +9965,25 @@ export namespace Prisma {
   }
 
   /**
+   * Upload.customer
+   */
+  export type Upload$customerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    where?: CustomerWhereInput
+  }
+
+  /**
    * Upload without action
    */
   export type UploadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8492,6 +10037,7 @@ export namespace Prisma {
     maturityDate: Date | null
     prepaymentDate: Date | null
     status: string | null
+    customerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -8509,6 +10055,7 @@ export namespace Prisma {
     maturityDate: Date | null
     prepaymentDate: Date | null
     status: string | null
+    customerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -8526,6 +10073,7 @@ export namespace Prisma {
     maturityDate: number
     prepaymentDate: number
     status: number
+    customerId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -8555,6 +10103,7 @@ export namespace Prisma {
     maturityDate?: true
     prepaymentDate?: true
     status?: true
+    customerId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -8572,6 +10121,7 @@ export namespace Prisma {
     maturityDate?: true
     prepaymentDate?: true
     status?: true
+    customerId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -8589,6 +10139,7 @@ export namespace Prisma {
     maturityDate?: true
     prepaymentDate?: true
     status?: true
+    customerId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -8693,6 +10244,7 @@ export namespace Prisma {
     maturityDate: Date
     prepaymentDate: Date | null
     status: string | null
+    customerId: string | null
     createdAt: Date
     updatedAt: Date
     _count: WCDLLoanCountAggregateOutputType | null
@@ -8729,10 +10281,12 @@ export namespace Prisma {
     maturityDate?: boolean
     prepaymentDate?: boolean
     status?: boolean
+    customerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     pipelineRun?: boolean | WCDLLoan$pipelineRunArgs<ExtArgs>
+    customer?: boolean | WCDLLoan$customerArgs<ExtArgs>
   }, ExtArgs["result"]["wCDLLoan"]>
 
   export type WCDLLoanSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8748,10 +10302,12 @@ export namespace Prisma {
     maturityDate?: boolean
     prepaymentDate?: boolean
     status?: boolean
+    customerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     pipelineRun?: boolean | WCDLLoan$pipelineRunArgs<ExtArgs>
+    customer?: boolean | WCDLLoan$customerArgs<ExtArgs>
   }, ExtArgs["result"]["wCDLLoan"]>
 
   export type WCDLLoanSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8767,10 +10323,12 @@ export namespace Prisma {
     maturityDate?: boolean
     prepaymentDate?: boolean
     status?: boolean
+    customerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     pipelineRun?: boolean | WCDLLoan$pipelineRunArgs<ExtArgs>
+    customer?: boolean | WCDLLoan$customerArgs<ExtArgs>
   }, ExtArgs["result"]["wCDLLoan"]>
 
   export type WCDLLoanSelectScalar = {
@@ -8786,22 +10344,26 @@ export namespace Prisma {
     maturityDate?: boolean
     prepaymentDate?: boolean
     status?: boolean
+    customerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type WCDLLoanOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "runId" | "statementMonth" | "loanNumber" | "bankName" | "principalAmount" | "roi" | "startDate" | "maturityDate" | "prepaymentDate" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["wCDLLoan"]>
+  export type WCDLLoanOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "runId" | "statementMonth" | "loanNumber" | "bankName" | "principalAmount" | "roi" | "startDate" | "maturityDate" | "prepaymentDate" | "status" | "customerId" | "createdAt" | "updatedAt", ExtArgs["result"]["wCDLLoan"]>
   export type WCDLLoanInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     pipelineRun?: boolean | WCDLLoan$pipelineRunArgs<ExtArgs>
+    customer?: boolean | WCDLLoan$customerArgs<ExtArgs>
   }
   export type WCDLLoanIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     pipelineRun?: boolean | WCDLLoan$pipelineRunArgs<ExtArgs>
+    customer?: boolean | WCDLLoan$customerArgs<ExtArgs>
   }
   export type WCDLLoanIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     pipelineRun?: boolean | WCDLLoan$pipelineRunArgs<ExtArgs>
+    customer?: boolean | WCDLLoan$customerArgs<ExtArgs>
   }
 
   export type $WCDLLoanPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8809,6 +10371,7 @@ export namespace Prisma {
     objects: {
       organisation: Prisma.$OrganisationPayload<ExtArgs>
       pipelineRun: Prisma.$PipelineRunPayload<ExtArgs> | null
+      customer: Prisma.$CustomerPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8823,6 +10386,7 @@ export namespace Prisma {
       maturityDate: Date
       prepaymentDate: Date | null
       status: string | null
+      customerId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["wCDLLoan"]>
@@ -9221,6 +10785,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     organisation<T extends OrganisationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganisationDefaultArgs<ExtArgs>>): Prisma__OrganisationClient<$Result.GetResult<Prisma.$OrganisationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     pipelineRun<T extends WCDLLoan$pipelineRunArgs<ExtArgs> = {}>(args?: Subset<T, WCDLLoan$pipelineRunArgs<ExtArgs>>): Prisma__PipelineRunClient<$Result.GetResult<Prisma.$PipelineRunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    customer<T extends WCDLLoan$customerArgs<ExtArgs> = {}>(args?: Subset<T, WCDLLoan$customerArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9262,6 +10827,7 @@ export namespace Prisma {
     readonly maturityDate: FieldRef<"WCDLLoan", 'DateTime'>
     readonly prepaymentDate: FieldRef<"WCDLLoan", 'DateTime'>
     readonly status: FieldRef<"WCDLLoan", 'String'>
+    readonly customerId: FieldRef<"WCDLLoan", 'String'>
     readonly createdAt: FieldRef<"WCDLLoan", 'DateTime'>
     readonly updatedAt: FieldRef<"WCDLLoan", 'DateTime'>
   }
@@ -9681,6 +11247,25 @@ export namespace Prisma {
      */
     include?: PipelineRunInclude<ExtArgs> | null
     where?: PipelineRunWhereInput
+  }
+
+  /**
+   * WCDLLoan.customer
+   */
+  export type WCDLLoan$customerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    where?: CustomerWhereInput
   }
 
   /**
@@ -12477,8 +14062,8 @@ export namespace Prisma {
     action?: boolean
     sessionId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["aIUsageLog"]>
 
   export type AIUsageLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -12493,8 +14078,8 @@ export namespace Prisma {
     action?: boolean
     sessionId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["aIUsageLog"]>
 
   export type AIUsageLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -12509,8 +14094,8 @@ export namespace Prisma {
     action?: boolean
     sessionId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["aIUsageLog"]>
 
   export type AIUsageLogSelectScalar = {
@@ -12529,23 +14114,23 @@ export namespace Prisma {
 
   export type AIUsageLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "userEmail" | "orgId" | "model" | "tokensIn" | "tokensOut" | "costUsd" | "action" | "sessionId" | "createdAt", ExtArgs["result"]["aIUsageLog"]>
   export type AIUsageLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type AIUsageLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type AIUsageLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $AIUsageLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "AIUsageLog"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       organisation: Prisma.$OrganisationPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -12953,8 +14538,8 @@ export namespace Prisma {
    */
   export interface Prisma__AIUsageLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     organisation<T extends OrganisationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganisationDefaultArgs<ExtArgs>>): Prisma__OrganisationClient<$Result.GetResult<Prisma.$OrganisationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -16784,6 +18369,28 @@ export namespace Prisma {
   export type OrganisationScalarFieldEnum = (typeof OrganisationScalarFieldEnum)[keyof typeof OrganisationScalarFieldEnum]
 
 
+  export const CustomerScalarFieldEnum: {
+    id: 'id',
+    customId: 'customId',
+    companyName: 'companyName',
+    contactName: 'contactName',
+    pan: 'pan',
+    cin: 'cin',
+    email: 'email',
+    phone: 'phone',
+    industry: 'industry',
+    address: 'address',
+    tags: 'tags',
+    status: 'status',
+    risk: 'risk',
+    orgId: 'orgId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
+
+
   export const UserScalarFieldEnum: {
     id: 'id',
     email: 'email',
@@ -16820,7 +18427,8 @@ export namespace Prisma {
     checksum: 'checksum',
     startedAt: 'startedAt',
     completedAt: 'completedAt',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    customerId: 'customerId'
   };
 
   export type PipelineRunScalarFieldEnum = (typeof PipelineRunScalarFieldEnum)[keyof typeof PipelineRunScalarFieldEnum]
@@ -16839,6 +18447,7 @@ export namespace Prisma {
     fileSizeBytes: 'fileSizeBytes',
     status: 'status',
     runId: 'runId',
+    customerId: 'customerId',
     createdAt: 'createdAt'
   };
 
@@ -16858,6 +18467,7 @@ export namespace Prisma {
     maturityDate: 'maturityDate',
     prepaymentDate: 'prepaymentDate',
     status: 'status',
+    customerId: 'customerId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -17218,6 +18828,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationListRelationFilter
     aiUsageLogs?: AIUsageLogListRelationFilter
     auditLogs?: AuditLogListRelationFilter
+    customers?: CustomerListRelationFilter
   }
 
   export type OrganisationOrderByWithRelationInput = {
@@ -17237,6 +18848,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationOrderByRelationAggregateInput
     aiUsageLogs?: AIUsageLogOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
+    customers?: CustomerOrderByRelationAggregateInput
   }
 
   export type OrganisationWhereUniqueInput = Prisma.AtLeast<{
@@ -17259,6 +18871,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationListRelationFilter
     aiUsageLogs?: AIUsageLogListRelationFilter
     auditLogs?: AuditLogListRelationFilter
+    customers?: CustomerListRelationFilter
   }, "id">
 
   export type OrganisationOrderByWithAggregationInput = {
@@ -17285,6 +18898,125 @@ export namespace Prisma {
     logoUrl?: StringNullableWithAggregatesFilter<"Organisation"> | string | null
     departments?: StringNullableListFilter<"Organisation">
     createdAt?: DateTimeWithAggregatesFilter<"Organisation"> | Date | string
+  }
+
+  export type CustomerWhereInput = {
+    AND?: CustomerWhereInput | CustomerWhereInput[]
+    OR?: CustomerWhereInput[]
+    NOT?: CustomerWhereInput | CustomerWhereInput[]
+    id?: StringFilter<"Customer"> | string
+    customId?: StringFilter<"Customer"> | string
+    companyName?: StringFilter<"Customer"> | string
+    contactName?: StringFilter<"Customer"> | string
+    pan?: StringFilter<"Customer"> | string
+    cin?: StringNullableFilter<"Customer"> | string | null
+    email?: StringNullableFilter<"Customer"> | string | null
+    phone?: StringNullableFilter<"Customer"> | string | null
+    industry?: StringNullableFilter<"Customer"> | string | null
+    address?: StringNullableFilter<"Customer"> | string | null
+    tags?: StringNullableListFilter<"Customer">
+    status?: StringNullableFilter<"Customer"> | string | null
+    risk?: StringNullableFilter<"Customer"> | string | null
+    orgId?: StringFilter<"Customer"> | string
+    createdAt?: DateTimeFilter<"Customer"> | Date | string
+    updatedAt?: DateTimeFilter<"Customer"> | Date | string
+    organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
+    uploads?: UploadListRelationFilter
+    pipelineRuns?: PipelineRunListRelationFilter
+    wcdlLoans?: WCDLLoanListRelationFilter
+  }
+
+  export type CustomerOrderByWithRelationInput = {
+    id?: SortOrder
+    customId?: SortOrder
+    companyName?: SortOrder
+    contactName?: SortOrder
+    pan?: SortOrder
+    cin?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    industry?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    tags?: SortOrder
+    status?: SortOrderInput | SortOrder
+    risk?: SortOrderInput | SortOrder
+    orgId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    organisation?: OrganisationOrderByWithRelationInput
+    uploads?: UploadOrderByRelationAggregateInput
+    pipelineRuns?: PipelineRunOrderByRelationAggregateInput
+    wcdlLoans?: WCDLLoanOrderByRelationAggregateInput
+  }
+
+  export type CustomerWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    customId?: string
+    AND?: CustomerWhereInput | CustomerWhereInput[]
+    OR?: CustomerWhereInput[]
+    NOT?: CustomerWhereInput | CustomerWhereInput[]
+    companyName?: StringFilter<"Customer"> | string
+    contactName?: StringFilter<"Customer"> | string
+    pan?: StringFilter<"Customer"> | string
+    cin?: StringNullableFilter<"Customer"> | string | null
+    email?: StringNullableFilter<"Customer"> | string | null
+    phone?: StringNullableFilter<"Customer"> | string | null
+    industry?: StringNullableFilter<"Customer"> | string | null
+    address?: StringNullableFilter<"Customer"> | string | null
+    tags?: StringNullableListFilter<"Customer">
+    status?: StringNullableFilter<"Customer"> | string | null
+    risk?: StringNullableFilter<"Customer"> | string | null
+    orgId?: StringFilter<"Customer"> | string
+    createdAt?: DateTimeFilter<"Customer"> | Date | string
+    updatedAt?: DateTimeFilter<"Customer"> | Date | string
+    organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
+    uploads?: UploadListRelationFilter
+    pipelineRuns?: PipelineRunListRelationFilter
+    wcdlLoans?: WCDLLoanListRelationFilter
+  }, "id" | "customId">
+
+  export type CustomerOrderByWithAggregationInput = {
+    id?: SortOrder
+    customId?: SortOrder
+    companyName?: SortOrder
+    contactName?: SortOrder
+    pan?: SortOrder
+    cin?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    industry?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    tags?: SortOrder
+    status?: SortOrderInput | SortOrder
+    risk?: SortOrderInput | SortOrder
+    orgId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CustomerCountOrderByAggregateInput
+    _max?: CustomerMaxOrderByAggregateInput
+    _min?: CustomerMinOrderByAggregateInput
+  }
+
+  export type CustomerScalarWhereWithAggregatesInput = {
+    AND?: CustomerScalarWhereWithAggregatesInput | CustomerScalarWhereWithAggregatesInput[]
+    OR?: CustomerScalarWhereWithAggregatesInput[]
+    NOT?: CustomerScalarWhereWithAggregatesInput | CustomerScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Customer"> | string
+    customId?: StringWithAggregatesFilter<"Customer"> | string
+    companyName?: StringWithAggregatesFilter<"Customer"> | string
+    contactName?: StringWithAggregatesFilter<"Customer"> | string
+    pan?: StringWithAggregatesFilter<"Customer"> | string
+    cin?: StringNullableWithAggregatesFilter<"Customer"> | string | null
+    email?: StringNullableWithAggregatesFilter<"Customer"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"Customer"> | string | null
+    industry?: StringNullableWithAggregatesFilter<"Customer"> | string | null
+    address?: StringNullableWithAggregatesFilter<"Customer"> | string | null
+    tags?: StringNullableListFilter<"Customer">
+    status?: StringNullableWithAggregatesFilter<"Customer"> | string | null
+    risk?: StringNullableWithAggregatesFilter<"Customer"> | string | null
+    orgId?: StringWithAggregatesFilter<"Customer"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Customer"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Customer"> | Date | string
   }
 
   export type UserWhereInput = {
@@ -17425,11 +19157,13 @@ export namespace Prisma {
     startedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
     completedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
     createdAt?: DateTimeFilter<"PipelineRun"> | Date | string
+    customerId?: StringNullableFilter<"PipelineRun"> | string | null
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
     uploads?: UploadListRelationFilter
     wcdlLoans?: WCDLLoanListRelationFilter
     forexTrans?: ForexTransactionListRelationFilter
     approvals?: ApprovalListRelationFilter
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
   }
 
   export type PipelineRunOrderByWithRelationInput = {
@@ -17448,11 +19182,13 @@ export namespace Prisma {
     startedAt?: SortOrderInput | SortOrder
     completedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    customerId?: SortOrderInput | SortOrder
     organisation?: OrganisationOrderByWithRelationInput
     uploads?: UploadOrderByRelationAggregateInput
     wcdlLoans?: WCDLLoanOrderByRelationAggregateInput
     forexTrans?: ForexTransactionOrderByRelationAggregateInput
     approvals?: ApprovalOrderByRelationAggregateInput
+    customer?: CustomerOrderByWithRelationInput
   }
 
   export type PipelineRunWhereUniqueInput = Prisma.AtLeast<{
@@ -17474,11 +19210,13 @@ export namespace Prisma {
     startedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
     completedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
     createdAt?: DateTimeFilter<"PipelineRun"> | Date | string
+    customerId?: StringNullableFilter<"PipelineRun"> | string | null
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
     uploads?: UploadListRelationFilter
     wcdlLoans?: WCDLLoanListRelationFilter
     forexTrans?: ForexTransactionListRelationFilter
     approvals?: ApprovalListRelationFilter
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
   }, "id">
 
   export type PipelineRunOrderByWithAggregationInput = {
@@ -17497,6 +19235,7 @@ export namespace Prisma {
     startedAt?: SortOrderInput | SortOrder
     completedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    customerId?: SortOrderInput | SortOrder
     _count?: PipelineRunCountOrderByAggregateInput
     _avg?: PipelineRunAvgOrderByAggregateInput
     _max?: PipelineRunMaxOrderByAggregateInput
@@ -17523,6 +19262,7 @@ export namespace Prisma {
     startedAt?: DateTimeNullableWithAggregatesFilter<"PipelineRun"> | Date | string | null
     completedAt?: DateTimeNullableWithAggregatesFilter<"PipelineRun"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"PipelineRun"> | Date | string
+    customerId?: StringNullableWithAggregatesFilter<"PipelineRun"> | string | null
   }
 
   export type UploadWhereInput = {
@@ -17541,10 +19281,12 @@ export namespace Prisma {
     fileSizeBytes?: BigIntNullableFilter<"Upload"> | bigint | number | null
     status?: EnumUploadStatusNullableFilter<"Upload"> | $Enums.UploadStatus | null
     runId?: StringNullableFilter<"Upload"> | string | null
+    customerId?: StringNullableFilter<"Upload"> | string | null
     createdAt?: DateTimeFilter<"Upload"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     pipelineRun?: XOR<PipelineRunNullableScalarRelationFilter, PipelineRunWhereInput> | null
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
   }
 
   export type UploadOrderByWithRelationInput = {
@@ -17560,10 +19302,12 @@ export namespace Prisma {
     fileSizeBytes?: SortOrderInput | SortOrder
     status?: SortOrderInput | SortOrder
     runId?: SortOrderInput | SortOrder
+    customerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     organisation?: OrganisationOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
     pipelineRun?: PipelineRunOrderByWithRelationInput
+    customer?: CustomerOrderByWithRelationInput
   }
 
   export type UploadWhereUniqueInput = Prisma.AtLeast<{
@@ -17582,10 +19326,12 @@ export namespace Prisma {
     fileSizeBytes?: BigIntNullableFilter<"Upload"> | bigint | number | null
     status?: EnumUploadStatusNullableFilter<"Upload"> | $Enums.UploadStatus | null
     runId?: StringNullableFilter<"Upload"> | string | null
+    customerId?: StringNullableFilter<"Upload"> | string | null
     createdAt?: DateTimeFilter<"Upload"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     pipelineRun?: XOR<PipelineRunNullableScalarRelationFilter, PipelineRunWhereInput> | null
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
   }, "id" | "s3Key">
 
   export type UploadOrderByWithAggregationInput = {
@@ -17601,6 +19347,7 @@ export namespace Prisma {
     fileSizeBytes?: SortOrderInput | SortOrder
     status?: SortOrderInput | SortOrder
     runId?: SortOrderInput | SortOrder
+    customerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: UploadCountOrderByAggregateInput
     _avg?: UploadAvgOrderByAggregateInput
@@ -17625,6 +19372,7 @@ export namespace Prisma {
     fileSizeBytes?: BigIntNullableWithAggregatesFilter<"Upload"> | bigint | number | null
     status?: EnumUploadStatusNullableWithAggregatesFilter<"Upload"> | $Enums.UploadStatus | null
     runId?: StringNullableWithAggregatesFilter<"Upload"> | string | null
+    customerId?: StringNullableWithAggregatesFilter<"Upload"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Upload"> | Date | string
   }
 
@@ -17644,10 +19392,12 @@ export namespace Prisma {
     maturityDate?: DateTimeFilter<"WCDLLoan"> | Date | string
     prepaymentDate?: DateTimeNullableFilter<"WCDLLoan"> | Date | string | null
     status?: StringNullableFilter<"WCDLLoan"> | string | null
+    customerId?: StringNullableFilter<"WCDLLoan"> | string | null
     createdAt?: DateTimeFilter<"WCDLLoan"> | Date | string
     updatedAt?: DateTimeFilter<"WCDLLoan"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
     pipelineRun?: XOR<PipelineRunNullableScalarRelationFilter, PipelineRunWhereInput> | null
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
   }
 
   export type WCDLLoanOrderByWithRelationInput = {
@@ -17663,10 +19413,12 @@ export namespace Prisma {
     maturityDate?: SortOrder
     prepaymentDate?: SortOrderInput | SortOrder
     status?: SortOrderInput | SortOrder
+    customerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     organisation?: OrganisationOrderByWithRelationInput
     pipelineRun?: PipelineRunOrderByWithRelationInput
+    customer?: CustomerOrderByWithRelationInput
   }
 
   export type WCDLLoanWhereUniqueInput = Prisma.AtLeast<{
@@ -17685,10 +19437,12 @@ export namespace Prisma {
     maturityDate?: DateTimeFilter<"WCDLLoan"> | Date | string
     prepaymentDate?: DateTimeNullableFilter<"WCDLLoan"> | Date | string | null
     status?: StringNullableFilter<"WCDLLoan"> | string | null
+    customerId?: StringNullableFilter<"WCDLLoan"> | string | null
     createdAt?: DateTimeFilter<"WCDLLoan"> | Date | string
     updatedAt?: DateTimeFilter<"WCDLLoan"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
     pipelineRun?: XOR<PipelineRunNullableScalarRelationFilter, PipelineRunWhereInput> | null
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
   }, "id">
 
   export type WCDLLoanOrderByWithAggregationInput = {
@@ -17704,6 +19458,7 @@ export namespace Prisma {
     maturityDate?: SortOrder
     prepaymentDate?: SortOrderInput | SortOrder
     status?: SortOrderInput | SortOrder
+    customerId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: WCDLLoanCountOrderByAggregateInput
@@ -17729,6 +19484,7 @@ export namespace Prisma {
     maturityDate?: DateTimeWithAggregatesFilter<"WCDLLoan"> | Date | string
     prepaymentDate?: DateTimeNullableWithAggregatesFilter<"WCDLLoan"> | Date | string | null
     status?: StringNullableWithAggregatesFilter<"WCDLLoan"> | string | null
+    customerId?: StringNullableWithAggregatesFilter<"WCDLLoan"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"WCDLLoan"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"WCDLLoan"> | Date | string
   }
@@ -17966,8 +19722,8 @@ export namespace Prisma {
     action?: StringNullableFilter<"AIUsageLog"> | string | null
     sessionId?: StringNullableFilter<"AIUsageLog"> | string | null
     createdAt?: DateTimeFilter<"AIUsageLog"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type AIUsageLogOrderByWithRelationInput = {
@@ -17982,8 +19738,8 @@ export namespace Prisma {
     action?: SortOrderInput | SortOrder
     sessionId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
-    user?: UserOrderByWithRelationInput
     organisation?: OrganisationOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type AIUsageLogWhereUniqueInput = Prisma.AtLeast<{
@@ -18001,8 +19757,8 @@ export namespace Prisma {
     action?: StringNullableFilter<"AIUsageLog"> | string | null
     sessionId?: StringNullableFilter<"AIUsageLog"> | string | null
     createdAt?: DateTimeFilter<"AIUsageLog"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type AIUsageLogOrderByWithAggregationInput = {
@@ -18313,6 +20069,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateInput = {
@@ -18332,6 +20089,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUpdateInput = {
@@ -18351,6 +20109,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateInput = {
@@ -18370,6 +20129,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationCreateManyInput = {
@@ -18400,6 +20160,150 @@ export namespace Prisma {
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     departments?: OrganisationUpdatedepartmentsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerCreateInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organisation: OrganisationCreateNestedOneWithoutCustomersInput
+    uploads?: UploadCreateNestedManyWithoutCustomerInput
+    pipelineRuns?: PipelineRunCreateNestedManyWithoutCustomerInput
+    wcdlLoans?: WCDLLoanCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    orgId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploads?: UploadUncheckedCreateNestedManyWithoutCustomerInput
+    pipelineRuns?: PipelineRunUncheckedCreateNestedManyWithoutCustomerInput
+    wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organisation?: OrganisationUpdateOneRequiredWithoutCustomersNestedInput
+    uploads?: UploadUpdateManyWithoutCustomerNestedInput
+    pipelineRuns?: PipelineRunUpdateManyWithoutCustomerNestedInput
+    wcdlLoans?: WCDLLoanUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    orgId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploads?: UploadUncheckedUpdateManyWithoutCustomerNestedInput
+    pipelineRuns?: PipelineRunUncheckedUpdateManyWithoutCustomerNestedInput
+    wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerCreateManyInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    orgId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CustomerUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    orgId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserCreateInput = {
@@ -18558,6 +20462,7 @@ export namespace Prisma {
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
+    customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
   }
 
   export type PipelineRunUncheckedCreateInput = {
@@ -18576,6 +20481,7 @@ export namespace Prisma {
     startedAt?: Date | string | null
     completedAt?: Date | string | null
     createdAt?: Date | string
+    customerId?: string | null
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
@@ -18602,6 +20508,7 @@ export namespace Prisma {
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
+    customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
   }
 
   export type PipelineRunUncheckedUpdateInput = {
@@ -18620,6 +20527,7 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
@@ -18642,6 +20550,7 @@ export namespace Prisma {
     startedAt?: Date | string | null
     completedAt?: Date | string | null
     createdAt?: Date | string
+    customerId?: string | null
   }
 
   export type PipelineRunUpdateManyMutationInput = {
@@ -18677,6 +20586,7 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UploadCreateInput = {
@@ -18693,6 +20603,7 @@ export namespace Prisma {
     organisation: OrganisationCreateNestedOneWithoutUploadsInput
     user: UserCreateNestedOneWithoutUploadsInput
     pipelineRun?: PipelineRunCreateNestedOneWithoutUploadsInput
+    customer?: CustomerCreateNestedOneWithoutUploadsInput
   }
 
   export type UploadUncheckedCreateInput = {
@@ -18708,6 +20619,7 @@ export namespace Prisma {
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
     runId?: string | null
+    customerId?: string | null
     createdAt?: Date | string
   }
 
@@ -18725,6 +20637,7 @@ export namespace Prisma {
     organisation?: OrganisationUpdateOneRequiredWithoutUploadsNestedInput
     user?: UserUpdateOneRequiredWithoutUploadsNestedInput
     pipelineRun?: PipelineRunUpdateOneWithoutUploadsNestedInput
+    customer?: CustomerUpdateOneWithoutUploadsNestedInput
   }
 
   export type UploadUncheckedUpdateInput = {
@@ -18740,6 +20653,7 @@ export namespace Prisma {
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -18756,6 +20670,7 @@ export namespace Prisma {
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
     runId?: string | null
+    customerId?: string | null
     createdAt?: Date | string
   }
 
@@ -18785,6 +20700,7 @@ export namespace Prisma {
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -18803,6 +20719,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutWcdlLoansInput
     pipelineRun?: PipelineRunCreateNestedOneWithoutWcdlLoansInput
+    customer?: CustomerCreateNestedOneWithoutWcdlLoansInput
   }
 
   export type WCDLLoanUncheckedCreateInput = {
@@ -18818,6 +20735,7 @@ export namespace Prisma {
     maturityDate: Date | string
     prepaymentDate?: Date | string | null
     status?: string | null
+    customerId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18837,6 +20755,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutWcdlLoansNestedInput
     pipelineRun?: PipelineRunUpdateOneWithoutWcdlLoansNestedInput
+    customer?: CustomerUpdateOneWithoutWcdlLoansNestedInput
   }
 
   export type WCDLLoanUncheckedUpdateInput = {
@@ -18852,6 +20771,7 @@ export namespace Prisma {
     maturityDate?: DateTimeFieldUpdateOperationsInput | Date | string
     prepaymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18869,6 +20789,7 @@ export namespace Prisma {
     maturityDate: Date | string
     prepaymentDate?: Date | string | null
     status?: string | null
+    customerId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18901,6 +20822,7 @@ export namespace Prisma {
     maturityDate?: DateTimeFieldUpdateOperationsInput | Date | string
     prepaymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19164,8 +21086,8 @@ export namespace Prisma {
     action?: string | null
     sessionId?: string | null
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutAiUsageLogsInput
     organisation: OrganisationCreateNestedOneWithoutAiUsageLogsInput
+    user: UserCreateNestedOneWithoutAiUsageLogsInput
   }
 
   export type AIUsageLogUncheckedCreateInput = {
@@ -19192,8 +21114,8 @@ export namespace Prisma {
     action?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutAiUsageLogsNestedInput
     organisation?: OrganisationUpdateOneRequiredWithoutAiUsageLogsNestedInput
+    user?: UserUpdateOneRequiredWithoutAiUsageLogsNestedInput
   }
 
   export type AIUsageLogUncheckedUpdateInput = {
@@ -19665,6 +21587,12 @@ export namespace Prisma {
     none?: AuditLogWhereInput
   }
 
+  export type CustomerListRelationFilter = {
+    every?: CustomerWhereInput
+    some?: CustomerWhereInput
+    none?: CustomerWhereInput
+  }
+
   export type PipelineRunOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -19694,6 +21622,10 @@ export namespace Prisma {
   }
 
   export type AuditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CustomerOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -19739,6 +21671,66 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type OrganisationScalarRelationFilter = {
+    is?: OrganisationWhereInput
+    isNot?: OrganisationWhereInput
+  }
+
+  export type CustomerCountOrderByAggregateInput = {
+    id?: SortOrder
+    customId?: SortOrder
+    companyName?: SortOrder
+    contactName?: SortOrder
+    pan?: SortOrder
+    cin?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    industry?: SortOrder
+    address?: SortOrder
+    tags?: SortOrder
+    status?: SortOrder
+    risk?: SortOrder
+    orgId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomerMaxOrderByAggregateInput = {
+    id?: SortOrder
+    customId?: SortOrder
+    companyName?: SortOrder
+    contactName?: SortOrder
+    pan?: SortOrder
+    cin?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    industry?: SortOrder
+    address?: SortOrder
+    status?: SortOrder
+    risk?: SortOrder
+    orgId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomerMinOrderByAggregateInput = {
+    id?: SortOrder
+    customId?: SortOrder
+    companyName?: SortOrder
+    contactName?: SortOrder
+    pan?: SortOrder
+    cin?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    industry?: SortOrder
+    address?: SortOrder
+    status?: SortOrder
+    risk?: SortOrder
+    orgId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type BoolNullableFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
     not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
@@ -19758,11 +21750,6 @@ export namespace Prisma {
   export type RoleScalarRelationFilter = {
     is?: RoleWhereInput
     isNot?: RoleWhereInput
-  }
-
-  export type OrganisationScalarRelationFilter = {
-    is?: OrganisationWhereInput
-    isNot?: OrganisationWhereInput
   }
 
   export type UserCountOrderByAggregateInput = {
@@ -19873,6 +21860,11 @@ export namespace Prisma {
     none?: ApprovalWhereInput
   }
 
+  export type CustomerNullableScalarRelationFilter = {
+    is?: CustomerWhereInput | null
+    isNot?: CustomerWhereInput | null
+  }
+
   export type ApprovalOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -19893,6 +21885,7 @@ export namespace Prisma {
     startedAt?: SortOrder
     completedAt?: SortOrder
     createdAt?: SortOrder
+    customerId?: SortOrder
   }
 
   export type PipelineRunAvgOrderByAggregateInput = {
@@ -19915,6 +21908,7 @@ export namespace Prisma {
     startedAt?: SortOrder
     completedAt?: SortOrder
     createdAt?: SortOrder
+    customerId?: SortOrder
   }
 
   export type PipelineRunMinOrderByAggregateInput = {
@@ -19933,6 +21927,7 @@ export namespace Prisma {
     startedAt?: SortOrder
     completedAt?: SortOrder
     createdAt?: SortOrder
+    customerId?: SortOrder
   }
 
   export type PipelineRunSumOrderByAggregateInput = {
@@ -20006,6 +22001,7 @@ export namespace Prisma {
     fileSizeBytes?: SortOrder
     status?: SortOrder
     runId?: SortOrder
+    customerId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -20026,6 +22022,7 @@ export namespace Prisma {
     fileSizeBytes?: SortOrder
     status?: SortOrder
     runId?: SortOrder
+    customerId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -20042,6 +22039,7 @@ export namespace Prisma {
     fileSizeBytes?: SortOrder
     status?: SortOrder
     runId?: SortOrder
+    customerId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -20099,6 +22097,7 @@ export namespace Prisma {
     maturityDate?: SortOrder
     prepaymentDate?: SortOrder
     status?: SortOrder
+    customerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20121,6 +22120,7 @@ export namespace Prisma {
     maturityDate?: SortOrder
     prepaymentDate?: SortOrder
     status?: SortOrder
+    customerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20138,6 +22138,7 @@ export namespace Prisma {
     maturityDate?: SortOrder
     prepaymentDate?: SortOrder
     status?: SortOrder
+    customerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20683,6 +22684,13 @@ export namespace Prisma {
     connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
   }
 
+  export type CustomerCreateNestedManyWithoutOrganisationInput = {
+    create?: XOR<CustomerCreateWithoutOrganisationInput, CustomerUncheckedCreateWithoutOrganisationInput> | CustomerCreateWithoutOrganisationInput[] | CustomerUncheckedCreateWithoutOrganisationInput[]
+    connectOrCreate?: CustomerCreateOrConnectWithoutOrganisationInput | CustomerCreateOrConnectWithoutOrganisationInput[]
+    createMany?: CustomerCreateManyOrganisationInputEnvelope
+    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutOrganisationInput = {
     create?: XOR<UserCreateWithoutOrganisationInput, UserUncheckedCreateWithoutOrganisationInput> | UserCreateWithoutOrganisationInput[] | UserUncheckedCreateWithoutOrganisationInput[]
     connectOrCreate?: UserCreateOrConnectWithoutOrganisationInput | UserCreateOrConnectWithoutOrganisationInput[]
@@ -20744,6 +22752,13 @@ export namespace Prisma {
     connectOrCreate?: AuditLogCreateOrConnectWithoutOrganisationInput | AuditLogCreateOrConnectWithoutOrganisationInput[]
     createMany?: AuditLogCreateManyOrganisationInputEnvelope
     connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+  }
+
+  export type CustomerUncheckedCreateNestedManyWithoutOrganisationInput = {
+    create?: XOR<CustomerCreateWithoutOrganisationInput, CustomerUncheckedCreateWithoutOrganisationInput> | CustomerCreateWithoutOrganisationInput[] | CustomerUncheckedCreateWithoutOrganisationInput[]
+    connectOrCreate?: CustomerCreateOrConnectWithoutOrganisationInput | CustomerCreateOrConnectWithoutOrganisationInput[]
+    createMany?: CustomerCreateManyOrganisationInputEnvelope
+    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
   }
 
   export type OrganisationUpdatedepartmentsInput = {
@@ -20881,6 +22896,20 @@ export namespace Prisma {
     deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
+  export type CustomerUpdateManyWithoutOrganisationNestedInput = {
+    create?: XOR<CustomerCreateWithoutOrganisationInput, CustomerUncheckedCreateWithoutOrganisationInput> | CustomerCreateWithoutOrganisationInput[] | CustomerUncheckedCreateWithoutOrganisationInput[]
+    connectOrCreate?: CustomerCreateOrConnectWithoutOrganisationInput | CustomerCreateOrConnectWithoutOrganisationInput[]
+    upsert?: CustomerUpsertWithWhereUniqueWithoutOrganisationInput | CustomerUpsertWithWhereUniqueWithoutOrganisationInput[]
+    createMany?: CustomerCreateManyOrganisationInputEnvelope
+    set?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    disconnect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    delete?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    update?: CustomerUpdateWithWhereUniqueWithoutOrganisationInput | CustomerUpdateWithWhereUniqueWithoutOrganisationInput[]
+    updateMany?: CustomerUpdateManyWithWhereWithoutOrganisationInput | CustomerUpdateManyWithWhereWithoutOrganisationInput[]
+    deleteMany?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
+  }
+
   export type UserUncheckedUpdateManyWithoutOrganisationNestedInput = {
     create?: XOR<UserCreateWithoutOrganisationInput, UserUncheckedCreateWithoutOrganisationInput> | UserCreateWithoutOrganisationInput[] | UserUncheckedCreateWithoutOrganisationInput[]
     connectOrCreate?: UserCreateOrConnectWithoutOrganisationInput | UserCreateOrConnectWithoutOrganisationInput[]
@@ -21005,6 +23034,169 @@ export namespace Prisma {
     update?: AuditLogUpdateWithWhereUniqueWithoutOrganisationInput | AuditLogUpdateWithWhereUniqueWithoutOrganisationInput[]
     updateMany?: AuditLogUpdateManyWithWhereWithoutOrganisationInput | AuditLogUpdateManyWithWhereWithoutOrganisationInput[]
     deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+  }
+
+  export type CustomerUncheckedUpdateManyWithoutOrganisationNestedInput = {
+    create?: XOR<CustomerCreateWithoutOrganisationInput, CustomerUncheckedCreateWithoutOrganisationInput> | CustomerCreateWithoutOrganisationInput[] | CustomerUncheckedCreateWithoutOrganisationInput[]
+    connectOrCreate?: CustomerCreateOrConnectWithoutOrganisationInput | CustomerCreateOrConnectWithoutOrganisationInput[]
+    upsert?: CustomerUpsertWithWhereUniqueWithoutOrganisationInput | CustomerUpsertWithWhereUniqueWithoutOrganisationInput[]
+    createMany?: CustomerCreateManyOrganisationInputEnvelope
+    set?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    disconnect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    delete?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    connect?: CustomerWhereUniqueInput | CustomerWhereUniqueInput[]
+    update?: CustomerUpdateWithWhereUniqueWithoutOrganisationInput | CustomerUpdateWithWhereUniqueWithoutOrganisationInput[]
+    updateMany?: CustomerUpdateManyWithWhereWithoutOrganisationInput | CustomerUpdateManyWithWhereWithoutOrganisationInput[]
+    deleteMany?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
+  }
+
+  export type CustomerCreatetagsInput = {
+    set: string[]
+  }
+
+  export type OrganisationCreateNestedOneWithoutCustomersInput = {
+    create?: XOR<OrganisationCreateWithoutCustomersInput, OrganisationUncheckedCreateWithoutCustomersInput>
+    connectOrCreate?: OrganisationCreateOrConnectWithoutCustomersInput
+    connect?: OrganisationWhereUniqueInput
+  }
+
+  export type UploadCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<UploadCreateWithoutCustomerInput, UploadUncheckedCreateWithoutCustomerInput> | UploadCreateWithoutCustomerInput[] | UploadUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: UploadCreateOrConnectWithoutCustomerInput | UploadCreateOrConnectWithoutCustomerInput[]
+    createMany?: UploadCreateManyCustomerInputEnvelope
+    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+  }
+
+  export type PipelineRunCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<PipelineRunCreateWithoutCustomerInput, PipelineRunUncheckedCreateWithoutCustomerInput> | PipelineRunCreateWithoutCustomerInput[] | PipelineRunUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: PipelineRunCreateOrConnectWithoutCustomerInput | PipelineRunCreateOrConnectWithoutCustomerInput[]
+    createMany?: PipelineRunCreateManyCustomerInputEnvelope
+    connect?: PipelineRunWhereUniqueInput | PipelineRunWhereUniqueInput[]
+  }
+
+  export type WCDLLoanCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<WCDLLoanCreateWithoutCustomerInput, WCDLLoanUncheckedCreateWithoutCustomerInput> | WCDLLoanCreateWithoutCustomerInput[] | WCDLLoanUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: WCDLLoanCreateOrConnectWithoutCustomerInput | WCDLLoanCreateOrConnectWithoutCustomerInput[]
+    createMany?: WCDLLoanCreateManyCustomerInputEnvelope
+    connect?: WCDLLoanWhereUniqueInput | WCDLLoanWhereUniqueInput[]
+  }
+
+  export type UploadUncheckedCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<UploadCreateWithoutCustomerInput, UploadUncheckedCreateWithoutCustomerInput> | UploadCreateWithoutCustomerInput[] | UploadUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: UploadCreateOrConnectWithoutCustomerInput | UploadCreateOrConnectWithoutCustomerInput[]
+    createMany?: UploadCreateManyCustomerInputEnvelope
+    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+  }
+
+  export type PipelineRunUncheckedCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<PipelineRunCreateWithoutCustomerInput, PipelineRunUncheckedCreateWithoutCustomerInput> | PipelineRunCreateWithoutCustomerInput[] | PipelineRunUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: PipelineRunCreateOrConnectWithoutCustomerInput | PipelineRunCreateOrConnectWithoutCustomerInput[]
+    createMany?: PipelineRunCreateManyCustomerInputEnvelope
+    connect?: PipelineRunWhereUniqueInput | PipelineRunWhereUniqueInput[]
+  }
+
+  export type WCDLLoanUncheckedCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<WCDLLoanCreateWithoutCustomerInput, WCDLLoanUncheckedCreateWithoutCustomerInput> | WCDLLoanCreateWithoutCustomerInput[] | WCDLLoanUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: WCDLLoanCreateOrConnectWithoutCustomerInput | WCDLLoanCreateOrConnectWithoutCustomerInput[]
+    createMany?: WCDLLoanCreateManyCustomerInputEnvelope
+    connect?: WCDLLoanWhereUniqueInput | WCDLLoanWhereUniqueInput[]
+  }
+
+  export type CustomerUpdatetagsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type OrganisationUpdateOneRequiredWithoutCustomersNestedInput = {
+    create?: XOR<OrganisationCreateWithoutCustomersInput, OrganisationUncheckedCreateWithoutCustomersInput>
+    connectOrCreate?: OrganisationCreateOrConnectWithoutCustomersInput
+    upsert?: OrganisationUpsertWithoutCustomersInput
+    connect?: OrganisationWhereUniqueInput
+    update?: XOR<XOR<OrganisationUpdateToOneWithWhereWithoutCustomersInput, OrganisationUpdateWithoutCustomersInput>, OrganisationUncheckedUpdateWithoutCustomersInput>
+  }
+
+  export type UploadUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<UploadCreateWithoutCustomerInput, UploadUncheckedCreateWithoutCustomerInput> | UploadCreateWithoutCustomerInput[] | UploadUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: UploadCreateOrConnectWithoutCustomerInput | UploadCreateOrConnectWithoutCustomerInput[]
+    upsert?: UploadUpsertWithWhereUniqueWithoutCustomerInput | UploadUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: UploadCreateManyCustomerInputEnvelope
+    set?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+    disconnect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+    delete?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+    update?: UploadUpdateWithWhereUniqueWithoutCustomerInput | UploadUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: UploadUpdateManyWithWhereWithoutCustomerInput | UploadUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: UploadScalarWhereInput | UploadScalarWhereInput[]
+  }
+
+  export type PipelineRunUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<PipelineRunCreateWithoutCustomerInput, PipelineRunUncheckedCreateWithoutCustomerInput> | PipelineRunCreateWithoutCustomerInput[] | PipelineRunUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: PipelineRunCreateOrConnectWithoutCustomerInput | PipelineRunCreateOrConnectWithoutCustomerInput[]
+    upsert?: PipelineRunUpsertWithWhereUniqueWithoutCustomerInput | PipelineRunUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: PipelineRunCreateManyCustomerInputEnvelope
+    set?: PipelineRunWhereUniqueInput | PipelineRunWhereUniqueInput[]
+    disconnect?: PipelineRunWhereUniqueInput | PipelineRunWhereUniqueInput[]
+    delete?: PipelineRunWhereUniqueInput | PipelineRunWhereUniqueInput[]
+    connect?: PipelineRunWhereUniqueInput | PipelineRunWhereUniqueInput[]
+    update?: PipelineRunUpdateWithWhereUniqueWithoutCustomerInput | PipelineRunUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: PipelineRunUpdateManyWithWhereWithoutCustomerInput | PipelineRunUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: PipelineRunScalarWhereInput | PipelineRunScalarWhereInput[]
+  }
+
+  export type WCDLLoanUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<WCDLLoanCreateWithoutCustomerInput, WCDLLoanUncheckedCreateWithoutCustomerInput> | WCDLLoanCreateWithoutCustomerInput[] | WCDLLoanUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: WCDLLoanCreateOrConnectWithoutCustomerInput | WCDLLoanCreateOrConnectWithoutCustomerInput[]
+    upsert?: WCDLLoanUpsertWithWhereUniqueWithoutCustomerInput | WCDLLoanUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: WCDLLoanCreateManyCustomerInputEnvelope
+    set?: WCDLLoanWhereUniqueInput | WCDLLoanWhereUniqueInput[]
+    disconnect?: WCDLLoanWhereUniqueInput | WCDLLoanWhereUniqueInput[]
+    delete?: WCDLLoanWhereUniqueInput | WCDLLoanWhereUniqueInput[]
+    connect?: WCDLLoanWhereUniqueInput | WCDLLoanWhereUniqueInput[]
+    update?: WCDLLoanUpdateWithWhereUniqueWithoutCustomerInput | WCDLLoanUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: WCDLLoanUpdateManyWithWhereWithoutCustomerInput | WCDLLoanUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: WCDLLoanScalarWhereInput | WCDLLoanScalarWhereInput[]
+  }
+
+  export type UploadUncheckedUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<UploadCreateWithoutCustomerInput, UploadUncheckedCreateWithoutCustomerInput> | UploadCreateWithoutCustomerInput[] | UploadUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: UploadCreateOrConnectWithoutCustomerInput | UploadCreateOrConnectWithoutCustomerInput[]
+    upsert?: UploadUpsertWithWhereUniqueWithoutCustomerInput | UploadUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: UploadCreateManyCustomerInputEnvelope
+    set?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+    disconnect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+    delete?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+    update?: UploadUpdateWithWhereUniqueWithoutCustomerInput | UploadUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: UploadUpdateManyWithWhereWithoutCustomerInput | UploadUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: UploadScalarWhereInput | UploadScalarWhereInput[]
+  }
+
+  export type PipelineRunUncheckedUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<PipelineRunCreateWithoutCustomerInput, PipelineRunUncheckedCreateWithoutCustomerInput> | PipelineRunCreateWithoutCustomerInput[] | PipelineRunUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: PipelineRunCreateOrConnectWithoutCustomerInput | PipelineRunCreateOrConnectWithoutCustomerInput[]
+    upsert?: PipelineRunUpsertWithWhereUniqueWithoutCustomerInput | PipelineRunUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: PipelineRunCreateManyCustomerInputEnvelope
+    set?: PipelineRunWhereUniqueInput | PipelineRunWhereUniqueInput[]
+    disconnect?: PipelineRunWhereUniqueInput | PipelineRunWhereUniqueInput[]
+    delete?: PipelineRunWhereUniqueInput | PipelineRunWhereUniqueInput[]
+    connect?: PipelineRunWhereUniqueInput | PipelineRunWhereUniqueInput[]
+    update?: PipelineRunUpdateWithWhereUniqueWithoutCustomerInput | PipelineRunUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: PipelineRunUpdateManyWithWhereWithoutCustomerInput | PipelineRunUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: PipelineRunScalarWhereInput | PipelineRunScalarWhereInput[]
+  }
+
+  export type WCDLLoanUncheckedUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<WCDLLoanCreateWithoutCustomerInput, WCDLLoanUncheckedCreateWithoutCustomerInput> | WCDLLoanCreateWithoutCustomerInput[] | WCDLLoanUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: WCDLLoanCreateOrConnectWithoutCustomerInput | WCDLLoanCreateOrConnectWithoutCustomerInput[]
+    upsert?: WCDLLoanUpsertWithWhereUniqueWithoutCustomerInput | WCDLLoanUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: WCDLLoanCreateManyCustomerInputEnvelope
+    set?: WCDLLoanWhereUniqueInput | WCDLLoanWhereUniqueInput[]
+    disconnect?: WCDLLoanWhereUniqueInput | WCDLLoanWhereUniqueInput[]
+    delete?: WCDLLoanWhereUniqueInput | WCDLLoanWhereUniqueInput[]
+    connect?: WCDLLoanWhereUniqueInput | WCDLLoanWhereUniqueInput[]
+    update?: WCDLLoanUpdateWithWhereUniqueWithoutCustomerInput | WCDLLoanUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: WCDLLoanUpdateManyWithWhereWithoutCustomerInput | WCDLLoanUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: WCDLLoanScalarWhereInput | WCDLLoanScalarWhereInput[]
   }
 
   export type RoleCreateNestedOneWithoutUsersInput = {
@@ -21203,6 +23395,12 @@ export namespace Prisma {
     connect?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
   }
 
+  export type CustomerCreateNestedOneWithoutPipelineRunsInput = {
+    create?: XOR<CustomerCreateWithoutPipelineRunsInput, CustomerUncheckedCreateWithoutPipelineRunsInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutPipelineRunsInput
+    connect?: CustomerWhereUniqueInput
+  }
+
   export type UploadUncheckedCreateNestedManyWithoutPipelineRunInput = {
     create?: XOR<UploadCreateWithoutPipelineRunInput, UploadUncheckedCreateWithoutPipelineRunInput> | UploadCreateWithoutPipelineRunInput[] | UploadUncheckedCreateWithoutPipelineRunInput[]
     connectOrCreate?: UploadCreateOrConnectWithoutPipelineRunInput | UploadCreateOrConnectWithoutPipelineRunInput[]
@@ -21307,6 +23505,16 @@ export namespace Prisma {
     deleteMany?: ApprovalScalarWhereInput | ApprovalScalarWhereInput[]
   }
 
+  export type CustomerUpdateOneWithoutPipelineRunsNestedInput = {
+    create?: XOR<CustomerCreateWithoutPipelineRunsInput, CustomerUncheckedCreateWithoutPipelineRunsInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutPipelineRunsInput
+    upsert?: CustomerUpsertWithoutPipelineRunsInput
+    disconnect?: CustomerWhereInput | boolean
+    delete?: CustomerWhereInput | boolean
+    connect?: CustomerWhereUniqueInput
+    update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutPipelineRunsInput, CustomerUpdateWithoutPipelineRunsInput>, CustomerUncheckedUpdateWithoutPipelineRunsInput>
+  }
+
   export type UploadUncheckedUpdateManyWithoutPipelineRunNestedInput = {
     create?: XOR<UploadCreateWithoutPipelineRunInput, UploadUncheckedCreateWithoutPipelineRunInput> | UploadCreateWithoutPipelineRunInput[] | UploadUncheckedCreateWithoutPipelineRunInput[]
     connectOrCreate?: UploadCreateOrConnectWithoutPipelineRunInput | UploadCreateOrConnectWithoutPipelineRunInput[]
@@ -21381,6 +23589,12 @@ export namespace Prisma {
     connect?: PipelineRunWhereUniqueInput
   }
 
+  export type CustomerCreateNestedOneWithoutUploadsInput = {
+    create?: XOR<CustomerCreateWithoutUploadsInput, CustomerUncheckedCreateWithoutUploadsInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutUploadsInput
+    connect?: CustomerWhereUniqueInput
+  }
+
   export type NullableBigIntFieldUpdateOperationsInput = {
     set?: bigint | number | null
     increment?: bigint | number
@@ -21419,6 +23633,16 @@ export namespace Prisma {
     update?: XOR<XOR<PipelineRunUpdateToOneWithWhereWithoutUploadsInput, PipelineRunUpdateWithoutUploadsInput>, PipelineRunUncheckedUpdateWithoutUploadsInput>
   }
 
+  export type CustomerUpdateOneWithoutUploadsNestedInput = {
+    create?: XOR<CustomerCreateWithoutUploadsInput, CustomerUncheckedCreateWithoutUploadsInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutUploadsInput
+    upsert?: CustomerUpsertWithoutUploadsInput
+    disconnect?: CustomerWhereInput | boolean
+    delete?: CustomerWhereInput | boolean
+    connect?: CustomerWhereUniqueInput
+    update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutUploadsInput, CustomerUpdateWithoutUploadsInput>, CustomerUncheckedUpdateWithoutUploadsInput>
+  }
+
   export type OrganisationCreateNestedOneWithoutWcdlLoansInput = {
     create?: XOR<OrganisationCreateWithoutWcdlLoansInput, OrganisationUncheckedCreateWithoutWcdlLoansInput>
     connectOrCreate?: OrganisationCreateOrConnectWithoutWcdlLoansInput
@@ -21429,6 +23653,12 @@ export namespace Prisma {
     create?: XOR<PipelineRunCreateWithoutWcdlLoansInput, PipelineRunUncheckedCreateWithoutWcdlLoansInput>
     connectOrCreate?: PipelineRunCreateOrConnectWithoutWcdlLoansInput
     connect?: PipelineRunWhereUniqueInput
+  }
+
+  export type CustomerCreateNestedOneWithoutWcdlLoansInput = {
+    create?: XOR<CustomerCreateWithoutWcdlLoansInput, CustomerUncheckedCreateWithoutWcdlLoansInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutWcdlLoansInput
+    connect?: CustomerWhereUniqueInput
   }
 
   export type DecimalFieldUpdateOperationsInput = {
@@ -21455,6 +23685,16 @@ export namespace Prisma {
     delete?: PipelineRunWhereInput | boolean
     connect?: PipelineRunWhereUniqueInput
     update?: XOR<XOR<PipelineRunUpdateToOneWithWhereWithoutWcdlLoansInput, PipelineRunUpdateWithoutWcdlLoansInput>, PipelineRunUncheckedUpdateWithoutWcdlLoansInput>
+  }
+
+  export type CustomerUpdateOneWithoutWcdlLoansNestedInput = {
+    create?: XOR<CustomerCreateWithoutWcdlLoansInput, CustomerUncheckedCreateWithoutWcdlLoansInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutWcdlLoansInput
+    upsert?: CustomerUpsertWithoutWcdlLoansInput
+    disconnect?: CustomerWhereInput | boolean
+    delete?: CustomerWhereInput | boolean
+    connect?: CustomerWhereUniqueInput
+    update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutWcdlLoansInput, CustomerUpdateWithoutWcdlLoansInput>, CustomerUncheckedUpdateWithoutWcdlLoansInput>
   }
 
   export type OrganisationCreateNestedOneWithoutForexTransInput = {
@@ -21518,24 +23758,16 @@ export namespace Prisma {
     update?: XOR<XOR<OrganisationUpdateToOneWithWhereWithoutAgentConfigsInput, OrganisationUpdateWithoutAgentConfigsInput>, OrganisationUncheckedUpdateWithoutAgentConfigsInput>
   }
 
-  export type UserCreateNestedOneWithoutAiUsageLogsInput = {
-    create?: XOR<UserCreateWithoutAiUsageLogsInput, UserUncheckedCreateWithoutAiUsageLogsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAiUsageLogsInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type OrganisationCreateNestedOneWithoutAiUsageLogsInput = {
     create?: XOR<OrganisationCreateWithoutAiUsageLogsInput, OrganisationUncheckedCreateWithoutAiUsageLogsInput>
     connectOrCreate?: OrganisationCreateOrConnectWithoutAiUsageLogsInput
     connect?: OrganisationWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutAiUsageLogsNestedInput = {
+  export type UserCreateNestedOneWithoutAiUsageLogsInput = {
     create?: XOR<UserCreateWithoutAiUsageLogsInput, UserUncheckedCreateWithoutAiUsageLogsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAiUsageLogsInput
-    upsert?: UserUpsertWithoutAiUsageLogsInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAiUsageLogsInput, UserUpdateWithoutAiUsageLogsInput>, UserUncheckedUpdateWithoutAiUsageLogsInput>
   }
 
   export type OrganisationUpdateOneRequiredWithoutAiUsageLogsNestedInput = {
@@ -21544,6 +23776,14 @@ export namespace Prisma {
     upsert?: OrganisationUpsertWithoutAiUsageLogsInput
     connect?: OrganisationWhereUniqueInput
     update?: XOR<XOR<OrganisationUpdateToOneWithWhereWithoutAiUsageLogsInput, OrganisationUpdateWithoutAiUsageLogsInput>, OrganisationUncheckedUpdateWithoutAiUsageLogsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutAiUsageLogsNestedInput = {
+    create?: XOR<UserCreateWithoutAiUsageLogsInput, UserUncheckedCreateWithoutAiUsageLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAiUsageLogsInput
+    upsert?: UserUpsertWithoutAiUsageLogsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAiUsageLogsInput, UserUpdateWithoutAiUsageLogsInput>, UserUncheckedUpdateWithoutAiUsageLogsInput>
   }
 
   export type OrganisationCreateNestedOneWithoutAuditLogsInput = {
@@ -22099,6 +24339,7 @@ export namespace Prisma {
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
+    customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
   }
 
   export type PipelineRunUncheckedCreateWithoutOrganisationInput = {
@@ -22116,6 +24357,7 @@ export namespace Prisma {
     startedAt?: Date | string | null
     completedAt?: Date | string | null
     createdAt?: Date | string
+    customerId?: string | null
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
@@ -22145,6 +24387,7 @@ export namespace Prisma {
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutUploadsInput
     pipelineRun?: PipelineRunCreateNestedOneWithoutUploadsInput
+    customer?: CustomerCreateNestedOneWithoutUploadsInput
   }
 
   export type UploadUncheckedCreateWithoutOrganisationInput = {
@@ -22159,6 +24402,7 @@ export namespace Prisma {
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
     runId?: string | null
+    customerId?: string | null
     createdAt?: Date | string
   }
 
@@ -22186,6 +24430,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     pipelineRun?: PipelineRunCreateNestedOneWithoutWcdlLoansInput
+    customer?: CustomerCreateNestedOneWithoutWcdlLoansInput
   }
 
   export type WCDLLoanUncheckedCreateWithoutOrganisationInput = {
@@ -22200,6 +24445,7 @@ export namespace Prisma {
     maturityDate: Date | string
     prepaymentDate?: Date | string | null
     status?: string | null
+    customerId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -22402,6 +24648,58 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CustomerCreateWithoutOrganisationInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploads?: UploadCreateNestedManyWithoutCustomerInput
+    pipelineRuns?: PipelineRunCreateNestedManyWithoutCustomerInput
+    wcdlLoans?: WCDLLoanCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateWithoutOrganisationInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploads?: UploadUncheckedCreateNestedManyWithoutCustomerInput
+    pipelineRuns?: PipelineRunUncheckedCreateNestedManyWithoutCustomerInput
+    wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerCreateOrConnectWithoutOrganisationInput = {
+    where: CustomerWhereUniqueInput
+    create: XOR<CustomerCreateWithoutOrganisationInput, CustomerUncheckedCreateWithoutOrganisationInput>
+  }
+
+  export type CustomerCreateManyOrganisationInputEnvelope = {
+    data: CustomerCreateManyOrganisationInput | CustomerCreateManyOrganisationInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithWhereUniqueWithoutOrganisationInput = {
     where: UserWhereUniqueInput
     update: XOR<UserUpdateWithoutOrganisationInput, UserUncheckedUpdateWithoutOrganisationInput>
@@ -22453,6 +24751,7 @@ export namespace Prisma {
     startedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
     completedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
     createdAt?: DateTimeFilter<"PipelineRun"> | Date | string
+    customerId?: StringNullableFilter<"PipelineRun"> | string | null
   }
 
   export type UploadUpsertWithWhereUniqueWithoutOrganisationInput = {
@@ -22487,6 +24786,7 @@ export namespace Prisma {
     fileSizeBytes?: BigIntNullableFilter<"Upload"> | bigint | number | null
     status?: EnumUploadStatusNullableFilter<"Upload"> | $Enums.UploadStatus | null
     runId?: StringNullableFilter<"Upload"> | string | null
+    customerId?: StringNullableFilter<"Upload"> | string | null
     createdAt?: DateTimeFilter<"Upload"> | Date | string
   }
 
@@ -22522,6 +24822,7 @@ export namespace Prisma {
     maturityDate?: DateTimeFilter<"WCDLLoan"> | Date | string
     prepaymentDate?: DateTimeNullableFilter<"WCDLLoan"> | Date | string | null
     status?: StringNullableFilter<"WCDLLoan"> | string | null
+    customerId?: StringNullableFilter<"WCDLLoan"> | string | null
     createdAt?: DateTimeFilter<"WCDLLoan"> | Date | string
     updatedAt?: DateTimeFilter<"WCDLLoan"> | Date | string
   }
@@ -22695,6 +24996,324 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"AuditLog"> | Date | string
   }
 
+  export type CustomerUpsertWithWhereUniqueWithoutOrganisationInput = {
+    where: CustomerWhereUniqueInput
+    update: XOR<CustomerUpdateWithoutOrganisationInput, CustomerUncheckedUpdateWithoutOrganisationInput>
+    create: XOR<CustomerCreateWithoutOrganisationInput, CustomerUncheckedCreateWithoutOrganisationInput>
+  }
+
+  export type CustomerUpdateWithWhereUniqueWithoutOrganisationInput = {
+    where: CustomerWhereUniqueInput
+    data: XOR<CustomerUpdateWithoutOrganisationInput, CustomerUncheckedUpdateWithoutOrganisationInput>
+  }
+
+  export type CustomerUpdateManyWithWhereWithoutOrganisationInput = {
+    where: CustomerScalarWhereInput
+    data: XOR<CustomerUpdateManyMutationInput, CustomerUncheckedUpdateManyWithoutOrganisationInput>
+  }
+
+  export type CustomerScalarWhereInput = {
+    AND?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
+    OR?: CustomerScalarWhereInput[]
+    NOT?: CustomerScalarWhereInput | CustomerScalarWhereInput[]
+    id?: StringFilter<"Customer"> | string
+    customId?: StringFilter<"Customer"> | string
+    companyName?: StringFilter<"Customer"> | string
+    contactName?: StringFilter<"Customer"> | string
+    pan?: StringFilter<"Customer"> | string
+    cin?: StringNullableFilter<"Customer"> | string | null
+    email?: StringNullableFilter<"Customer"> | string | null
+    phone?: StringNullableFilter<"Customer"> | string | null
+    industry?: StringNullableFilter<"Customer"> | string | null
+    address?: StringNullableFilter<"Customer"> | string | null
+    tags?: StringNullableListFilter<"Customer">
+    status?: StringNullableFilter<"Customer"> | string | null
+    risk?: StringNullableFilter<"Customer"> | string | null
+    orgId?: StringFilter<"Customer"> | string
+    createdAt?: DateTimeFilter<"Customer"> | Date | string
+    updatedAt?: DateTimeFilter<"Customer"> | Date | string
+  }
+
+  export type OrganisationCreateWithoutCustomersInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    departments?: OrganisationCreatedepartmentsInput | string[]
+    createdAt?: Date | string
+    users?: UserCreateNestedManyWithoutOrganisationInput
+    pipelineRuns?: PipelineRunCreateNestedManyWithoutOrganisationInput
+    uploads?: UploadCreateNestedManyWithoutOrganisationInput
+    wcdlLoans?: WCDLLoanCreateNestedManyWithoutOrganisationInput
+    forexTrans?: ForexTransactionCreateNestedManyWithoutOrganisationInput
+    agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
+    formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
+    aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
+  }
+
+  export type OrganisationUncheckedCreateWithoutCustomersInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    departments?: OrganisationCreatedepartmentsInput | string[]
+    createdAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutOrganisationInput
+    pipelineRuns?: PipelineRunUncheckedCreateNestedManyWithoutOrganisationInput
+    uploads?: UploadUncheckedCreateNestedManyWithoutOrganisationInput
+    wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutOrganisationInput
+    forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutOrganisationInput
+    agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
+    formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
+    aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
+  }
+
+  export type OrganisationCreateOrConnectWithoutCustomersInput = {
+    where: OrganisationWhereUniqueInput
+    create: XOR<OrganisationCreateWithoutCustomersInput, OrganisationUncheckedCreateWithoutCustomersInput>
+  }
+
+  export type UploadCreateWithoutCustomerInput = {
+    id?: string
+    filename: string
+    s3Key: string
+    bankName?: string | null
+    accountType?: string | null
+    accountId?: string | null
+    statementMonth?: string | null
+    fileSizeBytes?: bigint | number | null
+    status?: $Enums.UploadStatus | null
+    createdAt?: Date | string
+    organisation: OrganisationCreateNestedOneWithoutUploadsInput
+    user: UserCreateNestedOneWithoutUploadsInput
+    pipelineRun?: PipelineRunCreateNestedOneWithoutUploadsInput
+  }
+
+  export type UploadUncheckedCreateWithoutCustomerInput = {
+    id?: string
+    orgId: string
+    uploadedById: string
+    filename: string
+    s3Key: string
+    bankName?: string | null
+    accountType?: string | null
+    accountId?: string | null
+    statementMonth?: string | null
+    fileSizeBytes?: bigint | number | null
+    status?: $Enums.UploadStatus | null
+    runId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type UploadCreateOrConnectWithoutCustomerInput = {
+    where: UploadWhereUniqueInput
+    create: XOR<UploadCreateWithoutCustomerInput, UploadUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type UploadCreateManyCustomerInputEnvelope = {
+    data: UploadCreateManyCustomerInput | UploadCreateManyCustomerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PipelineRunCreateWithoutCustomerInput = {
+    id?: string
+    statementMonth: string
+    status?: $Enums.RunStatus | null
+    stage?: number | null
+    statementExcelKey?: string | null
+    workingSheetKey?: string | null
+    bankingReportKey?: string | null
+    validationResult?: string | null
+    errorMessage?: string | null
+    reportSummary?: string | null
+    checksum?: string | null
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
+    uploads?: UploadCreateNestedManyWithoutPipelineRunInput
+    wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
+    forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
+  }
+
+  export type PipelineRunUncheckedCreateWithoutCustomerInput = {
+    id?: string
+    orgId: string
+    statementMonth: string
+    status?: $Enums.RunStatus | null
+    stage?: number | null
+    statementExcelKey?: string | null
+    workingSheetKey?: string | null
+    bankingReportKey?: string | null
+    validationResult?: string | null
+    errorMessage?: string | null
+    reportSummary?: string | null
+    checksum?: string | null
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
+    wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
+    forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
+  }
+
+  export type PipelineRunCreateOrConnectWithoutCustomerInput = {
+    where: PipelineRunWhereUniqueInput
+    create: XOR<PipelineRunCreateWithoutCustomerInput, PipelineRunUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type PipelineRunCreateManyCustomerInputEnvelope = {
+    data: PipelineRunCreateManyCustomerInput | PipelineRunCreateManyCustomerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WCDLLoanCreateWithoutCustomerInput = {
+    id?: string
+    statementMonth: string
+    loanNumber: string
+    bankName: string
+    principalAmount: Decimal | DecimalJsLike | number | string
+    roi: Decimal | DecimalJsLike | number | string
+    startDate: Date | string
+    maturityDate: Date | string
+    prepaymentDate?: Date | string | null
+    status?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organisation: OrganisationCreateNestedOneWithoutWcdlLoansInput
+    pipelineRun?: PipelineRunCreateNestedOneWithoutWcdlLoansInput
+  }
+
+  export type WCDLLoanUncheckedCreateWithoutCustomerInput = {
+    id?: string
+    orgId: string
+    runId?: string | null
+    statementMonth: string
+    loanNumber: string
+    bankName: string
+    principalAmount: Decimal | DecimalJsLike | number | string
+    roi: Decimal | DecimalJsLike | number | string
+    startDate: Date | string
+    maturityDate: Date | string
+    prepaymentDate?: Date | string | null
+    status?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WCDLLoanCreateOrConnectWithoutCustomerInput = {
+    where: WCDLLoanWhereUniqueInput
+    create: XOR<WCDLLoanCreateWithoutCustomerInput, WCDLLoanUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type WCDLLoanCreateManyCustomerInputEnvelope = {
+    data: WCDLLoanCreateManyCustomerInput | WCDLLoanCreateManyCustomerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OrganisationUpsertWithoutCustomersInput = {
+    update: XOR<OrganisationUpdateWithoutCustomersInput, OrganisationUncheckedUpdateWithoutCustomersInput>
+    create: XOR<OrganisationCreateWithoutCustomersInput, OrganisationUncheckedCreateWithoutCustomersInput>
+    where?: OrganisationWhereInput
+  }
+
+  export type OrganisationUpdateToOneWithWhereWithoutCustomersInput = {
+    where?: OrganisationWhereInput
+    data: XOR<OrganisationUpdateWithoutCustomersInput, OrganisationUncheckedUpdateWithoutCustomersInput>
+  }
+
+  export type OrganisationUpdateWithoutCustomersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    departments?: OrganisationUpdatedepartmentsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutOrganisationNestedInput
+    pipelineRuns?: PipelineRunUpdateManyWithoutOrganisationNestedInput
+    uploads?: UploadUpdateManyWithoutOrganisationNestedInput
+    wcdlLoans?: WCDLLoanUpdateManyWithoutOrganisationNestedInput
+    forexTrans?: ForexTransactionUpdateManyWithoutOrganisationNestedInput
+    agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
+    formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
+    aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
+  }
+
+  export type OrganisationUncheckedUpdateWithoutCustomersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    departments?: OrganisationUpdatedepartmentsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutOrganisationNestedInput
+    pipelineRuns?: PipelineRunUncheckedUpdateManyWithoutOrganisationNestedInput
+    uploads?: UploadUncheckedUpdateManyWithoutOrganisationNestedInput
+    wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutOrganisationNestedInput
+    forexTrans?: ForexTransactionUncheckedUpdateManyWithoutOrganisationNestedInput
+    agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
+    formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
+    aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
+  }
+
+  export type UploadUpsertWithWhereUniqueWithoutCustomerInput = {
+    where: UploadWhereUniqueInput
+    update: XOR<UploadUpdateWithoutCustomerInput, UploadUncheckedUpdateWithoutCustomerInput>
+    create: XOR<UploadCreateWithoutCustomerInput, UploadUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type UploadUpdateWithWhereUniqueWithoutCustomerInput = {
+    where: UploadWhereUniqueInput
+    data: XOR<UploadUpdateWithoutCustomerInput, UploadUncheckedUpdateWithoutCustomerInput>
+  }
+
+  export type UploadUpdateManyWithWhereWithoutCustomerInput = {
+    where: UploadScalarWhereInput
+    data: XOR<UploadUpdateManyMutationInput, UploadUncheckedUpdateManyWithoutCustomerInput>
+  }
+
+  export type PipelineRunUpsertWithWhereUniqueWithoutCustomerInput = {
+    where: PipelineRunWhereUniqueInput
+    update: XOR<PipelineRunUpdateWithoutCustomerInput, PipelineRunUncheckedUpdateWithoutCustomerInput>
+    create: XOR<PipelineRunCreateWithoutCustomerInput, PipelineRunUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type PipelineRunUpdateWithWhereUniqueWithoutCustomerInput = {
+    where: PipelineRunWhereUniqueInput
+    data: XOR<PipelineRunUpdateWithoutCustomerInput, PipelineRunUncheckedUpdateWithoutCustomerInput>
+  }
+
+  export type PipelineRunUpdateManyWithWhereWithoutCustomerInput = {
+    where: PipelineRunScalarWhereInput
+    data: XOR<PipelineRunUpdateManyMutationInput, PipelineRunUncheckedUpdateManyWithoutCustomerInput>
+  }
+
+  export type WCDLLoanUpsertWithWhereUniqueWithoutCustomerInput = {
+    where: WCDLLoanWhereUniqueInput
+    update: XOR<WCDLLoanUpdateWithoutCustomerInput, WCDLLoanUncheckedUpdateWithoutCustomerInput>
+    create: XOR<WCDLLoanCreateWithoutCustomerInput, WCDLLoanUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type WCDLLoanUpdateWithWhereUniqueWithoutCustomerInput = {
+    where: WCDLLoanWhereUniqueInput
+    data: XOR<WCDLLoanUpdateWithoutCustomerInput, WCDLLoanUncheckedUpdateWithoutCustomerInput>
+  }
+
+  export type WCDLLoanUpdateManyWithWhereWithoutCustomerInput = {
+    where: WCDLLoanScalarWhereInput
+    data: XOR<WCDLLoanUpdateManyMutationInput, WCDLLoanUncheckedUpdateManyWithoutCustomerInput>
+  }
+
   export type RoleCreateWithoutUsersInput = {
     name: string
     description?: string | null
@@ -22729,6 +25348,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutUsersInput = {
@@ -22747,6 +25367,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutUsersInput = {
@@ -22767,6 +25388,7 @@ export namespace Prisma {
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutUploadsInput
     pipelineRun?: PipelineRunCreateNestedOneWithoutUploadsInput
+    customer?: CustomerCreateNestedOneWithoutUploadsInput
   }
 
   export type UploadUncheckedCreateWithoutUserInput = {
@@ -22781,6 +25403,7 @@ export namespace Prisma {
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
     runId?: string | null
+    customerId?: string | null
     createdAt?: Date | string
   }
 
@@ -22911,6 +25534,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutUsersInput = {
@@ -22929,6 +25553,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type UploadUpsertWithWhereUniqueWithoutUserInput = {
@@ -22995,6 +25620,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutPipelineRunsInput = {
@@ -23013,6 +25639,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutPipelineRunsInput = {
@@ -23033,6 +25660,7 @@ export namespace Prisma {
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutUploadsInput
     user: UserCreateNestedOneWithoutUploadsInput
+    customer?: CustomerCreateNestedOneWithoutUploadsInput
   }
 
   export type UploadUncheckedCreateWithoutPipelineRunInput = {
@@ -23047,6 +25675,7 @@ export namespace Prisma {
     statementMonth?: string | null
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
+    customerId?: string | null
     createdAt?: Date | string
   }
 
@@ -23074,6 +25703,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutWcdlLoansInput
+    customer?: CustomerCreateNestedOneWithoutWcdlLoansInput
   }
 
   export type WCDLLoanUncheckedCreateWithoutPipelineRunInput = {
@@ -23088,6 +25718,7 @@ export namespace Prisma {
     maturityDate: Date | string
     prepaymentDate?: Date | string | null
     status?: string | null
+    customerId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -23180,6 +25811,53 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CustomerCreateWithoutPipelineRunsInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organisation: OrganisationCreateNestedOneWithoutCustomersInput
+    uploads?: UploadCreateNestedManyWithoutCustomerInput
+    wcdlLoans?: WCDLLoanCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateWithoutPipelineRunsInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    orgId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploads?: UploadUncheckedCreateNestedManyWithoutCustomerInput
+    wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerCreateOrConnectWithoutPipelineRunsInput = {
+    where: CustomerWhereUniqueInput
+    create: XOR<CustomerCreateWithoutPipelineRunsInput, CustomerUncheckedCreateWithoutPipelineRunsInput>
+  }
+
   export type OrganisationUpsertWithoutPipelineRunsInput = {
     update: XOR<OrganisationUpdateWithoutPipelineRunsInput, OrganisationUncheckedUpdateWithoutPipelineRunsInput>
     create: XOR<OrganisationCreateWithoutPipelineRunsInput, OrganisationUncheckedCreateWithoutPipelineRunsInput>
@@ -23207,6 +25885,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutPipelineRunsInput = {
@@ -23225,6 +25904,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type UploadUpsertWithWhereUniqueWithoutPipelineRunInput = {
@@ -23301,6 +25981,59 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Approval"> | Date | string
   }
 
+  export type CustomerUpsertWithoutPipelineRunsInput = {
+    update: XOR<CustomerUpdateWithoutPipelineRunsInput, CustomerUncheckedUpdateWithoutPipelineRunsInput>
+    create: XOR<CustomerCreateWithoutPipelineRunsInput, CustomerUncheckedCreateWithoutPipelineRunsInput>
+    where?: CustomerWhereInput
+  }
+
+  export type CustomerUpdateToOneWithWhereWithoutPipelineRunsInput = {
+    where?: CustomerWhereInput
+    data: XOR<CustomerUpdateWithoutPipelineRunsInput, CustomerUncheckedUpdateWithoutPipelineRunsInput>
+  }
+
+  export type CustomerUpdateWithoutPipelineRunsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organisation?: OrganisationUpdateOneRequiredWithoutCustomersNestedInput
+    uploads?: UploadUpdateManyWithoutCustomerNestedInput
+    wcdlLoans?: WCDLLoanUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateWithoutPipelineRunsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    orgId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploads?: UploadUncheckedUpdateManyWithoutCustomerNestedInput
+    wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
   export type OrganisationCreateWithoutUploadsInput = {
     id?: string
     name: string
@@ -23317,6 +26050,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutUploadsInput = {
@@ -23335,6 +26069,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutUploadsInput = {
@@ -23406,6 +26141,7 @@ export namespace Prisma {
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
+    customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
   }
 
   export type PipelineRunUncheckedCreateWithoutUploadsInput = {
@@ -23424,6 +26160,7 @@ export namespace Prisma {
     startedAt?: Date | string | null
     completedAt?: Date | string | null
     createdAt?: Date | string
+    customerId?: string | null
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
@@ -23432,6 +26169,53 @@ export namespace Prisma {
   export type PipelineRunCreateOrConnectWithoutUploadsInput = {
     where: PipelineRunWhereUniqueInput
     create: XOR<PipelineRunCreateWithoutUploadsInput, PipelineRunUncheckedCreateWithoutUploadsInput>
+  }
+
+  export type CustomerCreateWithoutUploadsInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organisation: OrganisationCreateNestedOneWithoutCustomersInput
+    pipelineRuns?: PipelineRunCreateNestedManyWithoutCustomerInput
+    wcdlLoans?: WCDLLoanCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateWithoutUploadsInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    orgId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    pipelineRuns?: PipelineRunUncheckedCreateNestedManyWithoutCustomerInput
+    wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerCreateOrConnectWithoutUploadsInput = {
+    where: CustomerWhereUniqueInput
+    create: XOR<CustomerCreateWithoutUploadsInput, CustomerUncheckedCreateWithoutUploadsInput>
   }
 
   export type OrganisationUpsertWithoutUploadsInput = {
@@ -23461,6 +26245,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutUploadsInput = {
@@ -23479,6 +26264,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type UserUpsertWithoutUploadsInput = {
@@ -23562,6 +26348,7 @@ export namespace Prisma {
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
+    customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutUploadsInput = {
@@ -23580,9 +26367,63 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
+  }
+
+  export type CustomerUpsertWithoutUploadsInput = {
+    update: XOR<CustomerUpdateWithoutUploadsInput, CustomerUncheckedUpdateWithoutUploadsInput>
+    create: XOR<CustomerCreateWithoutUploadsInput, CustomerUncheckedCreateWithoutUploadsInput>
+    where?: CustomerWhereInput
+  }
+
+  export type CustomerUpdateToOneWithWhereWithoutUploadsInput = {
+    where?: CustomerWhereInput
+    data: XOR<CustomerUpdateWithoutUploadsInput, CustomerUncheckedUpdateWithoutUploadsInput>
+  }
+
+  export type CustomerUpdateWithoutUploadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organisation?: OrganisationUpdateOneRequiredWithoutCustomersNestedInput
+    pipelineRuns?: PipelineRunUpdateManyWithoutCustomerNestedInput
+    wcdlLoans?: WCDLLoanUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateWithoutUploadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    orgId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pipelineRuns?: PipelineRunUncheckedUpdateManyWithoutCustomerNestedInput
+    wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type OrganisationCreateWithoutWcdlLoansInput = {
@@ -23601,6 +26442,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutWcdlLoansInput = {
@@ -23619,6 +26461,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutWcdlLoansInput = {
@@ -23645,6 +26488,7 @@ export namespace Prisma {
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
+    customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
   }
 
   export type PipelineRunUncheckedCreateWithoutWcdlLoansInput = {
@@ -23663,6 +26507,7 @@ export namespace Prisma {
     startedAt?: Date | string | null
     completedAt?: Date | string | null
     createdAt?: Date | string
+    customerId?: string | null
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
@@ -23671,6 +26516,53 @@ export namespace Prisma {
   export type PipelineRunCreateOrConnectWithoutWcdlLoansInput = {
     where: PipelineRunWhereUniqueInput
     create: XOR<PipelineRunCreateWithoutWcdlLoansInput, PipelineRunUncheckedCreateWithoutWcdlLoansInput>
+  }
+
+  export type CustomerCreateWithoutWcdlLoansInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organisation: OrganisationCreateNestedOneWithoutCustomersInput
+    uploads?: UploadCreateNestedManyWithoutCustomerInput
+    pipelineRuns?: PipelineRunCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateWithoutWcdlLoansInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    orgId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploads?: UploadUncheckedCreateNestedManyWithoutCustomerInput
+    pipelineRuns?: PipelineRunUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerCreateOrConnectWithoutWcdlLoansInput = {
+    where: CustomerWhereUniqueInput
+    create: XOR<CustomerCreateWithoutWcdlLoansInput, CustomerUncheckedCreateWithoutWcdlLoansInput>
   }
 
   export type OrganisationUpsertWithoutWcdlLoansInput = {
@@ -23700,6 +26592,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutWcdlLoansInput = {
@@ -23718,6 +26611,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type PipelineRunUpsertWithoutWcdlLoansInput = {
@@ -23750,6 +26644,7 @@ export namespace Prisma {
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
+    customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutWcdlLoansInput = {
@@ -23768,9 +26663,63 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
+  }
+
+  export type CustomerUpsertWithoutWcdlLoansInput = {
+    update: XOR<CustomerUpdateWithoutWcdlLoansInput, CustomerUncheckedUpdateWithoutWcdlLoansInput>
+    create: XOR<CustomerCreateWithoutWcdlLoansInput, CustomerUncheckedCreateWithoutWcdlLoansInput>
+    where?: CustomerWhereInput
+  }
+
+  export type CustomerUpdateToOneWithWhereWithoutWcdlLoansInput = {
+    where?: CustomerWhereInput
+    data: XOR<CustomerUpdateWithoutWcdlLoansInput, CustomerUncheckedUpdateWithoutWcdlLoansInput>
+  }
+
+  export type CustomerUpdateWithoutWcdlLoansInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organisation?: OrganisationUpdateOneRequiredWithoutCustomersNestedInput
+    uploads?: UploadUpdateManyWithoutCustomerNestedInput
+    pipelineRuns?: PipelineRunUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateWithoutWcdlLoansInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    orgId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploads?: UploadUncheckedUpdateManyWithoutCustomerNestedInput
+    pipelineRuns?: PipelineRunUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type OrganisationCreateWithoutForexTransInput = {
@@ -23789,6 +26738,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutForexTransInput = {
@@ -23807,6 +26757,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutForexTransInput = {
@@ -23833,6 +26784,7 @@ export namespace Prisma {
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
+    customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
   }
 
   export type PipelineRunUncheckedCreateWithoutForexTransInput = {
@@ -23851,6 +26803,7 @@ export namespace Prisma {
     startedAt?: Date | string | null
     completedAt?: Date | string | null
     createdAt?: Date | string
+    customerId?: string | null
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
@@ -23888,6 +26841,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutForexTransInput = {
@@ -23906,6 +26860,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type PipelineRunUpsertWithoutForexTransInput = {
@@ -23938,6 +26893,7 @@ export namespace Prisma {
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
+    customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutForexTransInput = {
@@ -23956,6 +26912,7 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
@@ -23977,6 +26934,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutAgentConfigsInput = {
@@ -23995,6 +26953,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutAgentConfigsInput = {
@@ -24029,6 +26988,7 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutAgentConfigsInput = {
@@ -24047,6 +27007,50 @@ export namespace Prisma {
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutOrganisationNestedInput
+  }
+
+  export type OrganisationCreateWithoutAiUsageLogsInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    departments?: OrganisationCreatedepartmentsInput | string[]
+    createdAt?: Date | string
+    users?: UserCreateNestedManyWithoutOrganisationInput
+    pipelineRuns?: PipelineRunCreateNestedManyWithoutOrganisationInput
+    uploads?: UploadCreateNestedManyWithoutOrganisationInput
+    wcdlLoans?: WCDLLoanCreateNestedManyWithoutOrganisationInput
+    forexTrans?: ForexTransactionCreateNestedManyWithoutOrganisationInput
+    agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
+    formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerCreateNestedManyWithoutOrganisationInput
+  }
+
+  export type OrganisationUncheckedCreateWithoutAiUsageLogsInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    address?: string | null
+    logoUrl?: string | null
+    departments?: OrganisationCreatedepartmentsInput | string[]
+    createdAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutOrganisationInput
+    pipelineRuns?: PipelineRunUncheckedCreateNestedManyWithoutOrganisationInput
+    uploads?: UploadUncheckedCreateNestedManyWithoutOrganisationInput
+    wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutOrganisationInput
+    forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutOrganisationInput
+    agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
+    formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutOrganisationInput
+  }
+
+  export type OrganisationCreateOrConnectWithoutAiUsageLogsInput = {
+    where: OrganisationWhereUniqueInput
+    create: XOR<OrganisationCreateWithoutAiUsageLogsInput, OrganisationUncheckedCreateWithoutAiUsageLogsInput>
   }
 
   export type UserCreateWithoutAiUsageLogsInput = {
@@ -24094,45 +27098,53 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutAiUsageLogsInput, UserUncheckedCreateWithoutAiUsageLogsInput>
   }
 
-  export type OrganisationCreateWithoutAiUsageLogsInput = {
-    id?: string
-    name: string
-    legalName?: string | null
-    address?: string | null
-    logoUrl?: string | null
-    departments?: OrganisationCreatedepartmentsInput | string[]
-    createdAt?: Date | string
-    users?: UserCreateNestedManyWithoutOrganisationInput
-    pipelineRuns?: PipelineRunCreateNestedManyWithoutOrganisationInput
-    uploads?: UploadCreateNestedManyWithoutOrganisationInput
-    wcdlLoans?: WCDLLoanCreateNestedManyWithoutOrganisationInput
-    forexTrans?: ForexTransactionCreateNestedManyWithoutOrganisationInput
-    agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
-    formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
-    auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
-  }
-
-  export type OrganisationUncheckedCreateWithoutAiUsageLogsInput = {
-    id?: string
-    name: string
-    legalName?: string | null
-    address?: string | null
-    logoUrl?: string | null
-    departments?: OrganisationCreatedepartmentsInput | string[]
-    createdAt?: Date | string
-    users?: UserUncheckedCreateNestedManyWithoutOrganisationInput
-    pipelineRuns?: PipelineRunUncheckedCreateNestedManyWithoutOrganisationInput
-    uploads?: UploadUncheckedCreateNestedManyWithoutOrganisationInput
-    wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutOrganisationInput
-    forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutOrganisationInput
-    agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
-    formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
-    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
-  }
-
-  export type OrganisationCreateOrConnectWithoutAiUsageLogsInput = {
-    where: OrganisationWhereUniqueInput
+  export type OrganisationUpsertWithoutAiUsageLogsInput = {
+    update: XOR<OrganisationUpdateWithoutAiUsageLogsInput, OrganisationUncheckedUpdateWithoutAiUsageLogsInput>
     create: XOR<OrganisationCreateWithoutAiUsageLogsInput, OrganisationUncheckedCreateWithoutAiUsageLogsInput>
+    where?: OrganisationWhereInput
+  }
+
+  export type OrganisationUpdateToOneWithWhereWithoutAiUsageLogsInput = {
+    where?: OrganisationWhereInput
+    data: XOR<OrganisationUpdateWithoutAiUsageLogsInput, OrganisationUncheckedUpdateWithoutAiUsageLogsInput>
+  }
+
+  export type OrganisationUpdateWithoutAiUsageLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    departments?: OrganisationUpdatedepartmentsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutOrganisationNestedInput
+    pipelineRuns?: PipelineRunUpdateManyWithoutOrganisationNestedInput
+    uploads?: UploadUpdateManyWithoutOrganisationNestedInput
+    wcdlLoans?: WCDLLoanUpdateManyWithoutOrganisationNestedInput
+    forexTrans?: ForexTransactionUpdateManyWithoutOrganisationNestedInput
+    agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
+    formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUpdateManyWithoutOrganisationNestedInput
+  }
+
+  export type OrganisationUncheckedUpdateWithoutAiUsageLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    departments?: OrganisationUpdatedepartmentsInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutOrganisationNestedInput
+    pipelineRuns?: PipelineRunUncheckedUpdateManyWithoutOrganisationNestedInput
+    uploads?: UploadUncheckedUpdateManyWithoutOrganisationNestedInput
+    wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutOrganisationNestedInput
+    forexTrans?: ForexTransactionUncheckedUpdateManyWithoutOrganisationNestedInput
+    agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
+    formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type UserUpsertWithoutAiUsageLogsInput = {
@@ -24186,53 +27198,6 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type OrganisationUpsertWithoutAiUsageLogsInput = {
-    update: XOR<OrganisationUpdateWithoutAiUsageLogsInput, OrganisationUncheckedUpdateWithoutAiUsageLogsInput>
-    create: XOR<OrganisationCreateWithoutAiUsageLogsInput, OrganisationUncheckedCreateWithoutAiUsageLogsInput>
-    where?: OrganisationWhereInput
-  }
-
-  export type OrganisationUpdateToOneWithWhereWithoutAiUsageLogsInput = {
-    where?: OrganisationWhereInput
-    data: XOR<OrganisationUpdateWithoutAiUsageLogsInput, OrganisationUncheckedUpdateWithoutAiUsageLogsInput>
-  }
-
-  export type OrganisationUpdateWithoutAiUsageLogsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    legalName?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    departments?: OrganisationUpdatedepartmentsInput | string[]
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    users?: UserUpdateManyWithoutOrganisationNestedInput
-    pipelineRuns?: PipelineRunUpdateManyWithoutOrganisationNestedInput
-    uploads?: UploadUpdateManyWithoutOrganisationNestedInput
-    wcdlLoans?: WCDLLoanUpdateManyWithoutOrganisationNestedInput
-    forexTrans?: ForexTransactionUpdateManyWithoutOrganisationNestedInput
-    agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
-    formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
-    auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
-  }
-
-  export type OrganisationUncheckedUpdateWithoutAiUsageLogsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    legalName?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    departments?: OrganisationUpdatedepartmentsInput | string[]
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    users?: UserUncheckedUpdateManyWithoutOrganisationNestedInput
-    pipelineRuns?: PipelineRunUncheckedUpdateManyWithoutOrganisationNestedInput
-    uploads?: UploadUncheckedUpdateManyWithoutOrganisationNestedInput
-    wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutOrganisationNestedInput
-    forexTrans?: ForexTransactionUncheckedUpdateManyWithoutOrganisationNestedInput
-    agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
-    formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
-    auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
-  }
-
   export type OrganisationCreateWithoutAuditLogsInput = {
     id?: string
     name: string
@@ -24249,6 +27214,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutAuditLogsInput = {
@@ -24267,6 +27233,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
     formulaConfigs?: FormulaConfigurationUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutAuditLogsInput = {
@@ -24346,6 +27313,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutAuditLogsInput = {
@@ -24364,6 +27332,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
     formulaConfigs?: FormulaConfigurationUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type UserUpsertWithoutAuditLogsInput = {
@@ -24436,6 +27405,7 @@ export namespace Prisma {
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
+    customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
   }
 
   export type PipelineRunUncheckedCreateWithoutApprovalsInput = {
@@ -24454,6 +27424,7 @@ export namespace Prisma {
     startedAt?: Date | string | null
     completedAt?: Date | string | null
     createdAt?: Date | string
+    customerId?: string | null
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
@@ -24494,6 +27465,7 @@ export namespace Prisma {
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
+    customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutApprovalsInput = {
@@ -24512,6 +27484,7 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
@@ -24533,6 +27506,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationUncheckedCreateWithoutFormulaConfigsInput = {
@@ -24551,6 +27525,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedCreateNestedManyWithoutOrganisationInput
     aiUsageLogs?: AIUsageLogUncheckedCreateNestedManyWithoutOrganisationInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutOrganisationInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutOrganisationInput
   }
 
   export type OrganisationCreateOrConnectWithoutFormulaConfigsInput = {
@@ -24585,6 +27560,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUpdateManyWithoutOrganisationNestedInput
   }
 
   export type OrganisationUncheckedUpdateWithoutFormulaConfigsInput = {
@@ -24603,6 +27579,7 @@ export namespace Prisma {
     agentConfigs?: AgentConfigUncheckedUpdateManyWithoutOrganisationNestedInput
     aiUsageLogs?: AIUsageLogUncheckedUpdateManyWithoutOrganisationNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutOrganisationNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutOrganisationNestedInput
   }
 
   export type UserCreateManyRoleInput = {
@@ -24711,6 +27688,7 @@ export namespace Prisma {
     startedAt?: Date | string | null
     completedAt?: Date | string | null
     createdAt?: Date | string
+    customerId?: string | null
   }
 
   export type UploadCreateManyOrganisationInput = {
@@ -24725,6 +27703,7 @@ export namespace Prisma {
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
     runId?: string | null
+    customerId?: string | null
     createdAt?: Date | string
   }
 
@@ -24740,6 +27719,7 @@ export namespace Prisma {
     maturityDate: Date | string
     prepaymentDate?: Date | string | null
     status?: string | null
+    customerId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -24811,6 +27791,24 @@ export namespace Prisma {
     entityId: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
+  }
+
+  export type CustomerCreateManyOrganisationInput = {
+    id?: string
+    customId: string
+    companyName: string
+    contactName: string
+    pan: string
+    cin?: string | null
+    email?: string | null
+    phone?: string | null
+    industry?: string | null
+    address?: string | null
+    tags?: CustomerCreatetagsInput | string[]
+    status?: string | null
+    risk?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type UserUpdateWithoutOrganisationInput = {
@@ -24889,6 +27887,7 @@ export namespace Prisma {
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
+    customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutOrganisationInput = {
@@ -24906,6 +27905,7 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
@@ -24927,6 +27927,7 @@ export namespace Prisma {
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UploadUpdateWithoutOrganisationInput = {
@@ -24942,6 +27943,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutUploadsNestedInput
     pipelineRun?: PipelineRunUpdateOneWithoutUploadsNestedInput
+    customer?: CustomerUpdateOneWithoutUploadsNestedInput
   }
 
   export type UploadUncheckedUpdateWithoutOrganisationInput = {
@@ -24956,6 +27958,7 @@ export namespace Prisma {
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -24971,6 +27974,7 @@ export namespace Prisma {
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -24988,6 +27992,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     pipelineRun?: PipelineRunUpdateOneWithoutWcdlLoansNestedInput
+    customer?: CustomerUpdateOneWithoutWcdlLoansNestedInput
   }
 
   export type WCDLLoanUncheckedUpdateWithoutOrganisationInput = {
@@ -25002,6 +28007,7 @@ export namespace Prisma {
     maturityDate?: DateTimeFieldUpdateOperationsInput | Date | string
     prepaymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25018,6 +28024,7 @@ export namespace Prisma {
     maturityDate?: DateTimeFieldUpdateOperationsInput | Date | string
     prepaymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25229,6 +28236,278 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CustomerUpdateWithoutOrganisationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploads?: UploadUpdateManyWithoutCustomerNestedInput
+    pipelineRuns?: PipelineRunUpdateManyWithoutCustomerNestedInput
+    wcdlLoans?: WCDLLoanUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateWithoutOrganisationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploads?: UploadUncheckedUpdateManyWithoutCustomerNestedInput
+    pipelineRuns?: PipelineRunUncheckedUpdateManyWithoutCustomerNestedInput
+    wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateManyWithoutOrganisationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customId?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    contactName?: StringFieldUpdateOperationsInput | string
+    pan?: StringFieldUpdateOperationsInput | string
+    cin?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CustomerUpdatetagsInput | string[]
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    risk?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UploadCreateManyCustomerInput = {
+    id?: string
+    orgId: string
+    uploadedById: string
+    filename: string
+    s3Key: string
+    bankName?: string | null
+    accountType?: string | null
+    accountId?: string | null
+    statementMonth?: string | null
+    fileSizeBytes?: bigint | number | null
+    status?: $Enums.UploadStatus | null
+    runId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PipelineRunCreateManyCustomerInput = {
+    id?: string
+    orgId: string
+    statementMonth: string
+    status?: $Enums.RunStatus | null
+    stage?: number | null
+    statementExcelKey?: string | null
+    workingSheetKey?: string | null
+    bankingReportKey?: string | null
+    validationResult?: string | null
+    errorMessage?: string | null
+    reportSummary?: string | null
+    checksum?: string | null
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type WCDLLoanCreateManyCustomerInput = {
+    id?: string
+    orgId: string
+    runId?: string | null
+    statementMonth: string
+    loanNumber: string
+    bankName: string
+    principalAmount: Decimal | DecimalJsLike | number | string
+    roi: Decimal | DecimalJsLike | number | string
+    startDate: Date | string
+    maturityDate: Date | string
+    prepaymentDate?: Date | string | null
+    status?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UploadUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    s3Key?: StringFieldUpdateOperationsInput | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: NullableStringFieldUpdateOperationsInput | string | null
+    accountId?: NullableStringFieldUpdateOperationsInput | string | null
+    statementMonth?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organisation?: OrganisationUpdateOneRequiredWithoutUploadsNestedInput
+    user?: UserUpdateOneRequiredWithoutUploadsNestedInput
+    pipelineRun?: PipelineRunUpdateOneWithoutUploadsNestedInput
+  }
+
+  export type UploadUncheckedUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    uploadedById?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    s3Key?: StringFieldUpdateOperationsInput | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: NullableStringFieldUpdateOperationsInput | string | null
+    accountId?: NullableStringFieldUpdateOperationsInput | string | null
+    statementMonth?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
+    runId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UploadUncheckedUpdateManyWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    uploadedById?: StringFieldUpdateOperationsInput | string
+    filename?: StringFieldUpdateOperationsInput | string
+    s3Key?: StringFieldUpdateOperationsInput | string
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountType?: NullableStringFieldUpdateOperationsInput | string | null
+    accountId?: NullableStringFieldUpdateOperationsInput | string | null
+    statementMonth?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
+    runId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PipelineRunUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    statementMonth?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumRunStatusFieldUpdateOperationsInput | $Enums.RunStatus | null
+    stage?: NullableIntFieldUpdateOperationsInput | number | null
+    statementExcelKey?: NullableStringFieldUpdateOperationsInput | string | null
+    workingSheetKey?: NullableStringFieldUpdateOperationsInput | string | null
+    bankingReportKey?: NullableStringFieldUpdateOperationsInput | string | null
+    validationResult?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    reportSummary?: NullableStringFieldUpdateOperationsInput | string | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
+    uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
+    wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
+    forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
+  }
+
+  export type PipelineRunUncheckedUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    statementMonth?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumRunStatusFieldUpdateOperationsInput | $Enums.RunStatus | null
+    stage?: NullableIntFieldUpdateOperationsInput | number | null
+    statementExcelKey?: NullableStringFieldUpdateOperationsInput | string | null
+    workingSheetKey?: NullableStringFieldUpdateOperationsInput | string | null
+    bankingReportKey?: NullableStringFieldUpdateOperationsInput | string | null
+    validationResult?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    reportSummary?: NullableStringFieldUpdateOperationsInput | string | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
+    wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
+    forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
+  }
+
+  export type PipelineRunUncheckedUpdateManyWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    statementMonth?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumRunStatusFieldUpdateOperationsInput | $Enums.RunStatus | null
+    stage?: NullableIntFieldUpdateOperationsInput | number | null
+    statementExcelKey?: NullableStringFieldUpdateOperationsInput | string | null
+    workingSheetKey?: NullableStringFieldUpdateOperationsInput | string | null
+    bankingReportKey?: NullableStringFieldUpdateOperationsInput | string | null
+    validationResult?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    reportSummary?: NullableStringFieldUpdateOperationsInput | string | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WCDLLoanUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    statementMonth?: StringFieldUpdateOperationsInput | string
+    loanNumber?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    principalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    roi?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    maturityDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    prepaymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organisation?: OrganisationUpdateOneRequiredWithoutWcdlLoansNestedInput
+    pipelineRun?: PipelineRunUpdateOneWithoutWcdlLoansNestedInput
+  }
+
+  export type WCDLLoanUncheckedUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    runId?: NullableStringFieldUpdateOperationsInput | string | null
+    statementMonth?: StringFieldUpdateOperationsInput | string
+    loanNumber?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    principalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    roi?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    maturityDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    prepaymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WCDLLoanUncheckedUpdateManyWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    runId?: NullableStringFieldUpdateOperationsInput | string | null
+    statementMonth?: StringFieldUpdateOperationsInput | string
+    loanNumber?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    principalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    roi?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    maturityDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    prepaymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UploadCreateManyUserInput = {
     id?: string
     orgId: string
@@ -25241,6 +28520,7 @@ export namespace Prisma {
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
     runId?: string | null
+    customerId?: string | null
     createdAt?: Date | string
   }
 
@@ -25280,6 +28560,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutUploadsNestedInput
     pipelineRun?: PipelineRunUpdateOneWithoutUploadsNestedInput
+    customer?: CustomerUpdateOneWithoutUploadsNestedInput
   }
 
   export type UploadUncheckedUpdateWithoutUserInput = {
@@ -25294,6 +28575,7 @@ export namespace Prisma {
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -25309,6 +28591,7 @@ export namespace Prisma {
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -25393,6 +28676,7 @@ export namespace Prisma {
     statementMonth?: string | null
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
+    customerId?: string | null
     createdAt?: Date | string
   }
 
@@ -25408,6 +28692,7 @@ export namespace Prisma {
     maturityDate: Date | string
     prepaymentDate?: Date | string | null
     status?: string | null
+    customerId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -25454,6 +28739,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutUploadsNestedInput
     user?: UserUpdateOneRequiredWithoutUploadsNestedInput
+    customer?: CustomerUpdateOneWithoutUploadsNestedInput
   }
 
   export type UploadUncheckedUpdateWithoutPipelineRunInput = {
@@ -25468,6 +28754,7 @@ export namespace Prisma {
     statementMonth?: NullableStringFieldUpdateOperationsInput | string | null
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -25483,6 +28770,7 @@ export namespace Prisma {
     statementMonth?: NullableStringFieldUpdateOperationsInput | string | null
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -25500,6 +28788,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutWcdlLoansNestedInput
+    customer?: CustomerUpdateOneWithoutWcdlLoansNestedInput
   }
 
   export type WCDLLoanUncheckedUpdateWithoutPipelineRunInput = {
@@ -25514,6 +28803,7 @@ export namespace Prisma {
     maturityDate?: DateTimeFieldUpdateOperationsInput | Date | string
     prepaymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25530,6 +28820,7 @@ export namespace Prisma {
     maturityDate?: DateTimeFieldUpdateOperationsInput | Date | string
     prepaymentDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

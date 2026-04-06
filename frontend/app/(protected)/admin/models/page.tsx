@@ -136,9 +136,9 @@ export default function AdminModelsPage() {
       return (
           <div className="flex items-center justify-center h-[calc(100vh-10rem)] w-full">
               <div className="text-center space-y-4">
-                  <ShieldCheck className="h-16 w-16 text-rose-500/50 mx-auto" />
-                  <h2 className="text-2xl font-bold text-slate-200 tracking-wider uppercase">Restricted Core Domain</h2>
-                  <p className="text-sm text-slate-500 max-w-md mx-auto">AI Model mapping configurations are restricted strictly to Super Administrators (Role 0) to prevent unauthorized cost escalation.</p>
+                  <ShieldCheck className="h-16 w-16 text-status-critical/50 mx-auto" />
+                  <h2 className="text-2xl font-bold text-t-heading tracking-wider uppercase">Restricted Core Domain</h2>
+                  <p className="text-sm text-t-muted max-w-md mx-auto">AI Model mapping configurations are restricted strictly to Super Administrators (Role 0) to prevent unauthorized cost escalation.</p>
               </div>
           </div>
       )
@@ -149,46 +149,46 @@ export default function AdminModelsPage() {
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
          {/* ...stats remain identical */}
-         <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-            <div className="flex items-center gap-2 text-slate-500 mb-1">
+         <div className="rounded-xl border border-neutral-border bg-neutral-card p-4">
+            <div className="flex items-center gap-2 text-t-muted mb-1">
                <Cpu className="h-4 w-4" />
                <span className="text-[10px] font-semibold uppercase tracking-wider">Models Catalog</span>
             </div>
-            <p className="text-2xl font-bold text-slate-100">{extModels.length}</p>
-            <p className="text-[10px] text-slate-500">Live from OpenRouter</p>
+            <p className="text-2xl font-bold text-t-heading">{extModels.length}</p>
+            <p className="text-[10px] text-t-muted">Live from OpenRouter</p>
          </div>
-         <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-            <div className="flex items-center gap-2 text-indigo-400 mb-1">
+         <div className="rounded-xl border border-neutral-border bg-neutral-card p-4">
+            <div className="flex items-center gap-2 text-ai-violet mb-1">
                <ShieldCheck className="h-4 w-4" />
                <span className="text-[10px] font-semibold uppercase tracking-wider">Active Agents</span>
             </div>
-            <p className="text-2xl font-bold text-slate-100">{AGENTS.length}</p>
-            <p className="text-[10px] text-slate-500">Extractors configured</p>
+            <p className="text-2xl font-bold text-t-heading">{AGENTS.length}</p>
+            <p className="text-[10px] text-t-muted">Extractors configured</p>
          </div>
-         <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-            <div className="flex items-center gap-2 text-emerald-400 mb-1">
+         <div className="rounded-xl border border-neutral-border bg-neutral-card p-4">
+            <div className="flex items-center gap-2 text-status-success mb-1">
                <Zap className="h-4 w-4" />
                <span className="text-[10px] font-semibold uppercase tracking-wider">Default Model</span>
             </div>
-            <p className="text-sm font-bold text-slate-200 truncate">Claude 3 Sonnet</p>
-            <p className="text-[10px] text-slate-500">Highest reliability score</p>
+            <p className="text-sm font-bold text-t-heading truncate">Claude 3 Sonnet</p>
+            <p className="text-[10px] text-t-muted">Highest reliability score</p>
          </div>
-         <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-            <div className="flex items-center gap-2 text-amber-400 mb-1">
+         <div className="rounded-xl border border-neutral-border bg-neutral-card p-4">
+            <div className="flex items-center gap-2 text-status-medium mb-1">
                <DollarSign className="h-4 w-4" />
                <span className="text-[10px] font-semibold uppercase tracking-wider">Est. Monthly Cost</span>
             </div>
-            <p className="text-2xl font-bold text-slate-100">$42.30</p>
-            <p className="text-[10px] text-slate-500">Across 180 runs</p>
+            <p className="text-2xl font-bold text-t-heading">$42.30</p>
+            <p className="text-[10px] text-t-muted">Across 180 runs</p>
          </div>
       </div>
 
       <div className="flex flex-1 gap-6 min-h-0">
         {/* Left - Agent Configuration */}
-        <div className="w-[450px] overflow-y-auto rounded-xl border border-slate-800 bg-slate-900 flex flex-col shrink-0">
-           <div className="border-b border-slate-800 p-4 shrink-0 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-slate-200">Agent Architectures</h2>
-              <Settings2 className="h-4 w-4 text-slate-600" />
+        <div className="w-[450px] overflow-y-auto rounded-xl border border-neutral-border bg-neutral-card flex flex-col shrink-0">
+           <div className="border-b border-neutral-border p-4 shrink-0 flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-t-heading">Agent Architectures</h2>
+              <Settings2 className="h-4 w-4 text-t-muted" />
            </div>
            <div className="p-3 space-y-3 flex-1 overflow-y-auto scrollbar-hide">
               {AGENTS.map(agent => {
@@ -199,31 +199,31 @@ export default function AdminModelsPage() {
                     key={agent.id}
                     onClick={() => setSelectedAgent(agent.id)}
                     className={`w-full rounded-xl p-4 text-left border transition-all ${
-                      active ? 'bg-indigo-500/10 border-indigo-500/40' : 'bg-slate-950 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
+                      active ? 'bg-ai-violet/10 border-indigo-500/40' : 'bg-neutral-app border-neutral-border hover:border-neutral-border hover:bg-neutral-card'
                     }`}
                   >
                     <div className="flex justify-between items-start mb-3">
-                       <span className="text-xs font-semibold text-slate-300 uppercase tracking-widest">{agent.name}</span>
-                       <span className="text-[9px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-1.5 py-0.5 rounded tracking-widest uppercase">{agent.type}</span>
+                       <span className="text-xs font-semibold text-t-body uppercase tracking-widest">{agent.name}</span>
+                       <span className="text-[9px] bg-ai-violet/10 text-ai-violet border border-indigo-500/20 px-1.5 py-0.5 rounded tracking-widest uppercase">{agent.type}</span>
                     </div>
                     
-                    <div className="flex items-center gap-2 text-[10px] text-slate-400 mb-1.5 p-1.5 bg-slate-900 rounded-md border border-slate-800/50">
-                       <Zap className="h-3 w-3 text-amber-500 shrink-0" />
+                    <div className="flex items-center gap-2 text-[10px] text-t-muted mb-1.5 p-1.5 bg-neutral-card rounded-md border border-neutral-border/50">
+                       <Zap className="h-3 w-3 text-status-medium shrink-0" />
                        <span className="font-bold flex-1">Primary:</span>
-                       <span className="truncate text-slate-200 font-mono tracking-tight">{config?.primaryModel || "Awaiting Setup"}</span>
+                       <span className="truncate text-t-heading font-mono tracking-tight">{config?.primaryModel || "Awaiting Setup"}</span>
                     </div>
                     
                     {config?.fallbackModels && config.fallbackModels.length > 0 && (
                         <div className="mt-3">
-                          <p className="text-[9px] text-slate-500 font-semibold uppercase tracking-wider mb-1.5 px-0.5">Enabled Fallback Pipeline</p>
+                          <p className="text-[9px] text-t-muted font-semibold uppercase tracking-wider mb-1.5 px-0.5">Enabled Fallback Pipeline</p>
                           <div className="flex gap-1.5 flex-wrap">
                              {config.fallbackModels.map((f, i) => (
-                                 <span key={f} className="text-[9px] bg-slate-900 border border-slate-700/50 text-slate-300 pl-2 pr-1 py-1 rounded inline-flex items-center gap-1.5 font-mono shadow-sm">
-                                    <span className="text-indigo-400">{i+1}.</span>
+                                 <span key={f} className="text-[9px] bg-neutral-card border border-neutral-border/50 text-t-body pl-2 pr-1 py-1 rounded inline-flex items-center gap-1.5 font-mono shadow-sm">
+                                    <span className="text-ai-violet">{i+1}.</span>
                                     {f.replace('/', '/\n').split('\n').pop() || f}
                                     <div 
                                       onClick={(e) => { e.stopPropagation(); removeFallback(agent.id, f); }} 
-                                      className="ml-0.5 hover:bg-red-500/20 hover:text-red-400 rounded-full w-4 h-4 flex items-center justify-center cursor-pointer transition-colors"
+                                      className="ml-0.5 hover:bg-red-500/20 hover:text-status-critical rounded-full w-4 h-4 flex items-center justify-center cursor-pointer transition-colors"
                                     >
                                       ×
                                     </div>
@@ -243,63 +243,63 @@ export default function AdminModelsPage() {
            {/* Catalog Filters */}
            <div className="flex items-center gap-4 mb-4">
               <div className="relative flex-1">
-                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-t-muted" />
                  <input 
                    type="text" 
                    placeholder="Search 180+ authoritative models (Anthropic, OpenAI, Google)..."
                    value={search}
                    onChange={(e) => setSearch(e.target.value)}
-                   className="w-full bg-slate-900 border border-slate-800 rounded-lg pl-10 pr-4 py-2 flex-1 text-sm text-slate-200 outline-none focus:border-indigo-500/50"
+                   className="w-full bg-neutral-card border border-neutral-border rounded-lg pl-10 pr-4 py-2 flex-1 text-sm text-t-heading outline-none focus:border-indigo-500/50"
                  />
               </div>
            </div>
 
            {/* Catalog List */}
-           <div className="flex-1 overflow-y-auto rounded-xl border border-slate-800 bg-slate-900 scrollbar-hide relative overflow-hidden">
+           <div className="flex-1 overflow-y-auto rounded-xl border border-neutral-border bg-neutral-card scrollbar-hide relative overflow-hidden">
              {selectedAgent ? (
                <table className="w-full text-left text-sm relative z-10">
-                  <thead className="sticky top-0 bg-slate-900 z-20 border-b border-slate-800 backdrop-blur-md">
-                    <tr className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                  <thead className="sticky top-0 bg-neutral-card z-20 border-b border-neutral-border backdrop-blur-md">
+                    <tr className="text-[10px] uppercase tracking-wider text-t-muted font-semibold">
                        <th className="px-6 py-4">Authoritative Engine</th>
                        <th className="px-6 py-4 text-center">Context Window</th>
                        <th className="px-6 py-4 text-right">Pricing Analytics</th>
                        <th className="px-6 py-4 text-right">Routing Controls</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/50">
+                  <tbody className="divide-y divide-neutral-border">
                      {filteredModels.map(model => (
-                       <tr key={model.id} className="hover:bg-slate-800/30 group transition-colors">
+                       <tr key={model.id} className="hover:bg-neutral-row/30 group transition-colors">
                           <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
-                                 <div className="h-8 w-8 rounded bg-slate-950 border border-slate-800 shadow-sm flex items-center justify-center shrink-0">
-                                    <Globe className="h-4 w-4 text-indigo-500/70" />
+                                 <div className="h-8 w-8 rounded bg-neutral-app border border-neutral-border shadow-sm flex items-center justify-center shrink-0">
+                                    <Globe className="h-4 w-4 text-ai-violet/70" />
                                  </div>
                                  <div className="min-w-0">
-                                    <p className="text-sm font-bold text-slate-200 truncate">{model.name}</p>
-                                    <p className="text-[9px] text-slate-500 font-mono truncate">{model.id}</p>
+                                    <p className="text-sm font-bold text-t-heading truncate">{model.name}</p>
+                                    <p className="text-[9px] text-t-muted font-mono truncate">{model.id}</p>
                                  </div>
                               </div>
                           </td>
-                          <td className="px-6 py-4 text-xs font-mono text-slate-400 text-center">
+                          <td className="px-6 py-4 text-xs font-mono text-t-muted text-center">
                              {(model.context_length / 1024).toFixed(0)}k
                           </td>
                           <td className="px-6 py-4 text-right font-mono">
                              <div className="space-y-1">
-                                <p className="text-[10px] text-slate-400"><span className="text-slate-500 pr-2">PRMPT:</span> ${(parseFloat(model.pricing.prompt) * 1e6).toFixed(2)}</p>
-                                <p className="text-[10px] text-slate-400"><span className="text-slate-500 pr-2">CPLTN:</span> ${(parseFloat(model.pricing.completion) * 1e6).toFixed(2)}</p>
+                                <p className="text-[10px] text-t-muted"><span className="text-t-muted pr-2">PRMPT:</span> ${(parseFloat(model.pricing.prompt) * 1e6).toFixed(2)}</p>
+                                <p className="text-[10px] text-t-muted"><span className="text-t-muted pr-2">CPLTN:</span> ${(parseFloat(model.pricing.completion) * 1e6).toFixed(2)}</p>
                              </div>
                           </td>
                           <td className="px-6 py-4 text-right align-middle">
                               <div className="flex items-center gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button 
                                   onClick={() => assignPrimary(selectedAgent, model.id)}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-slate-900 border border-amber-500/20 text-[10px] font-bold tracking-widest uppercase rounded shadow transition-all duration-300"
+                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-status-medium-bg text-status-medium hover:bg-amber-500 hover:text-slate-900 border border-amber-500/20 text-[10px] font-bold tracking-widest uppercase rounded shadow transition-all duration-300"
                                 >
                                    Sets Primary <Zap className="h-3 w-3" />
                                 </button>
                                 <button 
                                   onClick={() => assignFallback(selectedAgent, model.id)}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 text-slate-300 hover:bg-indigo-500 hover:text-white border border-slate-700 text-[10px] font-bold tracking-widest uppercase rounded shadow transition-all duration-300"
+                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-row text-t-body hover:bg-ai-violet hover:text-t-heading border border-neutral-border text-[10px] font-bold tracking-widest uppercase rounded shadow transition-all duration-300"
                                 >
                                    Add Fallback <Layers className="h-3 w-3" />
                                 </button>
@@ -310,10 +310,10 @@ export default function AdminModelsPage() {
                   </tbody>
                </table>
              ) : (
-                <div className="absolute inset-0 flex items-center justify-center flex-col text-slate-500">
-                    <Layers className="h-12 w-12 text-slate-700 mb-4" />
+                <div className="absolute inset-0 flex items-center justify-center flex-col text-t-muted">
+                    <Layers className="h-12 w-12 text-t-muted mb-4" />
                     <p className="font-bold tracking-wider uppercase text-sm">Select an Architecture</p>
-                    <p className="text-xs text-slate-600 mt-1">Select an Agent to assign Primary & Fallback compute structures.</p>
+                    <p className="text-xs text-t-muted mt-1">Select an Agent to assign Primary & Fallback compute structures.</p>
                 </div>
              )}
            </div>

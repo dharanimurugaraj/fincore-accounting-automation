@@ -12,12 +12,16 @@ CREATE TABLE IF NOT EXISTS "Role" (
     "allowedPages" TEXT[] DEFAULT '{"*"}'
 );
 
-INSERT INTO "Role" (id, name, description) VALUES 
-(0, 'SUPER_ADMIN', 'Platform-wide total access'),
-(1, 'ADMIN', 'Organization-level administration'),
-(2, 'ANALYST', 'Standard organization user'),
-(3, 'VIEWER', 'Read-only organization access')
-ON CONFLICT DO NOTHING;
+INSERT INTO "Role" (id, name, description, "allowedPages") VALUES 
+(0, 'SUPER_ADMIN', 'Platform-wide total access', '{"*"}'),
+(1, 'ADMIN', 'Organization-level administration', '{"*"}'),
+(2, 'ANALYST', 'Standard organization user', '{"Dashboard", "Upload", "Documents", "Reports", "WCDL Tracker", "Forex Register", "Activity"}'),
+(3, 'VIEWER', 'Read-only organization access', '{"Dashboard", "Reports"}'),
+(4, 'PENDING_APPROVAL', 'User awaiting administrator confirmation', '{}')
+ON CONFLICT (id) DO UPDATE SET 
+    name = EXCLUDED.name,
+    description = EXCLUDED.description,
+    "allowedPages" = EXCLUDED."allowedPages";
 
 -- Enums
 DO $$ BEGIN
@@ -37,6 +41,25 @@ CREATE TABLE IF NOT EXISTS "Organisation" (
     "logoUrl" TEXT,
     "departments" TEXT[] DEFAULT '{}',
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "Customer" (
+    id TEXT PRIMARY KEY,
+    "customId" TEXT UNIQUE NOT NULL,
+    "companyName" TEXT NOT NULL,
+    "contactName" TEXT NOT NULL,
+    "pan" TEXT NOT NULL,
+    "cin" TEXT,
+    "email" TEXT,
+    "phone" TEXT,
+    "industry" TEXT,
+    "address" TEXT,
+    "tags" TEXT[] DEFAULT '{}',
+    "status" TEXT DEFAULT 'ACTIVE',
+    "risk" TEXT DEFAULT 'LOW',
+    "orgId" TEXT NOT NULL REFERENCES "Organisation"(id) ON DELETE CASCADE,
+    "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS "User" (
@@ -72,6 +95,7 @@ CREATE TABLE IF NOT EXISTS "PipelineRun" (
     "checksum" TEXT,
     "startedAt" TIMESTAMP WITH TIME ZONE,
     "completedAt" TIMESTAMP WITH TIME ZONE,
+    "customerId" TEXT REFERENCES "Customer"(id) ON DELETE SET NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -88,6 +112,7 @@ CREATE TABLE IF NOT EXISTS "Upload" (
     "fileSizeBytes"  BIGINT,
     status "UploadStatus" DEFAULT 'UPLOADED',
     "runId"          TEXT REFERENCES "PipelineRun"(id) ON DELETE SET NULL,
+    "customerId"     TEXT REFERENCES "Customer"(id) ON DELETE SET NULL,
     "createdAt"      TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -104,6 +129,7 @@ CREATE TABLE IF NOT EXISTS "WCDLLoan" (
     "maturityDate"    DATE NOT NULL,
     "prepaymentDate"  DATE,
     "status"          TEXT DEFAULT 'ACTIVE',
+    "customerId"      TEXT REFERENCES "Customer"(id) ON DELETE SET NULL,
     "createdAt"       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     "updatedAt"       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
