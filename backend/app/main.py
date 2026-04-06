@@ -51,9 +51,17 @@ app.include_router(api_v1_router, prefix="/api/v1")
 # Static file serving for local storage (Safe for Vercel)
 import os
 storage_path = Path(settings.LOCAL_STORAGE_PATH)
-if not os.getenv("VERCEL"):
-    storage_path.mkdir(parents=True, exist_ok=True)
-app.mount("/files", StaticFiles(directory=str(storage_path)), name="local-files")
+try:
+    if not storage_path.exists():
+        storage_path.mkdir(parents=True, exist_ok=True)
+except Exception as e:
+    print(f"WARN: Could not create storage directory {storage_path}: {e}")
+
+if storage_path.exists():
+    app.mount("/files", StaticFiles(directory=str(storage_path)), name="local-files")
+else:
+    print(f"WARN: Skipping StaticFiles mount - {storage_path} does not exist.")
+
 
 
 @app.get("/api/v1/health")

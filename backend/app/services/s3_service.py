@@ -17,7 +17,12 @@ class LocalStorage:
 
     def __init__(self, root: Path = None):
         self.root = root or STORAGE_ROOT
-        self.root.mkdir(parents=True, exist_ok=True)
+        try:
+            if not self.root.exists():
+                self.root.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            pass # Vercel may have restricted access to non-tmp paths
+
 
     def _resolve(self, key: str) -> Path:
         full = self.root / key

@@ -15,14 +15,22 @@ def get_db_connection():
         raise ValueError("DATABASE_URL environment variable is missing.")
     
     # Force SSL for cloud providers like Prisma/Neon/AWS
+    # If sslmode is already in the URL, don't pass it as a separate param to avoid conflict
+    if 'sslmode=' in url:
+        return psycopg2.connect(
+            url,
+            cursor_factory=RealDictCursor,
+            connect_timeout=5
+        )
+
     ssl = 'require' if 'prisma' in url or '.io' in url or 'neon' in url else 'prefer'
-    
     return psycopg2.connect(
         url,
         cursor_factory=RealDictCursor,
         sslmode=ssl,
         connect_timeout=5
     )
+
 
 @contextmanager
 def get_db():
