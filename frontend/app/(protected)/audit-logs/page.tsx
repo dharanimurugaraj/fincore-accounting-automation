@@ -84,24 +84,24 @@ export default function AuditLogsPage() {
     <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col gap-4 md:flex-row md:items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
+          <h1 className="text-3xl font-bold tracking-tight text-t-heading flex items-center gap-3">
             <ShieldCheck className="h-8 w-8 text-rose-400" />
             Audit Logs
           </h1>
-          <p className="text-slate-400 mt-1">Immutable record of system actions, updates, and events.</p>
+          <p className="text-t-muted mt-1">Immutable record of system actions, updates, and events.</p>
         </div>
 
         <div className="flex flex-wrap gap-3">
            {/* Time Filter */}
-           <div className="flex bg-slate-900 border border-slate-800 rounded-lg p-1">
+           <div className="flex bg-neutral-card border border-neutral-border rounded-lg p-1">
             {["", "1d", "7d", "30d"].map((t) => (
               <button
                 key={t}
                 onClick={() => setTimeFilter(t)}
                 className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all ${
                   timeFilter === t
-                    ? "bg-rose-500/20 text-rose-400"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-status-critical/20 text-rose-400"
+                    : "text-t-muted hover:text-t-heading"
                 }`}
               >
                 {t === "" ? "All Time" : t.toUpperCase()}
@@ -115,7 +115,7 @@ export default function AuditLogsPage() {
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="bg-slate-900 border border-slate-800 text-slate-300 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-rose-500/50 outline-none"
+                className="bg-neutral-card border border-neutral-border text-t-body text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-rose-500/50 outline-none"
               >
                 <option value="">All Roles</option>
                 <option value="0">Super Admin (0)</option>
@@ -126,7 +126,7 @@ export default function AuditLogsPage() {
 
               <button 
                 onClick={handleExport}
-                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm px-4 py-2 rounded-lg font-medium transition-colors"
+                className="flex items-center gap-2 bg-neutral-row hover:bg-neutral-border text-t-heading text-sm px-4 py-2 rounded-lg font-medium transition-colors"
                >
                  <Download className="w-4 h-4" />
                  Export CSV
@@ -136,15 +136,15 @@ export default function AuditLogsPage() {
         </div>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+      <div className="bg-neutral-card border border-neutral-border rounded-2xl overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center text-slate-400 animate-pulse">Loading audit logs...</div>
+          <div className="p-8 text-center text-t-muted animate-pulse">Loading audit logs...</div>
         ) : entries.length === 0 ? (
-          <div className="p-8 text-center text-slate-400">No audit records found for this timeframe.</div>
+          <div className="p-8 text-center text-t-muted">No audit records found for this timeframe.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-slate-950/50 text-slate-400">
+              <thead className="bg-neutral-app/50 text-t-muted">
                 <tr>
                   <th className="px-6 py-4 font-semibold text-xs tracking-wider uppercase">Timestamp</th>
                   {(profile?.role_id === 0 || profile?.role_id === 1) && (
@@ -158,11 +158,11 @@ export default function AuditLogsPage() {
                   <th className="px-6 py-4 font-semibold text-xs tracking-wider uppercase">Metadata</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/50">
+              <tbody className="divide-y divide-neutral-border">
                 {entries.map((entry) => (
-                  <tr key={entry.id} className="hover:bg-slate-800/30 transition-colors">
+                  <tr key={entry.id} className="hover:bg-neutral-row/30 transition-colors">
                     <td className="px-6 py-4">
-                      <span className="text-slate-300">
+                      <span className="text-t-body">
                         {new Date(entry.created_at).toLocaleString([], {
                           month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
                         })}
@@ -170,12 +170,12 @@ export default function AuditLogsPage() {
                     </td>
                     {(profile?.role_id === 0 || profile?.role_id === 1) && (
                       <>
-                        <td className="px-6 py-4 font-medium text-slate-200">{entry.user_email}</td>
+                        <td className="px-6 py-4 font-medium text-t-heading">{entry.user_email}</td>
                         <td className="px-6 py-4">
                           <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-widest rounded ${
-                            entry.user_role_id === 0 ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
-                            entry.user_role_id === 1 ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" :
-                            "bg-slate-800 text-slate-400"
+                            entry.user_role_id === 0 ? "bg-status-medium-bg text-status-medium border border-amber-500/20" :
+                            entry.user_role_id === 1 ? "bg-ai-violet/10 text-ai-violet border border-indigo-500/20" :
+                            "bg-neutral-row text-t-muted"
                           }`}>
                             {entry.user_role_name}
                           </span>
@@ -186,10 +186,10 @@ export default function AuditLogsPage() {
                       <span className="text-rose-400 font-semibold">{entry.action}</span>
                     </td>
                     <td className="px-6 py-4">
-                       <span className="text-slate-200">{entry.entity_type} <span className="text-slate-500 text-xs ml-1">({entry.entity_id})</span></span>
+                       <span className="text-t-heading">{entry.entity_type} <span className="text-t-muted text-xs ml-1">({entry.entity_id})</span></span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-xs text-slate-400 font-mono max-w-xs truncate inline-block">
+                      <span className="text-xs text-t-muted font-mono max-w-xs truncate inline-block">
                         {entry.metadata || "-"}
                       </span>
                     </td>

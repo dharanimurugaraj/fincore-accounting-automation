@@ -8,12 +8,12 @@ interface WCDLMaturityTableProps {
 
 export default function WCDLMaturityTable({ loans }: WCDLMaturityTableProps) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-      <h3 className="text-sm font-semibold text-slate-200">WCDL Maturity Tracker</h3>
+    <div className="rounded-xl border border-neutral-border bg-neutral-card p-6">
+      <h3 className="text-sm font-semibold text-t-heading">WCDL Maturity Tracker</h3>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-slate-800 text-xs text-slate-400">
+            <tr className="border-b border-neutral-border text-xs text-t-muted">
               <th className="pb-2 pr-4">Loan No.</th>
               <th className="pb-2 pr-4">Start</th>
               <th className="pb-2 pr-4">Maturity</th>
@@ -27,7 +27,7 @@ export default function WCDLMaturityTable({ loans }: WCDLMaturityTableProps) {
             {loans.map((loan) => (
               <tr
                 key={loan.loanNumber}
-                className="border-b border-slate-800/50 text-slate-300"
+                className="border-b border-neutral-border/50 text-t-body"
               >
                 <td className="py-2.5 pr-4 font-mono text-xs">
                   {loan.loanNumber}
@@ -47,8 +47,8 @@ export default function WCDLMaturityTable({ loans }: WCDLMaturityTableProps) {
                   <span
                     className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
                       loan.status === "ACTIVE"
-                        ? "bg-emerald-500/10 text-emerald-400"
-                        : "bg-slate-700 text-slate-400"
+                        ? "bg-status-success-bg text-status-success"
+                        : "bg-neutral-border text-t-muted"
                     }`}
                   >
                     {loan.status}

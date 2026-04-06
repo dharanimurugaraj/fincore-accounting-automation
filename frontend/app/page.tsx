@@ -30,7 +30,7 @@ export default function RootPage() {
         <div className="absolute inset-0 border-4 border-blue-50 rounded-full"></div>
         <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
       </div>
-      <p className="mt-6 text-slate-400 font-medium tracking-tight animate-pulse">Launching Vyrenzo...</p>
+      <p className="mt-6 text-t-muted font-medium tracking-tight animate-pulse">Launching Vyrenzo...</p>
     </div>
   );
 }

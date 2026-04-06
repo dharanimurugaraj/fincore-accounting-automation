@@ -114,12 +114,6 @@ async def get_current_user(res: HTTPAuthorizationCredentials = Security(security
                 "photo_url": photo_url
             }
 
-        # 4. Sync metadata (Photo, Last Login) on every valid token
-        execute_query(
-            'UPDATE "User" SET "photoUrl" = %s, "lastLogin" = %s WHERE "firebaseUid" = %s',
-            (photo_url, datetime.utcnow(), fb_uid),
-        )
-
         user = rows[0]
         return {
             "id": user["id"],
@@ -132,6 +126,9 @@ async def get_current_user(res: HTTPAuthorizationCredentials = Security(security
         }
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(f"Auth Error: {e}")
         raise HTTPException(
             status_code=403,
             detail=f"Could not validate credentials: {str(e)}",

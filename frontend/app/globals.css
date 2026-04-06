@@ -4,51 +4,60 @@
 
 @layer base {
   :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 6.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 6.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 187 92% 50%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 50.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 187 92% 50%;
-    --radius: 0.5rem;
+    /* PRIMARY — Intelligence Blue */
+    --color-primary:        #1B4FD8;
+    --color-primary-hover:  #1035A0;
+    --color-primary-light:  #E8EDFC;
+    --color-primary-subtle: #EEF3FF;
+
+    /* SECONDARY — AI Layer */
+    --color-ai-teal:        #0B8FAC;
+    --color-ai-teal-light:  #E0F7FA;
+    --color-ai-violet:      #6C63FF;
+    --color-ai-violet-light:#F0EFFE;
+
+    /* NEUTRALS — The Core Palette */
+    --color-bg-app:         #F4F7FF;  /* Light blue-white for page bg */
+    --color-bg-card:        #FFFFFF;  /* Pure white for containers */
+    --color-bg-row:         #F0F2F8;  /* Table alt-row or hover */
+    --color-border:         #E2E8F0;  /* Standard soft border */
+    
+    /* TYPOGRAPHY */
+    --color-text-heading:   #1A1F36;  /* Deep navy heading */
+    --color-text-body:      #475569;  /* Slate gray body */
+    --color-text-muted:     #94A3B8;  /* Cool grey for subtext */
+
+    /* SEMANTIC STATUS — Muted Backgrounds */
+    --color-status-success:    #10B981;
+    --color-status-success-bg: #D1FAE5;
+    --color-status-critical:   #EF4444;
+    --color-status-critical-bg:#FEE2E2;
+    --color-status-medium:     #F59E0B;
+    --color-status-medium-bg:  #FEF3C7;
+
+    --radius: 0.75rem;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-neutral-border;
   }
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-neutral-app text-t-body antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-t-heading font-bold;
   }
 }
 
 @layer utilities {
-  .scrollbar-thin {
-    scrollbar-width: thin;
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted));
-    border-radius: 3px;
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

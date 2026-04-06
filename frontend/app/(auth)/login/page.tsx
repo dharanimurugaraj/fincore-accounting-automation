@@ -24,7 +24,7 @@ export default function LoginPage() {
     setError("");
     try {
       if (!auth) {
-        throw new Error("Firebase Auth is not initialized. Please check your environment variables.");
+        throw new Error("Firebase Auth is not initialized.");
       }
       await signInWithPopup(auth, googleProvider);
     } catch (err: any) {
@@ -36,77 +36,68 @@ export default function LoginPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0F172A] flex flex-col items-center justify-center">
-        <div className="relative w-24 h-24">
-          <div className="absolute inset-0 border-4 border-slate-800 rounded-full"></div>
-          <div className="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
-          <ShieldCheck className="absolute inset-0 m-auto h-10 w-10 text-blue-500 animate-pulse" />
-        </div>
-        <p className="mt-8 text-slate-400 font-bold tracking-[0.2em] uppercase text-xs">Initializing Secure Core...</p>
+      <div className="min-h-screen bg-neutral-app flex flex-col items-center justify-center">
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-6 text-t-muted font-bold tracking-widest uppercase text-xs">Initializing Secure Core...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200 flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Dynamic Background Effects */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-cyan-600/10 rounded-full blur-[100px] delay-1000"></div>
-        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+    <div className="min-h-screen bg-neutral-app text-t-body flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Subtle Background Decor */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
+        <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-ai-teal/5 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="max-w-[1200px] w-full grid lg:grid-cols-2 gap-12 items-center relative z-10">
-
-        {/* Left Side: Branding Content */}
-        <div className="hidden lg:flex flex-col space-y-12 pr-12">
-          <div>
-            <div className="inline-flex items-center gap-3 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full mb-6">
-              <Sparkles className="h-4 w-4 text-blue-400" />
-              <span className="text-[10px] uppercase font-black tracking-widest text-blue-300">Alpha Release 1.0</span>
-            </div>
-            <h1 className="text-7xl font-black tracking-tight leading-[0.95] text-white">
-              FINCORE
+      <div className="max-w-[1100px] w-full grid lg:grid-cols-2 gap-16 items-center relative z-10">
+        
+        {/* Left: Branding & Value Prop */}
+        <div className="hidden lg:block space-y-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-subtle border border-primary/10 rounded-full">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Enterprise Release 1.0</span>
+          </div>
+          
+          <div className="space-y-4">
+            <h1 className="text-6xl font-black tracking-tight text-t-heading leading-tight">
+              Intelligence at the <br />
+              <span className="text-primary italic">FinCore</span> of Banking.
             </h1>
-            <p className="mt-8 text-xl text-slate-400 leading-relaxed max-w-lg">
-              The next-generation Command Center for <span className="text-white font-bold">Banking Intelligence</span> and Working Capital Management.
+            <p className="text-lg text-t-muted max-w-md leading-relaxed">
+              Automated Working Capital Management, CC/WCDL tracking, and AI-powered financial reporting in one secure command center.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-4">
             {[
-              { icon: BarChart3, label: "Real-time Metrics", desc: "CC & WCDL interest tracking." },
-              { icon: LockKeyhole, label: "Secure Gateway", desc: "Enterprise-grade Auth protocols." }
+              { icon: BarChart3, label: "Real-time Metrics", desc: "Automated CC & WCDL snapshots." },
+              { icon: LockKeyhole, label: "Bank Security", desc: "Enterprise-grade Auth encryption." }
             ].map((item, i) => (
-              <div key={i} className="p-6 rounded-3xl bg-slate-900/40 border border-slate-800/50 backdrop-blur-xl group hover:border-blue-500/30 transition-all">
-                <item.icon className="h-8 w-8 text-blue-500 mb-4 group-hover:scale-110 transition-transform" />
-                <h4 className="font-bold text-white mb-1">{item.label}</h4>
-                <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+              <div key={i} className="p-6 rounded-2xl bg-white border border-neutral-border shadow-sm">
+                <item.icon className="h-6 w-6 text-primary mb-3" />
+                <h4 className="font-bold text-t-heading text-sm">{item.label}</h4>
+                <p className="text-xs text-t-muted mt-1 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Right Side: Login Card */}
+        {/* Right: Modern Login Card */}
         <div className="flex justify-center lg:justify-end">
-          <div className="w-full max-w-md p-10 lg:p-12 rounded-[40px] bg-[#0F172A] border border-slate-800/50 shadow-2xl relative group overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
-
-            <div className="flex flex-col items-center text-center mb-12">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="relative flex items-center justify-center">
-                    <img src="/logo.png" alt="Vyrenzo Logo" className="h-8 object-contain" />
-                </div>
+          <div className="w-full max-w-md bg-white border border-neutral-border rounded-[32px] p-10 lg:p-12 shadow-2xl relative">
+            <div className="flex flex-col items-center mb-10 text-center">
+              <div className="flex items-center gap-2 mb-6">
+                 <img src="/icon.png" alt="FinCore" className="h-10 w-10" />
+                 <span className="text-xl font-black text-t-heading tracking-tighter italic">FINCORE</span>
               </div>
-              <h2 className="text-3xl font-black text-white tracking-tight mb-2">Welcome Back</h2>
-              <p className="text-slate-500 font-medium mb-2">Verify your identity to enter the Core</p>
-              <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px] bg-slate-800/50 px-3 py-1 rounded-full border border-slate-700/50">
-                Powered by Vyrenzo.ai
-              </p>
+              <h2 className="text-2xl font-black text-t-heading tracking-tight mb-2">Welcome Back</h2>
+              <p className="text-t-muted text-sm px-4">Access your organization's financial control center.</p>
             </div>
 
             {error && (
-              <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-xs text-center font-bold">
+              <div className="mb-6 p-4 bg-status-critical-bg border border-status-critical/20 rounded-xl text-status-critical text-xs text-center font-bold">
                 {error}
               </div>
             )}
@@ -114,30 +105,30 @@ export default function LoginPage() {
             <button
               onClick={handleGoogleLogin}
               disabled={isSigningIn}
-              className="group w-full relative flex items-center justify-center gap-4 bg-white text-[#0F172A] font-black py-5 px-6 rounded-2xl transition-all hover:bg-blue-50 active:scale-95 disabled:opacity-50 overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.05)]"
+              className="group w-full flex items-center justify-center gap-3 bg-neutral-app border border-neutral-border text-t-heading font-bold py-4 rounded-xl transition-all hover:bg-neutral-row active:scale-[0.98] disabled:opacity-50"
             >
               {isSigningIn ? (
-                <div className="h-6 w-6 border-3 border-[#0F172A] border-t-transparent rounded-full animate-spin"></div>
+                <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>
-                  <svg width="24" height="24" viewBox="0 0 48 48">
+                  <svg width="20" height="20" viewBox="0 0 48 48">
                     <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
                     <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
                     <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
                     <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
                   </svg>
-                  <span className="uppercase tracking-widest text-sm">Secure Entry with Google</span>
-                  <ChevronRight className="h-5 w-5 text-[#0F172A]/30 group-hover:translate-x-1 transition-transform" />
+                  <span className="text-sm font-bold">Continue with Google</span>
+                  <ChevronRight className="h-4 w-4 text-t-muted group-hover:translate-x-1 transition-all" />
                 </>
               )}
             </button>
 
-            <div className="mt-12 flex flex-col items-center space-y-4">
-              <p className="text-slate-600 text-[10px] font-black uppercase tracking-[0.3em]">Licensed to Financial Experts Only</p>
-              <div className="flex gap-2">
-                <div className="h-1 w-8 bg-blue-600 rounded-full"></div>
-                <div className="h-1 w-2 bg-slate-800 rounded-full"></div>
-                <div className="h-1 w-2 bg-slate-800 rounded-full"></div>
+            <div className="mt-12 flex flex-col items-center">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-t-muted">Powered by Vyrenzo AI</span>
+              <div className="flex gap-1.5 mt-3">
+                <div className="h-1 w-3 bg-primary rounded-full"></div>
+                <div className="h-1 w-1 bg-neutral-row rounded-full"></div>
+                <div className="h-1 w-1 bg-neutral-row rounded-full"></div>
               </div>
             </div>
           </div>

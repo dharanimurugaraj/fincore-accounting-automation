@@ -36,16 +36,16 @@ export default function DropZone({ onFilesSelected, disabled }: DropZoneProps) {
       onDragOver={(e) => e.preventDefault()}
       className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-12 transition-colors ${
         disabled
-          ? "border-slate-800 bg-slate-900/30"
-          : "border-slate-700 bg-slate-900/50 hover:border-cyan-500/50 hover:bg-slate-900"
+          ? "border-neutral-border bg-neutral-card/30"
+          : "border-neutral-border bg-neutral-card/50 hover:border-primary/50 hover:bg-neutral-card"
       }`}
     >
-      <Upload className="mb-4 h-10 w-10 text-slate-500" />
-      <p className="text-sm font-medium text-slate-300">
+      <Upload className="mb-4 h-10 w-10 text-t-muted" />
+      <p className="text-sm font-medium text-t-body">
         Drag & drop bank statement PDFs here
       </p>
-      <p className="mt-1 text-xs text-slate-500">PDF only, max 20MB each</p>
-      <label className="mt-4 cursor-pointer rounded-lg bg-slate-800 px-4 py-2 text-sm text-slate-300 transition-colors hover:bg-slate-700">
+      <p className="mt-1 text-xs text-t-muted">PDF only, max 20MB each</p>
+      <label className="mt-4 cursor-pointer rounded-lg bg-neutral-row px-4 py-2 text-sm text-t-body transition-colors hover:bg-neutral-border">
         Browse Files
         <input
           type="file"

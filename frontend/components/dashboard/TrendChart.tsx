@@ -17,8 +17,8 @@ interface TrendChartProps {
 
 export default function TrendChart({ data }: TrendChartProps) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-      <h3 className="text-sm font-semibold text-slate-200">
+    <div className="rounded-xl border border-neutral-border bg-neutral-card p-6">
+      <h3 className="text-sm font-semibold text-t-heading">
         6-Month Trend
       </h3>
       <div className="mt-4 h-64">

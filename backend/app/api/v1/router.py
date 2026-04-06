@@ -17,6 +17,7 @@ from app.api.v1.admin.users import router as users_router
 from app.api.v1.settings import router as settings_router
 from app.api.v1.activity import router as activity_router
 from app.api.v1.audit import router as audit_router
+from app.api.v1.customers import router as customers_router
 
 api_v1_router = APIRouter()
 
@@ -37,6 +38,7 @@ async def health_check():
 
 api_v1_router.include_router(auth_router,     prefix="/auth",      tags=["Auth"])
 api_v1_router.include_router(uploads_router,  prefix="/uploads",   tags=["Uploads"])
+api_v1_router.include_router(uploads_router,  prefix="/documents",   tags=["Documents"])
 api_v1_router.include_router(pipeline_router, prefix="/pipeline",  tags=["Pipeline"])
 api_v1_router.include_router(reports_router,  prefix="/reports",   tags=["Reports"])
 api_v1_router.include_router(wcdl_router,     prefix="/wcdl",      tags=["WCDL"])
@@ -48,3 +50,4 @@ api_v1_router.include_router(users_router,    prefix="/admin/users",    tags=["A
 api_v1_router.include_router(settings_router, prefix="/settings",       tags=["Settings"])
 api_v1_router.include_router(activity_router, prefix="/activity",       tags=["Activity"])
 api_v1_router.include_router(audit_router,    prefix="/audit-logs",     tags=["Audit"])
+api_v1_router.include_router(customers_router, prefix="/customers",     tags=["Customers"])

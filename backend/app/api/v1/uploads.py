@@ -5,7 +5,7 @@ POST /uploads, GET /uploads — file upload and listing.
 import os
 import uuid
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, Query, UploadFile, File, Form
 from fastapi.responses import FileResponse
@@ -44,11 +44,9 @@ async def list_documents(
         query += ' AND "statementMonth" = %s'
         params.append(statement_month)
 
-    count_query = query.replace(
-        'SELECT id, filename, "s3Key", "bankName", "accountType",\n'
-        '               "accountId", "statementMonth", status, "createdAt"',
-        "SELECT COUNT(*)",
-    )
+    count_query = 'SELECT COUNT(*) FROM "Upload" WHERE "orgId" = %s'
+    if statement_month:
+        count_query += ' AND "statementMonth" = %s'
 
     query += ' ORDER BY "createdAt" DESC LIMIT %s OFFSET %s'
     params_with_pagination = params + [limit, offset]
@@ -80,6 +78,7 @@ async def upload_files(
     user: CurrentUser,
     files: List[UploadFile] = File(...),
     statement_month: str = Form(...),
+    customer_id: Optional[str] = Form(None),
 ):
     """Accept multipart file uploads, save to local storage, register in DB."""
     results = []
@@ -102,15 +101,15 @@ async def upload_files(
                 INSERT INTO "Upload"
                     (id, "orgId", "uploadedById", filename, "s3Key",
                      "bankName", "accountType", "accountId",
-                     "statementMonth", "fileSizeBytes", status, "createdAt")
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                     "statementMonth", "fileSizeBytes", status, "customerId", "createdAt")
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
                 """,
                 (
                     upload_id, org_id, uploaded_by_id, filename, key,
                     "PENDING", "PENDING", "",
                     statement_month, len(file_bytes),
-                    UploadStatusEnum.UPLOADED.value, datetime.utcnow(),
+                    UploadStatusEnum.UPLOADED.value, customer_id, datetime.utcnow(),
                 ),
             )
         except Exception:

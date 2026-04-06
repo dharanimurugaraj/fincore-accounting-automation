@@ -30,11 +30,11 @@ async def trigger_pipeline(req: PipelineRunRequest, background_tasks: Background
 
     execute_insert(
         """
-        INSERT INTO "PipelineRun" (id, "orgId", "statementMonth", status, stage, "createdAt")
-        VALUES (%s, %s, %s, %s, %s, %s)
+        INSERT INTO "PipelineRun" (id, "orgId", "statementMonth", "customerId", status, stage, "createdAt")
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         RETURNING id
         """,
-        (run_id, req.org_id, req.statement_month, RunStatusEnum.PENDING.value, 0, datetime.utcnow()),
+        (run_id, req.org_id, req.statement_month, req.customer_id, RunStatusEnum.PENDING.value, 0, datetime.utcnow()),
     )
 
     pdf_s3_keys = []

@@ -70,9 +70,9 @@ export default function UserManagementPage() {
   if (profile?.role_id !== 0 && profile?.role_id !== 1) {
     return (
       <div className="flex flex-col items-center justify-center p-20 text-center">
-        <ShieldAlert className="h-16 w-16 text-rose-500 mb-4" />
-        <h1 className="text-2xl font-bold text-white mb-2">Access Denied</h1>
-        <p className="text-slate-400">You must be an administrator to assign organizational roles.</p>
+        <ShieldAlert className="h-16 w-16 text-status-critical mb-4" />
+        <h1 className="text-2xl font-bold text-t-heading mb-2">Access Denied</h1>
+        <p className="text-t-muted">You must be an administrator to assign organizational roles.</p>
       </div>
     );
   }
@@ -80,20 +80,20 @@ export default function UserManagementPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-          <UserCog className="h-8 w-8 text-emerald-400" />
+        <h1 className="text-3xl font-bold tracking-tight text-t-heading flex items-center gap-3">
+          <UserCog className="h-8 w-8 text-status-success" />
           User Management
         </h1>
-        <p className="text-slate-400 mt-1">Review active users and configure organizational access tiers across the platform.</p>
+        <p className="text-t-muted mt-1">Review active users and configure organizational access tiers across the platform.</p>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-neutral-card border border-neutral-border rounded-2xl overflow-hidden shadow-xl">
         {loading ? (
-          <div className="p-12 text-center text-slate-400 animate-pulse font-medium">Loading organization users...</div>
+          <div className="p-12 text-center text-t-muted animate-pulse font-medium">Loading organization users...</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-slate-950/50 text-slate-400">
+              <thead className="bg-neutral-app/50 text-t-muted">
                 <tr>
                   <th className="px-6 py-4 font-semibold text-xs tracking-wider uppercase">User Details</th>
                   <th className="px-6 py-4 font-semibold text-xs tracking-wider uppercase">Last Login</th>
@@ -101,27 +101,27 @@ export default function UserManagementPage() {
                   <th className="px-6 py-4 font-semibold text-xs tracking-wider uppercase">Platform Role Target</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/50">
+              <tbody className="divide-y divide-neutral-border">
                 {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-800/30 transition-colors group">
+                  <tr key={u.id} className="hover:bg-neutral-row/30 transition-colors group">
                     <td className="px-6 py-4">
                         <div className="flex flex-col">
-                            <span className="text-slate-200 font-medium">{u.name || "Unknown Identity"}</span>
-                            <span className="text-xs text-slate-500">{u.email}</span>
+                            <span className="text-t-heading font-medium">{u.name || "Unknown Identity"}</span>
+                            <span className="text-xs text-t-muted">{u.email}</span>
                         </div>
                     </td>
-                    <td className="px-6 py-4 text-slate-400">
+                    <td className="px-6 py-4 text-t-muted">
                         {u.last_login ? new Date(u.last_login).toLocaleDateString() : 'Never'}
                     </td>
                     <td className="px-6 py-4">
-                        <span className="px-2 py-1 text-[10px] font-bold uppercase tracking-widest rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span className="px-2 py-1 text-[10px] font-bold uppercase tracking-widest rounded bg-status-success-bg text-status-success border border-emerald-500/20">
                             Active
                         </span>
                     </td>
                     <td className="px-6 py-4">
                         {/* Protect Admins from tweaking SuperAdmins */}
                         {(profile?.role_id === 1 && u.role_id <= 1) ? (
-                            <span className="px-3 py-1.5 text-xs font-bold uppercase text-slate-500 cursor-not-allowed">
+                            <span className="px-3 py-1.5 text-xs font-bold uppercase text-t-muted cursor-not-allowed">
                                 {u.role_name} (LOCKED)
                             </span>
                         ) : (
@@ -129,9 +129,9 @@ export default function UserManagementPage() {
                                 value={u.role_id}
                                 onChange={(e) => handleRoleChange(u.id, parseInt(e.target.value))}
                                 className={`text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded outline-none transition-all cursor-pointer ${
-                                    u.role_id === 0 ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
-                                    u.role_id === 1 ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" :
-                                    "bg-slate-950 border border-slate-700 text-slate-300 hover:border-slate-500 focus:ring-2 focus:ring-emerald-500/50"
+                                    u.role_id === 0 ? "bg-status-medium-bg text-status-medium border border-amber-500/20" :
+                                    u.role_id === 1 ? "bg-ai-violet/10 text-ai-violet border border-indigo-500/20" :
+                                    "bg-neutral-app border border-neutral-border text-t-body hover:border-neutral-border focus:ring-2 focus:ring-emerald-500/50"
                                 }`}
                             >
                                 {roles.map(r => (
@@ -139,7 +139,7 @@ export default function UserManagementPage() {
                                         key={r.id} 
                                         value={r.id} 
                                         disabled={profile?.role_id === 1 && r.id <= 1} // Admins cannot promote to admin
-                                        className="bg-slate-900 text-slate-300"
+                                        className="bg-neutral-card text-t-body"
                                     >
                                         {r.id === 0 ? "★ " : ""}{r.name}
                                     </option>
