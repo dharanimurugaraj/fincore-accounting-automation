@@ -21,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased text-gray-900 bg-white`}>
+      <body className={`${inter.className} antialiased text-t-body bg-neutral-card`}>
         <AuthProvider>
            {children}
         </AuthProvider>

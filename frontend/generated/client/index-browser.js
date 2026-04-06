@@ -137,6 +137,25 @@ exports.Prisma.OrganisationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.CustomerScalarFieldEnum = {
+  id: 'id',
+  customId: 'customId',
+  companyName: 'companyName',
+  contactName: 'contactName',
+  pan: 'pan',
+  cin: 'cin',
+  email: 'email',
+  phone: 'phone',
+  industry: 'industry',
+  address: 'address',
+  tags: 'tags',
+  status: 'status',
+  risk: 'risk',
+  orgId: 'orgId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -170,7 +189,8 @@ exports.Prisma.PipelineRunScalarFieldEnum = {
   checksum: 'checksum',
   startedAt: 'startedAt',
   completedAt: 'completedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  customerId: 'customerId'
 };
 
 exports.Prisma.UploadScalarFieldEnum = {
@@ -186,6 +206,7 @@ exports.Prisma.UploadScalarFieldEnum = {
   fileSizeBytes: 'fileSizeBytes',
   status: 'status',
   runId: 'runId',
+  customerId: 'customerId',
   createdAt: 'createdAt'
 };
 
@@ -202,6 +223,7 @@ exports.Prisma.WCDLLoanScalarFieldEnum = {
   maturityDate: 'maturityDate',
   prepaymentDate: 'prepaymentDate',
   status: 'status',
+  customerId: 'customerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -335,6 +357,7 @@ exports.UploadStatus = exports.$Enums.UploadStatus = {
 exports.Prisma.ModelName = {
   Role: 'Role',
   Organisation: 'Organisation',
+  Customer: 'Customer',
   User: 'User',
   PipelineRun: 'PipelineRun',
   Upload: 'Upload',

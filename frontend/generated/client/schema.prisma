@@ -1,13 +1,13 @@
 // prisma/schema.prisma
 
-datasource db {
-  provider = "postgresql"
-}
-
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
   output          = "../frontend/generated/client"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
 }
 
 // --- ENUMS ---
@@ -61,8 +61,34 @@ model Organisation {
   formulaConfigs FormulaConfiguration[]
   aiUsageLogs    AIUsageLog[]
   auditLogs      AuditLog[]
+  customers      Customer[]
 
   @@map("Organisation")
+}
+
+model Customer {
+  id           String        @id @default(uuid())
+  customId     String        @unique @map("customId")
+  companyName  String        @map("companyName")
+  contactName  String        @map("contactName")
+  pan          String        @map("pan")
+  cin          String?       @map("cin")
+  email        String?       @map("email")
+  phone        String?       @map("phone")
+  industry     String?       @map("industry")
+  address      String?       @map("address")
+  tags         String[]      @default([]) @map("tags")
+  status       String?       @default("ACTIVE") @map("status")
+  risk         String?       @default("LOW") @map("risk")
+  orgId        String        @map("orgId")
+  organisation Organisation  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  uploads      Upload[]
+  pipelineRuns PipelineRun[]
+  wcdlLoans    WCDLLoan[]
+  createdAt    DateTime      @default(now()) @map("createdAt")
+  updatedAt    DateTime      @default(now()) @updatedAt @map("updatedAt")
+
+  @@map("Customer")
 }
 
 model User {
@@ -111,6 +137,8 @@ model PipelineRun {
   wcdlLoans         WCDLLoan[]
   forexTrans        ForexTransaction[]
   approvals         Approval[]
+  customerId        String?            @map("customerId")
+  customer          Customer?          @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
   @@map("PipelineRun")
 }
@@ -131,6 +159,8 @@ model Upload {
   status         UploadStatus? @default(UPLOADED)
   runId          String?       @map("runId")
   pipelineRun    PipelineRun?  @relation(fields: [runId], references: [id], onDelete: SetNull)
+  customerId     String?       @map("customerId")
+  customer       Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
   createdAt      DateTime      @default(now()) @map("createdAt")
 
   @@map("Upload")
@@ -151,6 +181,8 @@ model WCDLLoan {
   maturityDate    DateTime     @map("maturityDate") @db.Date
   prepaymentDate  DateTime?    @map("prepaymentDate") @db.Date
   status          String?      @default("ACTIVE")
+  customerId      String?      @map("customerId")
+  customer        Customer?    @relation(fields: [customerId], references: [id], onDelete: SetNull)
   createdAt       DateTime     @default(now()) @map("createdAt")
   updatedAt       DateTime     @default(now()) @updatedAt @map("updatedAt")
 
@@ -204,10 +236,8 @@ model AgentConfig {
 model AIUsageLog {
   id           String       @id @default(uuid())
   userId       String       @map("userId")
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userEmail    String       @map("userEmail")
   orgId        String       @map("orgId")
-  organisation Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
   model        String
   tokensIn     Int?         @default(0) @map("tokensIn")
   tokensOut    Int?         @default(0) @map("tokensOut")
@@ -215,6 +245,8 @@ model AIUsageLog {
   action       String?
   sessionId    String?      @map("sessionId")
   createdAt    DateTime     @default(now()) @map("createdAt")
+  organisation Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("AIUsageLog")
 }

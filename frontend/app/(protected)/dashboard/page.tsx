@@ -29,28 +29,28 @@ const PLACEHOLDER_DATA: DashboardData = {
       value: `₹${formatINR(512205)}`,
       subtext: "Across all CC accounts",
       trend: "down",
-      color: "text-emerald-400",
+      color: "text-status-success",
     },
     {
       label: "Total WCDL Interest",
       value: `₹${formatINR(3058904)}`,
       subtext: "3 active loans",
       trend: "up",
-      color: "text-amber-400",
+      color: "text-status-medium",
     },
     {
       label: "Finance Cost %",
       value: "7.43% p.a.",
       subtext: "Annualised, all instruments",
       trend: "flat",
-      color: "text-cyan-400",
+      color: "text-primary",
     },
     {
       label: "Total Bank Charges",
       value: `₹${formatINR(18540)}`,
       subtext: "₹4,200 penal charges",
       trend: "up",
-      color: "text-red-400",
+      color: "text-status-critical",
     },
     {
       label: "Avg CC Utilisation",
@@ -63,7 +63,7 @@ const PLACEHOLDER_DATA: DashboardData = {
       value: `₹${formatINR(12450)}`,
       subtext: "Notional opportunity cost",
       trend: "down",
-      color: "text-amber-400",
+      color: "text-status-medium",
     },
   ],
   ccUtilisation: { actual: 78.5, sanctioned: 100 },
@@ -149,7 +149,7 @@ export default function DashboardPage() {
   if (loading && !data) {
     return (
       <div className="flex h-[70vh] items-center justify-center">
-        <RefreshCw className="h-8 w-8 animate-spin text-indigo-500" />
+        <RefreshCw className="h-8 w-8 animate-spin text-ai-violet" />
       </div>
     );
   }
@@ -157,27 +157,27 @@ export default function DashboardPage() {
   if (!data) {
     return (
       <div className="flex h-[70vh] flex-col items-center justify-center p-12 text-center">
-        <div className="mb-4 rounded-full bg-slate-900/50 p-6 backdrop-blur-sm">
-          <Calendar className="h-12 w-12 text-slate-700" />
+        <div className="mb-4 rounded-full bg-neutral-card/50 p-6 backdrop-blur-sm">
+          <Calendar className="h-12 w-12 text-t-muted" />
         </div>
         <div className="mb-6 flex flex-col items-center gap-3">
-          <div className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900 px-3 py-1.5">
-            <Calendar className="h-4 w-4 text-slate-500" />
+          <div className="flex items-center gap-2 rounded-lg border border-neutral-border bg-neutral-card px-3 py-1.5">
+            <Calendar className="h-4 w-4 text-t-muted" />
             <input
               type="month"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="bg-transparent text-sm text-slate-200 outline-none"
+              className="bg-transparent text-sm text-t-heading outline-none"
             />
           </div>
         </div>
-        <h2 className="text-xl font-semibold text-slate-200">No report data for {selectedMonth}</h2>
-        <p className="mt-2 max-w-md text-slate-500">
+        <h2 className="text-xl font-semibold text-t-heading">No report data for {selectedMonth}</h2>
+        <p className="mt-2 max-w-md text-t-muted">
           Upload your bank statements for this month to generate the intelligence report and dashboard KPIs.
         </p>
         <button
           onClick={() => (window.location.href = "/upload")}
-          className="mt-6 rounded-lg bg-indigo-600 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+          className="mt-6 rounded-lg bg-ai-violet px-6 py-2 text-sm font-medium text-t-heading transition-colors hover:bg-ai-violet/90"
         >
           Upload Statements
         </button>
@@ -189,25 +189,25 @@ export default function DashboardPage() {
     <div className={`space-y-6 ${loading ? "opacity-30" : ""}`}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100">Dashboard</h1>
-          <p className="text-sm text-slate-400">
+          <h1 className="text-2xl font-bold text-t-heading">Dashboard</h1>
+          <p className="text-sm text-t-muted">
             {data?.month} — Working Capital Overview
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900 px-3 py-1.5">
-            <Calendar className="h-4 w-4 text-slate-500" />
+          <div className="flex items-center gap-2 rounded-lg border border-neutral-border bg-neutral-card px-3 py-1.5">
+            <Calendar className="h-4 w-4 text-t-muted" />
             <input
               type="month"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="bg-transparent text-sm text-slate-200 outline-none"
+              className="bg-transparent text-sm text-t-heading outline-none"
             />
           </div>
           <button
             onClick={refreshData}
             disabled={loading}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-800 disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-lg border border-neutral-border bg-neutral-card px-3 py-1.5 text-sm text-t-body hover:bg-neutral-row disabled:opacity-50"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
@@ -245,16 +245,16 @@ export default function DashboardPage() {
       {/* Charges + Idle Balance sections */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Charges Breakdown */}
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-          <h3 className="text-sm font-semibold text-slate-200">Bank Charges Breakdown</h3>
+        <div className="rounded-xl border border-neutral-border bg-neutral-card p-6">
+          <h3 className="text-sm font-semibold text-t-heading">Bank Charges Breakdown</h3>
           <div className="mt-4 space-y-3">
             {[
-              { label: "Penal Charges", value: data.chargesSummary.penal, color: "text-red-400" },
-              { label: "Recurring Charges", value: data.chargesSummary.recurring, color: "text-slate-300" },
-              { label: "Total Charges", value: data.chargesSummary.total, color: "text-slate-100" },
+              { label: "Penal Charges", value: data.chargesSummary.penal, color: "text-status-critical" },
+              { label: "Recurring Charges", value: data.chargesSummary.recurring, color: "text-t-body" },
+              { label: "Total Charges", value: data.chargesSummary.total, color: "text-t-heading" },
             ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between border-b border-slate-800/50 pb-2">
-                <span className="text-sm text-slate-400">{item.label}</span>
+              <div key={item.label} className="flex items-center justify-between border-b border-neutral-border/50 pb-2">
+                <span className="text-sm text-t-muted">{item.label}</span>
                 <span className={`text-sm font-semibold ${item.color}`}>
                   ₹{formatINR(item.value)}
                 </span>
@@ -264,18 +264,18 @@ export default function DashboardPage() {
         </div>
 
         {/* Idle Balance Losses */}
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-          <h3 className="text-sm font-semibold text-slate-200">Idle Balance — Notional Losses</h3>
+        <div className="rounded-xl border border-neutral-border bg-neutral-card p-6">
+          <h3 className="text-sm font-semibold text-t-heading">Idle Balance — Notional Losses</h3>
           <div className="mt-4 space-y-3">
             {data.idleBalances.map((ib) => (
-              <div key={ib.account} className="flex items-center justify-between border-b border-slate-800/50 pb-2">
+              <div key={ib.account} className="flex items-center justify-between border-b border-neutral-border/50 pb-2">
                 <div>
-                  <p className="text-sm text-slate-300">{ib.account}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm text-t-body">{ib.account}</p>
+                  <p className="text-xs text-t-muted">
                     Avg: ₹{formatINR(ib.avgBalance)}
                   </p>
                 </div>
-                <span className="text-sm font-semibold text-amber-400">
+                <span className="text-sm font-semibold text-status-medium">
                   -₹{formatINR(ib.loss)}
                 </span>
               </div>
