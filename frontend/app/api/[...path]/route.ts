@@ -38,7 +38,8 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
     const method = request.method;
 
     let host = "";
-    const backendUrlEnv = process.env.NEXT_PUBLIC_BACKEND_URL;
+    // Allow both NEXT_PUBLIC_BACKEND_URL and BACKEND_URL for flexibility in Vercel env settings
+    const backendUrlEnv = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL;
     const isLocal = process.env.NODE_ENV === "development";
     
     if (backendUrlEnv) {
@@ -50,23 +51,30 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
     }
 
     const protocol = host.includes("127.0.0.1") || host.includes("localhost") || host.startsWith("http://") ? "http" : "https";
-    host = host.replace(/^https?:\/\//, "");
+     // Standardize: Remove prefix if present, we prefix it again in the URL builder
+    const cleanHost = host.replace(/^https?:\/\//, "");
 
-    if (!host.includes("_/backend") && !isLocal) {
-        host = `${host}/_/backend`;
+    // If on same domain (Vercel Service), we need the route prefix
+    let finalHost = cleanHost;
+    if (!cleanHost.includes("_/backend") && !isLocal) {
+        finalHost = `${cleanHost}/_/backend`;
     }
 
     const url = new URL(request.url);
     const cleanPath = path.startsWith("v1/") ? path : `v1/${path}`;
     
     let backendUrl = "";
-    if (host.includes("/api")) {
-        backendUrl = `${protocol}://${host}/${cleanPath}${url.search}`;
+    if (finalHost.includes("/api")) {
+        backendUrl = `${protocol}://${finalHost}/${cleanPath}${url.search}`;
     } else {
-        backendUrl = `${protocol}://${host}/api/${cleanPath}${url.search}`;
+        backendUrl = `${protocol}://${finalHost}/api/${cleanPath}${url.search}`;
     }
 
     console.log(`[Proxy] ${method} -> ${backendUrl}`);
+
+    const controller = new AbortController();
+    // 9.5s timeout: Vercel kills at 10s on Hobby plan, so we abort slightly before
+    const timeoutId = setTimeout(() => controller.abort(), 9500);
 
     try {
         const headers = new Headers(request.headers);
@@ -79,7 +87,8 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
         const options: RequestInit = {
             method,
             headers: headers,
-            cache: 'no-store'
+            cache: 'no-store',
+            signal: controller.signal // Link the abort signal
         };
 
         if (method !== "GET" && method !== "HEAD") {
@@ -91,6 +100,8 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
         }
 
         const response = await fetch(backendUrl, options);
+        clearTimeout(timeoutId);
+
         console.log(`[Proxy Response] ${backendUrl} -> ${response.status} ${response.statusText}`);
 
         if (response.headers.get("content-type")?.includes("text/event-stream")) {
@@ -125,6 +136,17 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
         return NextResponse.json(responseData);
 
     } catch (err: any) {
+        clearTimeout(timeoutId);
+        
+        if (err.name === 'AbortError') {
+            console.error(`[Proxy Timeout] Backend did not respond in 9.5s: ${backendUrl}`);
+            return NextResponse.json({ 
+                error: "Backend Dependency Timeout", 
+                detail: "The Python backend took too long to respond. This is usually due to an unreachable database URL or a cold start.",
+                url: backendUrl 
+            }, { status: 504 });
+        }
+
         console.error(`[Proxy Failure] ${backendUrl}:`, err.message);
         
         if (backendUrl.includes("localhost")) {
@@ -143,3 +165,4 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
         }, { status: 504 });
     }
 }
+
