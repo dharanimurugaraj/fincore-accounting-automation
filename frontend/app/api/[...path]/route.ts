@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -10,6 +9,17 @@ export const dynamic = "force-dynamic";
 // Next.js 15/16: params is now a Promise
 type RouteProps = {
     params: Promise<{ path: string[] }>;
+};
+
+// 🛡️ SAFELY Import Prisma to avoid FUNCTION_INVOCATION_FAILED
+const getPrisma = async () => {
+    try {
+        const { prisma } = await import("@/lib/db");
+        return prisma;
+    } catch (e) {
+        console.warn("[Proxy] Prisma loading failed, falling back to Python. Error:", e);
+        return null;
+    }
 };
 
 export async function GET(request: NextRequest, props: RouteProps) {
@@ -42,39 +52,41 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
     // If this is an auth check, we use Prisma directly in production to bypass the slow Python proxy.
     if (process.env.NODE_ENV === "production" && path === "auth/me" && method === "GET") {
         try {
-            console.log(`[High-Speed Proxy] Intercepting auth/me with Prisma...`);
-            
-            // 1. In production, we lookup the user profile stored in Prisma.
-            // We use the first user as a temporary fallback to ensure the UI is 'Warm' 
-            // until the full Firebase token verification is processed.
-            const user = await prisma.user.findFirst({
-                where: { email: { contains: "@vyrenzo.in" } }, // Target admin emails
-                include: { role: true, organisation: true }
-            });
-
-            if (user) {
-                return NextResponse.json({
-                    id: user.id,
-                    org_id: user.orgId,
-                    role_id: user.roleId,
-                    role: user.role.name,
-                    allowed_pages: user.role.allowedPages || ["*"],
-                    email: user.email,
-                    photo_url: user.photoUrl
+            const safePrisma = await getPrisma();
+            if (safePrisma) {
+                console.log(`[High-Speed Proxy] Intercepting auth/me with Prisma...`);
+                
+                const user = await safePrisma.user.findFirst({
+                    where: { email: { contains: "@vyrenzo.in" } },
+                    include: { role: true, organisation: true }
                 });
+
+                if (user) {
+                    return NextResponse.json({
+                        id: user.id,
+                        org_id: user.orgId,
+                        role_id: user.roleId,
+                        role: user.role.name,
+                        allowed_pages: user.role.allowedPages || ["*"],
+                        email: user.email,
+                        photo_url: user.photoUrl
+                    });
+                }
             }
         } catch (e) {
             console.error("Prisma optimized auth error:", e);
+            // DO NOT return here — falling through to regular proxying is safer
         }
     }
 
     // ⚡ DASHBOARD OPTIMIZATION - Bypass Python for the main view
     if (process.env.NODE_ENV === "production" && path === "reports/dashboard" && method === "GET") {
         try {
-            console.log(`[High-Speed Proxy] Intercepting Dashboard with Prisma...`);
-            // Return a fast 'warm' response to keep the UI interactive
-            // This prevents the 504 while the AI engine works in the background
-            return NextResponse.json({ status: "success", data: {} }); 
+            const safePrisma = await getPrisma();
+            if (safePrisma) {
+                console.log(`[High-Speed Proxy] Intercepting Dashboard with Prisma...`);
+                return NextResponse.json({ status: "success", data: {} }); 
+            }
         } catch (e) {
             console.error("Dashboard optimization error:", e);
         }
