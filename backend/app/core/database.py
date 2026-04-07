@@ -47,12 +47,38 @@ def get_db_connection():
     # Serverless fallback (Direct connection)
     url = settings.DATABASE_URL
     
-    # If sslmode is already in the URL, don't pass it as a separate param 
-    if 'sslmode=' in url:
-        return psycopg2.connect(url, cursor_factory=RealDictCursor, connect_timeout=5)
+    # 🏹 PRISMA ACCELERATE COMPATIBILITY FIX
+    # Python (psycopg2) CANNOT talk to prisma.io/sk_... proxies.
+    # It will hang and cause a 504. We must use a DIRECT connection URL here.
+    if "prisma.io" in url or "sk_" in url:
+        # Check standard direct URL variables provided by Prisma/Vercel
+        alternatives = [
+            os.getenv("DIRECT_DATABASE_URL"),
+            os.getenv("POSTGRES_URL_NON_POOLING"),
+            os.getenv("PSQL_DIRECT_URL")
+        ]
+        
+        # Pick the first one that exists and is NOT a prisma proxy
+        valid_fallback = next((a for a in alternatives if a and "prisma.io" not in a), None)
+        
+        if valid_fallback:
+            logger.info("Production Fix: Diverting Python traffic to DIRECT Connection string.")
+            url = valid_fallback
+        else:
+            logger.warning("CRITICAL: Python is connecting to a Prisma Proxy with NO DIRECT fallback.")
+            logger.warning("TIP: Find the 'Direct connection string' in Prisma Console and add it as DIRECT_DATABASE_URL in Vercel.")
+    
+    try:
+        # If sslmode is already in the URL, don't pass it as a separate param 
+        if 'sslmode=' in url:
+            return psycopg2.connect(url, cursor_factory=RealDictCursor, connect_timeout=3)
 
-    ssl = 'require' if 'prisma' in url or '.io' in url or 'neon' in url else 'prefer'
-    return psycopg2.connect(url, cursor_factory=RealDictCursor, sslmode=ssl, connect_timeout=5)
+        ssl = 'require' if 'prisma' in url or '.io' in url or 'neon' in url else 'prefer'
+        return psycopg2.connect(url, cursor_factory=RealDictCursor, sslmode=ssl, connect_timeout=3)
+    except Exception as e:
+        logger.error(f"DATABASE CONNECT FAILED: {e}")
+        # Re-raise with more context
+        raise ConnectionError(f"Database connection blocked. Error: {str(e)}")
 
 
 
