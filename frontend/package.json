@@ -6,7 +6,8 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "cd .. && npx prisma generate"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "latest",
