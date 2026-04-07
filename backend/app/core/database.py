@@ -31,6 +31,7 @@ def _get_pool():
             _pool = ThreadedConnectionPool(1, 10, url, cursor_factory=RealDictCursor)
         except Exception as e:
             logger.error(f"FAILED to initialize local pool: {e}")
+            logger.error("TIP: If you are using Prisma Accelerate, ensure you have provided the DIRECT CONNECTION URL (pointing to the actual DB host) instead of the proxy URL.")
             return None # Fallback to direct connections which might give better errors
         
     return _pool
