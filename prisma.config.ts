@@ -1,13 +1,14 @@
 // prisma.config.ts
-import "dotenv/config";
-import { defineConfig } from "prisma/config";
+import { defineConfig } from "@prisma/config";
 
-// Detect DATABASE_URL from any available source
-const dbUrl = process.env.DATABASE_URL || "postgresql://localhost:5432/fincore_dev";
-
+/**
+ * Prisma 7 Configuration
+ * In Prisma 7, connection strings are managed here instead of schema.prisma.
+ */
 export default defineConfig({
   schema: "prisma/schema.prisma",
   datasource: {
-    url: dbUrl,
+    // Falls back to direct string if env variable is missing
+    url: process.env.DATABASE_URL || "postgresql://localhost:5432/fincore_dev",
   },
 });
