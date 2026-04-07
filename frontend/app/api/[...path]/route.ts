@@ -37,48 +37,60 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
     const path = segments.join("/") || "unresolved";
     const method = request.method;
 
-    let host = "";
-    // Allow both NEXT_PUBLIC_BACKEND_URL and BACKEND_URL for flexibility in Vercel env settings
-    const backendUrlEnv = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL;
+    // 1. Determine the raw host string with multiple fallbacks
+    let rawHost = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL || "";
     const isLocal = process.env.NODE_ENV === "development";
-    
-    if (backendUrlEnv) {
-        host = backendUrlEnv;
-    } else if (isLocal) {
-        host = "localhost:8000";
-    } else {
-        host = process.env.VERCEL_PROJECT_PRODUCTION_URL || request.headers.get("host") || process.env.VERCEL_URL || "localhost:8000";
+
+    if (!rawHost) {
+        if (isLocal) {
+            rawHost = "http://localhost:8000";
+        } else {
+            const hostHeader = request.headers.get("host") || process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL || "localhost:8000";
+            rawHost = hostHeader.includes("://") ? hostHeader : `https://${hostHeader}`;
+        }
     }
 
-    const protocol = host.includes("127.0.0.1") || host.includes("localhost") || host.startsWith("http://") ? "http" : "https";
-     // Standardize: Remove prefix if present, we prefix it again in the URL builder
-    const cleanHost = host.replace(/^https?:\/\//, "");
+    // 2. Parse Host accurately
+    let protocol = "https";
+    let cleanHost = "";
 
-    // If on same domain (Vercel Service), we need the route prefix
+    try {
+        const parsed = new URL(rawHost.startsWith("http") ? rawHost : `https://${rawHost}`);
+        protocol = parsed.protocol.replace(":", "");
+        cleanHost = parsed.host + parsed.pathname;
+        if (cleanHost.endsWith("/")) cleanHost = cleanHost.slice(0, -1);
+    } catch (e) {
+        cleanHost = rawHost.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    }
+
+    // 3. Apply Vercel Multi-service Prefix if needed
     let finalHost = cleanHost;
-    if (!cleanHost.includes("_/backend") && !isLocal) {
-        finalHost = `${cleanHost}/_/backend`;
+    if (!isLocal && !cleanHost.includes("_/backend")) {
+        finalHost = `${cleanHost}/_/backend`.replace(/\/\/+/g, "/");
     }
 
+    // 4. Construct Final Backend URL
     const url = new URL(request.url);
     const cleanPath = path.startsWith("v1/") ? path : `v1/${path}`;
     
-    let backendUrl = "";
-    if (finalHost.includes("/api")) {
-        backendUrl = `${protocol}://${finalHost}/${cleanPath}${url.search}`;
-    } else {
-        backendUrl = `${protocol}://${finalHost}/api/${cleanPath}${url.search}`;
+    // Ensure no duplicate /api or /v1 segments
+    let backendUrl = `${protocol}://${finalHost}`;
+    if (!backendUrl.includes("/api")) {
+        backendUrl += "/api";
     }
+    backendUrl += `/${cleanPath}${url.search}`;
+    // Fix any accidental triple slashes except after protocol
+    backendUrl = backendUrl.replace(/([^:]\/)\/+/g, "$1");
 
     console.log(`[Proxy] ${method} -> ${backendUrl}`);
 
     const controller = new AbortController();
-    // 9.5s timeout: Vercel kills at 10s on Hobby plan, so we abort slightly before
     const timeoutId = setTimeout(() => controller.abort(), 9500);
 
     try {
         const headers = new Headers(request.headers);
-        headers.set("host", new URL(backendUrl).host);
+        const targetUrl = new URL(backendUrl);
+        headers.set("host", targetUrl.host);
         
         if (method === "GET" || method === "DELETE" || method === "HEAD") {
             headers.delete("content-type");
