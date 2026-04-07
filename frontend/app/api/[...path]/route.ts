@@ -57,10 +57,16 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
     try {
         const parsed = new URL(rawHost.startsWith("http") ? rawHost : `https://${rawHost}`);
         protocol = parsed.protocol.replace(":", "");
-        cleanHost = parsed.host + parsed.pathname;
+        cleanHost = (parsed.host + parsed.pathname).replace(/\/\/+/g, "/");
         if (cleanHost.endsWith("/")) cleanHost = cleanHost.slice(0, -1);
     } catch (e) {
         cleanHost = rawHost.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    }
+
+    // 2.1 SAFETY: If cleanHost is still empty, force fallback to current domain
+    if (!cleanHost || cleanHost === "/") {
+        const fallback = request.headers.get("host") || process.env.VERCEL_PROJECT_PRODUCTION_URL || "finance.vyrenzo.in";
+        cleanHost = fallback.replace(/^https?:\/\//, "");
     }
 
     // 3. Apply Vercel Multi-service Prefix if needed
@@ -68,6 +74,8 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
     if (!isLocal && !cleanHost.includes("_/backend")) {
         finalHost = `${cleanHost}/_/backend`.replace(/\/\/+/g, "/");
     }
+    // Final check for leading slash
+    if (finalHost.startsWith("/")) finalHost = finalHost.slice(1);
 
     // 4. Construct Final Backend URL
     const url = new URL(request.url);
@@ -159,21 +167,15 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
             }, { status: 504 });
         }
 
-        console.error(`[Proxy Failure] ${backendUrl}:`, err.message);
-        
-        if (backendUrl.includes("localhost")) {
-            try {
-                const altUrl = backendUrl.replace("localhost", "127.0.0.1");
-                console.log(`[Proxy Fallback] Trying ${altUrl}...`);
-                const altRes = await fetch(altUrl, { method, headers: request.headers });
-                if (altRes.ok) return altRes;
-            } catch (e2) {}
-        }
-
         return NextResponse.json({ 
             error: "Backend Connectivity Failed", 
             detail: err.message,
-            url: backendUrl 
+            url: backendUrl,
+            debug: {
+                rawHost: process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL || "MISSING",
+                finalHost: finalHost,
+                isProduction: !isLocal
+            }
         }, { status: 504 });
     }
 }
