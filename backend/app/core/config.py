@@ -7,21 +7,29 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load .env only for local development. Vercel provides these via the Dashboard.
+# Search for .env in current folder or parents to find the backend root
+_search_dir = Path(__file__).parent.parent.parent
+_env_path = _search_dir / ".env"
+
 if not os.getenv("VERCEL"):
-    _env_path = Path(__file__).parent.parent.parent / ".env"
     if _env_path.exists():
+        print(f"DEBUG: Found .env at {_env_path}")
         load_dotenv(_env_path, override=True)
+    else:
+        # Fallback to project root if being run from root
+        _root_env = _search_dir.parent / ".env"
+        if _root_env.exists():
+            print(f"DEBUG: Found fallback .env at {_root_env}")
+            load_dotenv(_root_env, override=True)
+
 
 
 class Settings:
     """Central config — all env vars in one place."""
 
     # ── Database ────────────────────────────────────────────────────────────
-    DATABASE_URL: str = os.getenv(
-        "DATABASE_URL",
-        "postgresql://fincore:fincore_dev@localhost:5432/fincore_dev",
-    )
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "")
+
 
     # ── Storage (S3 or local) ───────────────────────────────────────────────
     S3_BUCKET: str = os.getenv("S3_BUCKET", "")
@@ -36,7 +44,7 @@ class Settings:
     # ── AI / LLM ───────────────────────────────────────────────────────────
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
-    OPENROUTER_MODEL: str = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash-lite")
+    OPENROUTER_MODEL: str = os.getenv("OPENROUTER_MODEL", "openai/gpt-5.4")
 
     # ── Firebase ────────────────────────────────────────────────────────────
     FIREBASE_PROJECT_ID: str = os.getenv("FIREBASE_PROJECT_ID", "")

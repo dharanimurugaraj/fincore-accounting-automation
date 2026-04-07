@@ -6,7 +6,6 @@ from fastapi import APIRouter
 
 from app.api.v1.auth import router as auth_router
 from app.api.v1.uploads import router as uploads_router
-from app.api.v1.pipeline import router as pipeline_router
 from app.api.v1.reports import router as reports_router
 from app.api.v1.wcdl import router as wcdl_router
 from app.api.v1.forex import router as forex_router
@@ -37,9 +36,8 @@ async def health_check():
 
 
 api_v1_router.include_router(auth_router,     prefix="/auth",      tags=["Auth"])
-api_v1_router.include_router(uploads_router,  prefix="/uploads",   tags=["Uploads"])
-api_v1_router.include_router(uploads_router,  prefix="/documents",   tags=["Documents"])
-api_v1_router.include_router(pipeline_router, prefix="/pipeline",  tags=["Pipeline"])
+api_v1_router.include_router(uploads_router,  prefix="/documents", tags=["Documents"])
+
 api_v1_router.include_router(reports_router,  prefix="/reports",   tags=["Reports"])
 api_v1_router.include_router(wcdl_router,     prefix="/wcdl",      tags=["WCDL"])
 api_v1_router.include_router(forex_router,    prefix="/forex",     tags=["Forex"])

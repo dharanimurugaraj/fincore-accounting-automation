@@ -221,3 +221,35 @@ CREATE TABLE IF NOT EXISTS "FormulaConfiguration" (
 
 -- Seed Initial Organisation
 INSERT INTO "Organisation" (id, name) VALUES ('default-org', 'Vyrenzo Bank Demo') ON CONFLICT DO NOTHING;
+
+-- Parsed Accounts Persistence
+CREATE TABLE IF NOT EXISTS "ParsedAccount" (
+    id            TEXT PRIMARY KEY,
+    "runId"       TEXT NOT NULL REFERENCES "PipelineRun"(id) ON DELETE CASCADE,
+    "bankName"    TEXT NOT NULL,
+    "accountNo"   TEXT NOT NULL,
+    "accountType" TEXT NOT NULL,
+    "periodFrom"  TIMESTAMP WITH TIME ZONE,
+    "periodTo"    TIMESTAMP WITH TIME ZONE,
+    "openingBal"  NUMERIC(15, 2),
+    "closingBal"  NUMERIC(15, 2),
+    "createdAt"   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Parsed Transactions Persistence
+CREATE TABLE IF NOT EXISTS "Transaction" (
+    id               TEXT PRIMARY KEY,
+    "accountId"      TEXT NOT NULL REFERENCES "ParsedAccount"(id) ON DELETE CASCADE,
+    "date"           DATE NOT NULL,
+    "narration"      TEXT NOT NULL,
+    "refNumber"      TEXT,
+    "withdrawal"     NUMERIC(15, 2),
+    "deposit"        NUMERIC(15, 2),
+    "closingBalance" NUMERIC(15, 2) NOT NULL,
+    "drCrFlag"       TEXT NOT NULL,
+    "ccValue"        NUMERIC(15, 2),
+    "posBalance"     NUMERIC(15, 2),
+    "noOfDays"       INTEGER,
+    "category"       TEXT,
+    "createdAt"      TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

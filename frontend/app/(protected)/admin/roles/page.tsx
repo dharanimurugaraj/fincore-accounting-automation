@@ -12,15 +12,16 @@ interface RoleEntry {
   allowedPages: string[];
 }
 
-const AVAILABLE_PAGES = [
-  "Dashboard",
-  "Upload",
-  "Documents",
-  "Reports",
-  "WCDL Tracker",
-  "Forex Register",
-  "Activity",
-  "Audit Logs"
+const RESOURCES = [
+  { id: "Dashboard", label: "Dashboard" },
+  { id: "Customers", label: "Customers" },
+  { id: "Upload", label: "Upload" },
+  { id: "Documents", label: "Documents" },
+  { id: "Reports", label: "Reports" },
+  { id: "WCDL", label: "WCDL Tracker" },
+  { id: "Forex", label: "Forex Register" },
+  { id: "Activity", label: "Activity" },
+  { id: "Audit", label: "Audit Logs" }
 ];
 
 export default function RoleManagementPage() {
@@ -53,12 +54,17 @@ export default function RoleManagementPage() {
     }
   }, [profile]);
 
-  const togglePage = (page: string) => {
-    if (selectedPages.includes(page)) {
-      setSelectedPages(selectedPages.filter(p => p !== page));
+  const togglePermission = (resourceId: string, type: 'read' | 'write') => {
+    const perm = `${resourceId}:${type}`;
+    if (selectedPages.includes(perm)) {
+      setSelectedPages(selectedPages.filter(p => p !== perm));
     } else {
-      setSelectedPages([...selectedPages, page]);
+      setSelectedPages([...selectedPages, perm]);
     }
+  };
+
+  const hasPerm = (resourceId: string, type: 'read' | 'write') => {
+    return selectedPages.includes(`${resourceId}:${type}`) || selectedPages.includes("*");
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -93,7 +99,7 @@ export default function RoleManagementPage() {
     }
     setRoleName(r.name);
     setRoleDesc(r.description || "");
-    setSelectedPages(r.allowedPages?.includes("*") ? AVAILABLE_PAGES : (r.allowedPages || []));
+    setSelectedPages(r.allowedPages || []);
     setShowForm(true);
   }
 
@@ -123,10 +129,10 @@ export default function RoleManagementPage() {
             onClick={() => {
                 setRoleName("");
                 setRoleDesc("");
-                setSelectedPages(AVAILABLE_PAGES);
+                setSelectedPages([]);
                 setShowForm(!showForm);
             }}
-            className="px-4 py-2 bg-ai-violet hover:bg-ai-violet text-t-heading font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-ai-violet hover:bg-ai-violet text-t-heading font-medium rounded-lg transition-colors border border-indigo-500/20"
             >
             {showForm ? "Cancel" : "+ Create Custom Role"}
             </button>
@@ -159,31 +165,45 @@ export default function RoleManagementPage() {
           </div>
 
           <div className="space-y-4">
-             <label className="text-xs font-semibold text-t-muted uppercase tracking-wider block border-b border-neutral-border pb-2">Allowed UI Modules</label>
-             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {AVAILABLE_PAGES.map(page => {
-                    const isSelected = selectedPages.includes(page);
+             <label className="text-xs font-semibold text-t-muted uppercase tracking-wider block border-b border-neutral-border pb-2">Module Access Configuration</label>
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {RESOURCES.map(res => {
+                    const read = hasPerm(res.id, 'read');
+                    const write = hasPerm(res.id, 'write');
+                    
                     return (
-                        <button
-                          type="button"
-                          onClick={() => togglePage(page)}
-                          key={page}
-                          className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${
-                              isSelected ? "bg-ai-violet/10 border-indigo-500/50 text-indigo-300" : "bg-neutral-app border-neutral-border hover:border-neutral-border text-t-muted"
-                          }`}
-                        >
-                            <div className={`w-5 h-5 rounded flex items-center justify-center border ${isSelected ? 'bg-ai-violet border-indigo-500' : 'border-neutral-border'}`}>
-                                {isSelected && <Check className="w-3 h-3 text-t-heading" />}
+                        <div key={res.id} className="p-4 rounded-xl bg-neutral-app border border-neutral-border space-y-3">
+                            <h3 className="font-bold text-t-heading text-sm">{res.label}</h3>
+                            <div className="flex gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => togglePermission(res.id, 'read')}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md border text-xs font-bold transition-all ${
+                                        read ? "bg-status-success/10 border-emerald-500/50 text-emerald-400" : "bg-neutral-row border-neutral-border text-t-muted"
+                                    }`}
+                                >
+                                    {read ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
+                                    VIEW
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => togglePermission(res.id, 'write')}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md border text-xs font-bold transition-all ${
+                                        write ? "bg-status-critical/10 border-rose-500/50 text-rose-400" : "bg-neutral-row border-neutral-border text-t-muted"
+                                    }`}
+                                >
+                                    {write ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
+                                    EDIT
+                                </button>
                             </div>
-                            <span className="text-sm font-medium">{page}</span>
-                        </button>
+                        </div>
                     )
                 })}
              </div>
           </div>
 
           <div className="flex justify-end border-t border-neutral-border pt-6">
-             <button disabled={saving} type="submit" className="px-6 py-2 bg-ai-violet hover:bg-ai-violet disabled:opacity-50 text-t-heading font-medium rounded-lg transition-colors">
+             <button disabled={saving} type="submit" className="px-6 py-2 bg-ai-violet hover:bg-ai-violet disabled:opacity-50 text-t-heading font-medium rounded-lg transition-colors shadow-lg shadow-indigo-500/10">
                 {saving ? "Saving..." : "Save Role Configuration"}
              </button>
           </div>
@@ -191,7 +211,7 @@ export default function RoleManagementPage() {
       )}
 
       {/* Existing Roles Table */}
-      <div className="bg-neutral-card border border-neutral-border rounded-2xl overflow-hidden">
+      <div className="bg-neutral-card border border-neutral-border rounded-2xl overflow-hidden shadow-sm">
         {loading ? (
           <div className="p-8 text-center text-t-muted animate-pulse">Loading roles configuration...</div>
         ) : (
@@ -209,9 +229,9 @@ export default function RoleManagementPage() {
               <tbody className="divide-y divide-neutral-border">
                 {roles.map((r) => (
                   <tr key={r.id} className="hover:bg-neutral-row/30 transition-colors">
-                    <td className="px-6 py-4 font-mono text-t-muted">{r.id}</td>
+                    <td className="px-6 py-4 font-mono text-t-muted text-[11px]">{r.id}</td>
                     <td className="px-6 py-4">
-                        <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-widest rounded inline-block ${
+                        <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-widest rounded inline-block shadow-sm ${
                             r.id === 0 ? "bg-status-medium-bg text-status-medium border border-amber-500/20" :
                             r.id === 1 ? "bg-ai-violet/10 text-ai-violet border border-indigo-500/20" :
                             "bg-neutral-row text-t-body"
@@ -219,31 +239,38 @@ export default function RoleManagementPage() {
                             {r.name}
                         </span>
                     </td>
-                    <td className="px-6 py-4 text-t-muted">
+                    <td className="px-6 py-4 text-t-muted text-xs">
                         {r.description || "-"}
                     </td>
                     <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1 max-w-md">
                             {r.allowedPages?.includes("*") ? (
-                                <span className="text-status-success text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-status-success-bg">Full Platform Access</span>
+                                <span className="text-status-success text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-status-success-bg border border-emerald-500/10">Full Platform Access</span>
                             ) : (
-                                r.allowedPages?.slice(0, 3).map(p => (
-                                    <span key={p} className="text-t-body text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-row">{p}</span>
-                                ))
+                                r.allowedPages?.slice(0, 5).map(p => {
+                                    const [mod, access] = p.split(':');
+                                    return (
+                                        <span key={p} className={`text-[9px] uppercase tracking-tighter px-1.5 py-0.5 rounded border whitespace-nowrap ${
+                                            access === 'write' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-neutral-row text-t-muted border-neutral-border'
+                                        }`}>
+                                            {mod}{access ? `:${access}` : ''}
+                                        </span>
+                                    )
+                                })
                             )}
-                            {(r.allowedPages?.length > 3 && !r.allowedPages.includes("*")) && (
-                                <span className="text-t-muted text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-row/50">+{r.allowedPages.length - 3} MORE</span>
+                            {(r.allowedPages?.length > 5 && !r.allowedPages.includes("*")) && (
+                                <span className="text-t-muted text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-row/50">+{r.allowedPages.length - 5} MORE</span>
                             )}
                         </div>
                     </td>
                     {profile?.role_id === 0 && (
                         <td className="px-6 py-4 text-right">
                            {r.id > 1 ? (
-                               <button onClick={() => handleEdit(r)} className="text-ai-violet hover:text-indigo-300 font-medium text-xs uppercase tracking-wider">
-                                   Edit
+                               <button onClick={() => handleEdit(r)} className="text-ai-violet hover:text-indigo-300 font-bold text-[10px] uppercase tracking-widest border border-indigo-500/20 px-3 py-1 rounded-md hover:bg-ai-violet/10 transition-all">
+                                   Configure
                                </button>
                            ) : (
-                               <span className="text-t-muted text-[10px] uppercase tracking-widest cursor-not-allowed">System Protected</span>
+                               <span className="text-t-muted text-[9px] uppercase tracking-widest cursor-not-allowed opacity-50">System Root</span>
                            )}
                         </td>
                     )}
@@ -257,3 +284,4 @@ export default function RoleManagementPage() {
     </div>
   );
 }
+

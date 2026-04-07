@@ -1,386 +1,456 @@
-"use client";
+"use client"
 
-import { useState, useCallback, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import { Play, Trash2, Download, CheckCircle, Search, User } from "lucide-react";
-import DropZone from "@/components/upload/DropZone";
-import FileCard from "@/components/upload/FileCard";
-import PipelineStatus from "@/components/upload/PipelineStatus";
-import { usePipelineStore } from "@/store/pipeline.store";
-import type { FileToUpload, RunStatus } from "@/types";
+import { useState, useEffect, useRef } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { api } from "@/lib/api"
 
-function detectAccountFromFilename(name: string): {
-  bankName: string;
-  accountType: string;
-  accountId: string;
-  detected: boolean;
-} {
-  const lower = name.toLowerCase();
-  let bankName = "Unknown";
-  let accountType = "Unknown";
-  let accountId = "";
-
-  if (/hdfc/i.test(lower)) bankName = "HDFC";
-  else if (/ubi|union/i.test(lower)) bankName = "UBI";
-  else if (/sbi|state\s*bank/i.test(lower)) bankName = "SBI";
-  else if (/icici/i.test(lower)) bankName = "ICICI";
-  else if (/axis/i.test(lower)) bankName = "AXIS";
-
-  if (/cc|cash.?credit/i.test(lower)) accountType = "CC";
-  else if (/current|ca\b/i.test(lower)) accountType = "Current";
-  else if (/wcdl|demand.?loan/i.test(lower)) accountType = "WCDL";
-  else if (/forex|remittance|import/i.test(lower)) accountType = "Forex";
-  else if (/savings|sb\b/i.test(lower)) accountType = "Savings";
-
-  const numbers = name.match(/\d{3,}/);
-  if (numbers) accountId = numbers[0];
-
-  const detected = bankName !== "Unknown" || accountType !== "Unknown";
-  return { bankName, accountType, accountId, detected };
+interface ProgressState {
+  step: string
+  status: "idle" | "running" | "done" | "error" | "complete"
+  detail: string
+  percent: number
+  sub_steps: string[]
+  downloads?: {
+    working_sheet: string
+    banking_report: string
+  }
+  validation?: any
 }
 
+const PIPELINE_STEPS = [
+  {
+    id: "upload",
+    label: "Uploading Files",
+    icon: "📤",
+    description: "Receiving and saving PDF files"
+  },
+  {
+    id: "validation",
+    label: "Validating Bank Statements",
+    icon: "🔍",
+    description: "Confirming PDFs are valid bank statements"
+  },
+  {
+    id: "extraction",
+    label: "Extracting Transactions",
+    icon: "🤖",
+    description: "AI reading all transaction data"
+  },
+  {
+    id: "computation",
+    label: "Running Financial Formulas",
+    icon: "🧮",
+    description: "Computing CC interest, WCDL, Finance Cost"
+  },
+  {
+    id: "working_sheet",
+    label: "Generating Working Sheet",
+    icon: "📊",
+    description: "Building Excel with all calculations"
+  },
+  {
+    id: "banking_report",
+    label: "Generating Banking Report",
+    icon: "📋",
+    description: "Building management report Excel"
+  },
+  {
+    id: "complete",
+    label: "Complete",
+    icon: "🎉",
+    description: "Files ready for download"
+  }
+]
+
 export default function UploadPage() {
-  const {
-    files,
-    addFiles,
-    removeFile,
-    updateFile,
-    statementMonth,
-    setStatementMonth,
-    currentRun,
-    clearFiles,
-    startPolling,
-  } = usePipelineStore();
+  const [files, setFiles] = useState<File[]>([])
+  const [jobId, setJobId] = useState<string | null>(null)
+  const [progress, setProgress] = useState<ProgressState | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const eventSourceRef = useRef<EventSource | null>(null)
 
-  const searchParams = useSearchParams();
-  const [isUploading, setIsUploading] = useState(false);
-  const [customers, setCustomers] = useState<any[]>([]);
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string>("");
-
+  // Recover job from localStorage on mount (Layer 2)
   useEffect(() => {
-    fetchCustomers();
-    const cid = searchParams.get("customerId");
-    if (cid) setSelectedCustomerId(cid);
-  }, [searchParams]);
-
-  const fetchCustomers = async () => {
-    try {
-      const res = await fetch("/api/customers");
-      if (res.ok) setCustomers(await res.json());
-    } catch (err) {
-      console.error(err);
+    const savedJobId = localStorage.getItem("fincore_active_job");
+    if (savedJobId && !jobId) {
+      console.log("Recovered active job:", savedJobId);
+      setJobId(savedJobId);
     }
-  };
+  }, []);
 
-  const handleFilesSelected = useCallback(
-    (selectedFiles: File[]) => {
-      const fileEntries: FileToUpload[] = selectedFiles.map((f) => {
-        const detection = detectAccountFromFilename(f.name);
-        return {
-          file: f,
-          filename: f.name,
-          bankName: detection.bankName,
-          accountType: detection.accountType,
-          accountId: detection.accountId,
-          detectedFrom: detection.detected ? "filename" : "manual",
-          uploading: false,
-          uploaded: false,
-        };
-      });
-      addFiles(fileEntries);
-    },
-    [addFiles]
-  );
+  const handleUpload = async () => {
+    if (!files.length) return
 
-  const handleUpdateAccount = useCallback(
-    (index: number, bankName: string, accountType: string, accountId: string) => {
-      updateFile(index, { bankName, accountType, accountId, detectedFrom: "manual" });
-    },
-    [updateFile]
-  );
-
-  const uploadAndRunPipeline = async () => {
-    if (files.length === 0) return;
-    setIsUploading(true);
-
-    const orgId = "default-org";
+    const formData = new FormData()
+    files.forEach(f => formData.append("files", f))
 
     try {
-      const formData = new FormData();
-      formData.append("org_id", orgId);
-      formData.append("statement_month", statementMonth);
-      if (selectedCustomerId) {
-        formData.append("customer_id", selectedCustomerId);
-      }
-
-      for (const f of files) {
-        formData.append("files", f.file);
-      }
-
-      for (let i = 0; i < files.length; i++) {
-        updateFile(i, { uploading: true });
-      }
-
-      const uploadRes = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!uploadRes.ok) throw new Error("File upload failed");
-      const uploadData = await uploadRes.json();
-      const s3Keys: string[] = uploadData.uploads.map(
-        (u: { s3_key: string }) => u.s3_key
-      );
-
-      for (let i = 0; i < files.length; i++) {
-        const key = s3Keys[i] || "";
-        updateFile(i, { uploading: false, uploaded: true, s3Key: key });
-      }
-
-      if (s3Keys.length > 0) {
-        const runRes = await fetch("/api/pipeline", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            org_id: orgId,
-            statement_month: statementMonth,
-            pdf_s3_keys: s3Keys,
-            customer_id: selectedCustomerId || undefined,
-          }),
-        });
-
-        if (runRes.ok) {
-          const runData = await runRes.json();
-          startPolling(runData.run_id);
+        const data = await api.postForm<any>("process", formData)
+        
+        if (data.error) {
+            alert(data.error)
+            return
         }
-      }
+        
+        const job_id = data.job_id
+        if (!job_id) {
+            console.error("No Job ID returned from server")
+            return
+        }
+        console.log("Job started:", job_id)
+        setJobId(job_id)
+        localStorage.setItem("fincore_active_job", job_id);
     } catch (err) {
-      for (let i = 0; i < files.length; i++) {
-        updateFile(i, {
-          uploading: false,
-          error: err instanceof Error ? err.message : "Upload failed",
-        });
+        console.error("Upload error:", err)
+        alert("Failed to start processing")
+    }
+  }
+
+  // Polling logic (Layer 2 - every 3 seconds)
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+    
+    const pollStatus = async () => {
+      if (!jobId) return
+
+      try {
+        const data = await api.get<any>(`process/status/${jobId}`)
+        
+        // Map backend response to ProgressState
+        const mappedProgress: ProgressState = {
+          step: data.progress?.step || "upload",
+          status: data.status === "APPROVED" || data.status === "complete" ? "complete" : 
+                  data.status === "FAILED" ? "error" : "running",
+          detail: data.progress?.detail || "Processing...",
+          percent: data.progress?.percent || 0,
+          sub_steps: data.progress?.sub_steps || [],
+          downloads: data.working_sheet && data.banking_report ? {
+            working_sheet: data.working_sheet,
+            banking_report: data.banking_report
+          } : undefined
+        }
+
+        setProgress(mappedProgress)
+
+        if (mappedProgress.status === "complete") {
+            // Keep jobId so user can download, but maybe clear after some time?
+            // For now, let's just stop polling logic.
+            return 
+        }
+        
+        if (mappedProgress.status === "error") {
+            localStorage.removeItem("fincore_active_job");
+            return
+        }
+
+        timer = setTimeout(pollStatus, 3000)
+      } catch (err: any) {
+        if (err.status === 404) {
+            console.warn("Job not found, clearing stale ID");
+            localStorage.removeItem("fincore_active_job");
+            setJobId(null);
+            return;
+        }
+        timer = setTimeout(pollStatus, 3000)
       }
     }
 
-    setIsUploading(false);
-  };
+    if (jobId && (!progress || (progress.status !== "complete" && progress.status !== "error"))) {
+      pollStatus()
+    }
 
-  const allUploaded = files.length > 0 && files.every((f) => f.uploaded);
-  const pipelineActive = currentRun && !["APPROVED", "FAILED"].includes(currentRun.status);
-  const pipelineDone = currentRun?.status === "APPROVED";
-  const canDownload = pipelineDone && currentRun;
+    return () => clearTimeout(timer)
+  }, [jobId])
+
+  const getStepStatus = (stepId: string) => {
+    if (!progress) return "idle"
+    const currentIdx = PIPELINE_STEPS.findIndex(s => s.id === progress.step)
+    const thisIdx = PIPELINE_STEPS.findIndex(s => s.id === stepId)
+    
+    if (thisIdx < currentIdx) return "done"
+    if (thisIdx === currentIdx) return progress.status
+    if (progress.status === "complete") return "done"
+    return "idle"
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-3xl border border-neutral-border bg-neutral-card/20 p-6 flex flex-col md:flex-row md:items-end gap-6 backdrop-blur-xl">
-        <div className="flex-1 space-y-2">
-          <label className="text-[10px] font-bold uppercase tracking-widest text-t-muted flex items-center gap-2">
-            <User className="h-3 w-3 text-primary" />
-            Target Portfolio / Customer
-          </label>
-          <select 
-            value={selectedCustomerId}
-            onChange={(e) => setSelectedCustomerId(e.target.value)}
-            className="w-full bg-neutral-app/50 border border-neutral-border rounded-xl py-2.5 px-4 text-sm text-t-heading outline-none appearance-none focus:border-primary/50 transition-all font-medium"
-            disabled={isUploading || !!pipelineActive}
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 p-4 md:p-8 rounded-3xl">
+      <div className="max-w-3xl mx-auto">
+        
+        {/* Header */}
+        <div className="mb-10 text-center">
+          <h1 className="text-4xl font-black mb-3 bg-gradient-to-r from-[#0ABFBC] to-slate-900 bg-clip-text text-transparent italic tracking-tight">
+            FINCORE INTELLIGENCE
+          </h1>
+          <p className="text-slate-500 text-sm font-medium">
+            Enterprise-grade banking extraction. Process up to 10 PDFs (100 pages each) simultaneously.
+          </p>
+        </div>
+
+        {/* Upload zone */}
+        {!jobId && (
+          <div
+            className={`border-2 border-dashed rounded-[2.5rem] p-16 text-center mb-8 transition-all duration-500 shadow-xl shadow-slate-200/50 ${
+              isDragging
+                ? "border-[#0ABFBC] bg-[#0ABFBC]/5 scale-[1.01]"
+                : "border-slate-200 bg-white hover:border-[#0ABFBC]/50"
+            }`}
+            onDragOver={(e) => {
+              e.preventDefault()
+              setIsDragging(true)
+            }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault()
+              setIsDragging(false)
+              const dropped = Array.from(e.dataTransfer.files)
+                .filter(f => f.type === "application/pdf")
+              setFiles(prev => [...prev, ...dropped])
+            }}
           >
-            <option value="">Select a Customer (Optional)</option>
-            {customers.map(c => (
-              <option key={c.id} value={c.id}>{c.companyName} — {c.customId}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-[10px] font-bold uppercase tracking-widest text-t-muted">Statement Month</label>
-          <input
-            type="month"
-            value={statementMonth}
-            onChange={(e) => setStatementMonth(e.target.value)}
-            className="w-full md:w-auto rounded-xl border border-neutral-border bg-neutral-app/50 px-4 py-2.5 text-sm text-t-heading outline-none focus:border-primary/50 transition-all"
-            disabled={isUploading || !!pipelineActive}
-          />
-        </div>
-      </div>
-
-      {!pipelineActive && !pipelineDone && (
-        <DropZone
-          onFilesSelected={handleFilesSelected}
-          disabled={isUploading}
-        />
-      )}
-
-      {files.length > 0 && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-t-heading">
-              {files.length} file{files.length > 1 ? "s" : ""} selected
-            </h2>
-            {!pipelineActive && !pipelineDone && (
-              <button
-                onClick={clearFiles}
-                className="flex items-center gap-1.5 text-xs text-t-muted hover:text-status-critical"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-                Clear all
-              </button>
-            )}
+            <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6 shadow-inner">📄</div>
+            <p className="text-slate-800 mb-2 font-bold text-lg">
+              Drop bank statements here
+            </p>
+            <p className="text-slate-400 text-xs mb-10 font-medium italic">
+              All major Indian banks supported (HDFC, SBI, ICICI, etc.)
+            </p>
+            <label className="cursor-pointer inline-flex items-center gap-2 px-10 py-4 bg-[#0ABFBC] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-xl shadow-[#0ABFBC]/30">
+              Select Files
+              <input
+                type="file"
+                multiple
+                accept=".pdf"
+                className="hidden"
+                onChange={(e) => {
+                  const selected = Array.from(e.target.files || [])
+                  setFiles(prev => [...prev, ...selected])
+                }}
+              />
+            </label>
           </div>
+        )}
 
-          {files.map((file, index) => (
-            <FileCard
-              key={`${file.filename}-${index}`}
-              file={file}
-              index={index}
-              onRemove={removeFile}
-              onUpdateAccount={handleUpdateAccount}
-            />
-          ))}
-        </div>
-      )}
-
-      {files.length > 0 && !currentRun && (
-        <button
-          onClick={uploadAndRunPipeline}
-          disabled={isUploading || files.length === 0}
-          className="flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-t-heading transition-colors hover:bg-primary-hover disabled:opacity-50"
-        >
-          <Play className="h-4 w-4" />
-          {isUploading ? "Uploading..." : "Upload & Run Pipeline"}
-        </button>
-      )}
-
-      {currentRun && (
-        <PipelineStatus
-          status={currentRun.status}
-          stage={currentRun.stage}
-          errorMessage={currentRun.errorMessage}
-        />
-      )}
-
-      {currentRun?.status === "STAGE1_REVIEW" && currentRun.reviewFields && (
-        <div className="rounded-xl border border-status-medium/30 bg-amber-500/5 p-6">
-          <h3 className="text-sm font-semibold text-status-medium">
-            Review Required — Low Confidence Fields
-          </h3>
-          <div className="mt-3 space-y-2">
-            {currentRun.reviewFields.map((rf: any, i: number) => (
-              <div key={i} className="flex items-center justify-between rounded-lg border border-neutral-border bg-neutral-card p-3">
-                <div>
-                  <p className="text-sm text-t-heading">{rf.account}</p>
-                  <p className="text-xs text-t-muted">{rf.file}</p>
+        {/* File list */}
+        {files.length > 0 && !jobId && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 space-y-3"
+          >
+            {files.map((file, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between bg-white border border-slate-100 rounded-[1.5rem] px-6 py-5 shadow-sm"
+              >
+                <div className="flex items-center gap-5">
+                  <div className="w-12 h-12 bg-[#0ABFBC]/5 rounded-2xl flex items-center justify-center text-2xl">📄</div>
+                  <div>
+                    <div className="text-sm font-bold text-slate-800">{file.name}</div>
+                    <div className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em] mt-0.5">{(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                  </div>
                 </div>
-                <span className="rounded-full bg-status-medium-bg px-2.5 py-0.5 text-xs font-medium text-status-medium">
-                  {(rf.confidence * 100).toFixed(0)}% confidence
-                </span>
+                <button
+                  onClick={() => setFiles(f => f.filter((_, idx) => idx !== i))}
+                  className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all"
+                >
+                  ✕
+                </button>
               </div>
             ))}
-          </div>
-          <button
-            onClick={async () => {
-              await fetch("/api/pipeline", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  action: "confirm",
-                  run_id: currentRun.runId,
-                }),
-              });
-              startPolling(currentRun.runId);
-            }}
-            className="mt-4 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-t-heading hover:bg-amber-400"
-          >
-            Confirm & Continue
-          </button>
-        </div>
-      )}
+            
+            <button
+              onClick={handleUpload}
+              className="w-full mt-10 py-5 bg-slate-900 text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-[#0ABFBC] transition-all active:scale-[0.98] shadow-2xl shadow-slate-900/20"
+            >
+              Analyze Statements →
+            </button>
+          </motion.div>
+        )}
 
-      {currentRun?.status === "AWAITING_APPROVAL" && (
-        <div className="rounded-xl border border-status-success/30 bg-emerald-500/5 p-6">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-status-success" />
-            <h3 className="text-sm font-semibold text-status-success">
-              Validation Passed — Ready for Approval
-            </h3>
-          </div>
-          {currentRun.validationResult && (
-            <div className="mt-3 grid grid-cols-3 gap-4 text-center">
-              <div className="rounded-lg bg-neutral-card p-3">
-                <p className="text-2xl font-bold text-status-success">
-                  {(currentRun.validationResult as any).checks.filter((c: any) => c.status === "PASS").length}
-                </p>
-                <p className="text-xs text-t-muted">Passed</p>
+        {/* Live Progress */}
+        <AnimatePresence>
+          {jobId && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="space-y-6"
+            >
+              <div className="mb-10 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50">
+                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4">
+                  <div className="flex items-center gap-4">
+                    <span>Overall Pipeline Progress</span>
+                    <button 
+                        onClick={() => {
+                            localStorage.removeItem("fincore_active_job");
+                            setJobId(null);
+                            setProgress(null);
+                            setFiles([]);
+                        }}
+                        className="text-red-400 hover:text-red-500 hover:underline transition-all lowercase italic font-medium"
+                    >(Reset / Stop)</button>
+                  </div>
+                  <span className="text-[#0ABFBC] bg-[#0ABFBC]/10 px-2 py-0.5 rounded-md font-black">{progress?.percent ?? 0}%</span>
+                </div>
+                <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-[#0ABFBC] to-[#40E0D0] rounded-full"
+                    animate={{ width: `${progress?.percent ?? 0}%` }}
+                    transition={{ duration: 0.8, ease: "circOut" }}
+                  />
+                </div>
               </div>
-              <div className="rounded-lg bg-neutral-card p-3">
-                <p className="text-2xl font-bold text-status-medium">
-                  {(currentRun.validationResult as any).warnings.length}
-                </p>
-                <p className="text-xs text-t-muted">Warnings</p>
+
+              <div className="space-y-4">
+                {PIPELINE_STEPS.map((step, idx) => {
+                  const status = getStepStatus(step.id)
+                  const isActive = status === "running"
+                  const isDone = status === "done" || (step.id === "complete" && progress?.status === "complete")
+                  const isError = status === "error"
+
+                  return (
+                    <motion.div
+                      key={step.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className={`rounded-[2rem] border p-6 transition-all duration-500 shadow-sm ${
+                        isActive
+                          ? "border-[#0ABFBC]/30 bg-[#0ABFBC]/5 shadow-xl shadow-[#0ABFBC]/5"
+                          : isDone
+                          ? "border-green-100 bg-white"
+                          : isError
+                          ? "border-red-100 bg-red-50/10"
+                          : "border-slate-50 bg-white/50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-5">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-sm flex-shrink-0 transition-all duration-500 ${
+                          isActive ? "bg-[#0ABFBC] text-white shadow-lg shadow-[#0ABFBC]/40" :
+                          isDone ? "bg-green-500 text-white shadow-lg shadow-green-500/20" :
+                          isError ? "bg-red-500 text-white shadow-lg shadow-red-500/20" :
+                          "bg-slate-50 text-slate-400"
+                        }`}>
+                          {isActive ? (
+                            <motion.div
+                              animate={{ rotate: 360 }}
+                              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                              className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                            />
+                          ) : isDone ? (
+                            <span className="text-xl">✓</span>
+                          ) : isError ? (
+                            <span className="text-xl">✕</span>
+                          ) : (
+                            <span className="font-black opacity-30 italic">{idx + 1}</span>
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className={`text-xs font-black tracking-[0.15em] uppercase ${
+                            isActive ? "text-[#0ABFBC]" :
+                            isDone ? "text-slate-400" :
+                            isError ? "text-red-500" :
+                            "text-slate-300"
+                          }`}>
+                            {step.label}
+                          </div>
+                          {isActive && progress?.detail && (
+                            <motion.p
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="text-[11px] text-slate-500 mt-1 font-bold italic"
+                            >
+                              {progress.detail}
+                            </motion.p>
+                          )}
+                        </div>
+                      </div>
+
+                      {isActive && progress?.sub_steps && progress.sub_steps.length > 0 && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          className="mt-6 ml-16 space-y-3"
+                        >
+                          {progress?.sub_steps?.map((sub, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, x: -5 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: i * 0.1 }}
+                              className="text-[11px] font-black text-slate-500 flex items-center justify-between"
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className={`w-1.5 h-1.5 rounded-full ${sub.includes("/") || sub.includes("...") ? "bg-[#0ABFBC]" : "bg-slate-200"}`}></span>
+                                <span className="tracking-wide">{sub}</span>
+                              </div>
+                              {(sub.includes("/") || sub.includes("...")) && (
+                                <span className="px-2 py-0.5 bg-slate-100 rounded text-[9px] text-slate-400 font-bold uppercase">Live</span>
+                              )}
+                            </motion.div>
+                          ))}
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  )
+                })}
               </div>
-              <div className="rounded-lg bg-neutral-card p-3">
-                <p className="text-2xl font-bold text-status-critical">
-                  {(currentRun.validationResult as any).checks.filter((c: any) => c.status === "FAIL").length}
-                </p>
-                <p className="text-xs text-t-muted">Failed</p>
-              </div>
-            </div>
+
+              {progress?.status === "complete" && progress?.downloads && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-12 p-10 bg-white border border-slate-100 rounded-[3rem] shadow-2xl shadow-slate-200 text-center"
+                >
+                  <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">🎯</div>
+                  <h3 className="text-slate-900 text-2xl font-black mb-2 italic">Analysis Succeeded</h3>
+                  <p className="text-slate-400 text-xs font-medium mb-10">Reports are ready. AI verified all transactions and formulas.</p>
+                  <div className="flex flex-col sm:flex-row gap-5">
+                    <a
+                      href={`/api/process/download?path=${encodeURIComponent(progress.downloads.working_sheet)}`}
+                      className="flex-1 py-5 bg-[#0ABFBC] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-110 transition-all shadow-xl shadow-[#0ABFBC]/30 active:scale-95 text-decoration-none"
+                      download
+                    >📊 Working Sheet</a>
+                    <a
+                      href={`/api/process/download?path=${encodeURIComponent(progress.downloads.banking_report)}`}
+                      className="flex-1 py-5 bg-slate-900 text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-125 transition-all shadow-xl shadow-slate-900/30 active:scale-95 text-decoration-none"
+                      download
+                    >📋 Banking Report</a>
+                  </div>
+                </motion.div>
+              )}
+
+              {progress?.status === "error" && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-10 p-10 bg-red-50 border border-red-100 rounded-[3rem] text-center"
+                >
+                    <div className="text-4xl mb-6">🚨</div>
+                    <h3 className="text-red-600 font-black mb-3 text-xl italic uppercase tracking-tight">Processing Aborted</h3>
+                    <div className="bg-white/50 p-4 rounded-2xl border border-red-200 mb-8 mt-4">
+                        <p className="text-red-900 text-xs font-black tracking-tight">{progress.detail}</p>
+                    </div>
+                    <button 
+                        onClick={() => {localStorage.removeItem("fincore_active_job"); setJobId(null); setProgress(null); setFiles([]);}}
+                        className="px-10 py-4 bg-red-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:bg-red-700 shadow-xl shadow-red-600/20"
+                    >Restart Pipeline</button>
+                </motion.div>
+              )}
+
+              {progress?.status === "complete" && (
+                <div className="mt-8 text-center pb-20">
+                    <button 
+                        onClick={() => {localStorage.removeItem("fincore_active_job"); setJobId(null); setProgress(null); setFiles([]);}}
+                        className="px-10 py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all hover:bg-slate-200"
+                    >Analyze Another Statement</button>
+                </div>
+              )}
+            </motion.div>
           )}
-          <button
-            onClick={async () => {
-              await fetch("/api/pipeline", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  action: "approve",
-                  run_id: currentRun.runId,
-                }),
-              });
-              startPolling(currentRun.runId);
-            }}
-            className="mt-4 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-t-heading hover:bg-emerald-400"
-          >
-            Approve & Finalize
-          </button>
-        </div>
-      )}
-
-      {canDownload && (
-        <div className="rounded-xl border border-primary/30 bg-primary/5 p-6">
-          <h3 className="mb-4 text-sm font-semibold text-primary">
-            Reports Ready for Download
-          </h3>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {currentRun.statementExcelKey && (
-              <a
-                href={`/api/documents?action=download&key=${encodeURIComponent(currentRun.statementExcelKey)}`}
-                className="flex items-center gap-2 rounded-lg border border-neutral-border bg-neutral-row p-4 text-sm text-t-heading hover:border-primary/50 hover:bg-neutral-border"
-              >
-                <Download className="h-4 w-4 text-primary" />
-                Statement Excel
-              </a>
-            )}
-            {currentRun.workingSheetKey && (
-              <a
-                href={`/api/documents?action=download&key=${encodeURIComponent(currentRun.workingSheetKey)}`}
-                className="flex items-center gap-2 rounded-lg border border-neutral-border bg-neutral-row p-4 text-sm text-t-heading hover:border-primary/50 hover:bg-neutral-border"
-              >
-                <Download className="h-4 w-4 text-primary" />
-                Working Sheet
-              </a>
-            )}
-            {currentRun.bankingReportKey && (
-              <a
-                href={`/api/documents?action=download&key=${encodeURIComponent(currentRun.bankingReportKey)}`}
-                className="flex items-center gap-2 rounded-lg border border-neutral-border bg-neutral-row p-4 text-sm text-t-heading hover:border-primary/50 hover:bg-neutral-border"
-              >
-                <Download className="h-4 w-4 text-primary" />
-                Banking Report
-              </a>
-            )}
-          </div>
-        </div>
-      )}
+        </AnimatePresence>
+      </div>
     </div>
-  );
+  )
 }

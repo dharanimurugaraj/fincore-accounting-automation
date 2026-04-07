@@ -36,9 +36,20 @@ export default function CustomersPage() {
   const [search, setSearch] = useState("");
   const { profile } = useAuth();
 
+  const canAccess = (resource: string, type: 'read' | 'write') => {
+    if (!profile?.allowed_pages) return false;
+    if (profile.allowed_pages.includes("*")) return true;
+    return profile.allowed_pages.includes(`${resource}:${type}`);
+  };
+
+
   useEffect(() => {
-    fetchCustomers();
-  }, []);
+    if (canAccess('Customers', 'read')) {
+      fetchCustomers();
+    } else if (profile) {
+      setLoading(false);
+    }
+  }, [profile]);
 
   const fetchCustomers = async () => {
     try {
@@ -52,6 +63,16 @@ export default function CustomersPage() {
       setLoading(false);
     }
   };
+
+  if (!loading && !canAccess('Customers', 'read')) {
+    return (
+      <div className="flex flex-col items-center justify-center p-20 text-center bg-neutral-card/30 rounded-2xl border border-neutral-border animate-in fade-in zoom-in duration-500">
+        <ShieldAlert className="h-16 w-16 text-status-critical mb-4" />
+        <h1 className="text-2xl font-bold text-t-heading mb-2">Permission Denied</h1>
+        <p className="text-t-muted max-w-sm">You do not have the required access level to view the Customer Directory.</p>
+      </div>
+    );
+  }
 
   const filtered = customers.filter(c => 
     c.companyName.toLowerCase().includes(search.toLowerCase()) ||
@@ -84,16 +105,17 @@ export default function CustomersPage() {
           <h1 className="text-2xl font-bold text-t-heading">Customer Directory</h1>
           <p className="text-sm text-t-muted">Manage and track your client financial portfolios</p>
         </div>
-        {(profile?.role_id === 0 || profile?.role_id === 1) && (
+        {canAccess('Customers', 'write') && (
           <Link 
             href="/customers/new"
-            className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-t-heading transition-colors hover:bg-primary-hover"
+            className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-t-heading transition-colors hover:bg-primary-hover shadow-lg shadow-primary/10 border border-primary-hover/20"
           >
             <Plus className="h-4 w-4" />
             Add Customer
           </Link>
         )}
       </div>
+
 
       <div className="flex items-center gap-4">
         <div className="relative flex-1">

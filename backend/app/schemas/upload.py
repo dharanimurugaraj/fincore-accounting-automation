@@ -10,6 +10,7 @@ class UploadStatusEnum(str, Enum):
     OCR_COMPLETE = "OCR_COMPLETE"
     OCR_FAILED = "OCR_FAILED"
     NEEDS_REVIEW = "NEEDS_REVIEW"
+    LOCKED = "LOCKED"
 
 
 class UploadCompleteRequest(BaseModel):

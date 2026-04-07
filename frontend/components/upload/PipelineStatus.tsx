@@ -71,58 +71,66 @@ export default function PipelineStatus({
   const style = STATUS_STYLES[status] || STATUS_STYLES.PENDING;
 
   const stages = [
-    { num: 1, label: "Extract" },
-    { num: 2, label: "Working Sheet" },
-    { num: 3, label: "Report" },
-    { num: 4, label: "Done" },
+    { num: 1, label: "Detecting Bank" },
+    { num: 2, label: "Extracting Rows" },
+    { num: 3, label: "Generating Sheets" },
+    { num: 4, label: "Validation" },
+    { num: 5, label: "Ready" },
   ];
 
   return (
-    <div className="rounded-xl border border-neutral-border bg-neutral-card p-6">
-      <div className={`flex items-center gap-3 ${style.color}`}>
-        {style.icon}
-        <span className="text-sm font-medium">
-          {STAGE_LABELS[status] || status}
-        </span>
-      </div>
-
-      {errorMessage && (
-        <p className="mt-2 text-xs text-status-critical">{errorMessage}</p>
-      )}
-
-      <div className="mt-4 flex items-center gap-2">
-        {stages.map((s) => (
-          <div key={s.num} className="flex items-center gap-2">
-            <div
-              className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
-                stage >= s.num
-                  ? "bg-primary text-t-heading"
-                  : "bg-neutral-row text-t-muted"
-              }`}
-            >
-              {stage > s.num ? (
-                <Check className="h-3 w-3" />
-              ) : (
-                s.num
-              )}
-            </div>
-            <span
-              className={`text-xs ${
-                stage >= s.num ? "text-t-body" : "text-t-muted"
-              }`}
-            >
-              {s.label}
-            </span>
-            {s.num < 4 && (
-              <div
-                className={`h-px w-8 ${
-                  stage > s.num ? "bg-primary" : "bg-neutral-row"
-                }`}
-              />
+    <div className="rounded-3xl border border-neutral-border bg-neutral-card/30 p-8 backdrop-blur-xl transition-all animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-start gap-4">
+          <div className={`p-3 rounded-2xl bg-neutral-row/50 ${style.color}`}>
+            {style.icon}
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-bold text-t-heading uppercase tracking-widest">{status.replace("_", " ")}</h3>
+            <p className="text-sm text-t-body font-medium">
+              {STAGE_LABELS[status] || status}
+            </p>
+            {errorMessage && (
+              <p className="mt-1 text-xs text-status-critical font-medium bg-status-critical-bg/5 px-2 py-1 rounded inline-block">{errorMessage}</p>
             )}
           </div>
-        ))}
+        </div>
+
+        <div className="flex items-center gap-1.5 md:gap-3 bg-neutral-app/30 p-2 rounded-2xl border border-neutral-border/50">
+          {stages.map((s) => (
+            <div key={s.num} className="flex items-center gap-1.5">
+              <div
+                className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-bold transition-all duration-300 ${
+                  stage >= s.num
+                    ? "bg-primary shadow-[0_0_15px_rgba(255,191,0,0.3)] text-neutral-app"
+                    : "bg-neutral-row text-t-muted"
+                }`}
+              >
+                {stage > s.num ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  s.num
+                )}
+              </div>
+              <span
+                className={`text-[10px] font-bold uppercase tracking-wider hidden sm:inline-block ${
+                  stage >= s.num ? "text-t-heading" : "text-t-muted"
+                }`}
+              >
+                {s.label}
+              </span>
+              {s.num < 5 && (
+                <div
+                  className={`h-0.5 w-4 md:w-6 rounded-full transition-all duration-500 ${
+                    stage > s.num ? "bg-primary" : "bg-neutral-row"
+                  }`}
+                />
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
+

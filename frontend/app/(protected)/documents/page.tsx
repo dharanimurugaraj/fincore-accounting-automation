@@ -11,7 +11,8 @@ const STATUS_BADGE: Record<UploadStatus, { label: string; classes: string }> = {
   OCR_RUNNING: { label: "Processing", classes: "bg-primary/10 text-primary" },
   OCR_COMPLETE: { label: "Complete", classes: "bg-status-success-bg text-status-success" },
   OCR_FAILED: { label: "Failed", classes: "bg-red-500/10 text-status-critical" },
-  NEEDS_REVIEW: { label: "Review", classes: "bg-status-medium-bg text-status-medium" },
+  NEEDS_REVIEW: { label: "Needs Review", classes: "bg-status-medium/10 text-status-medium border-status-medium/20" },
+  LOCKED: { label: "Locked (Key Required)", classes: "bg-status-critical/10 text-status-critical border-status-critical/20" },
 };
 
 const SAMPLE_DOCS: UploadedFile[] = [
@@ -98,8 +99,13 @@ export default function DocumentsPage() {
   };
 
   useEffect(() => {
-    fetchDocuments();
+    // Only fetch if we have a token (prevents empty results on refresh race)
+    const token = typeof window !== "undefined" ? localStorage.getItem("fincore_token") : null;
+    if (token) {
+      fetchDocuments();
+    }
   }, []);
+
 
   const filtered = documents.filter((doc) => {
     const matchesSearch =

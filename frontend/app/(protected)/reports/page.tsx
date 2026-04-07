@@ -10,6 +10,7 @@ import {
   AlertTriangle,
   Loader2,
   Eye,
+  Lock,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import type { PipelineRun, RunStatus, ValidationCheck } from "@/types";
@@ -32,6 +33,11 @@ const STATUS_CONFIG: Record<
     label: "Review",
     icon: <AlertTriangle className="h-4 w-4" />,
     classes: "bg-status-medium-bg text-status-medium",
+  },
+  LOCKED_REVIEW: {
+    label: "Review In Progress",
+    icon: <Lock className="h-4 w-4" />,
+    classes: "bg-status-medium-bg/50 text-status-medium border border-status-medium/10",
   },
   STAGE2_RUNNING: {
     label: "Working Sheet",

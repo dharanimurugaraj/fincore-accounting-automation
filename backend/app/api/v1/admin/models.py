@@ -1,67 +1,79 @@
-"""
-Admin API for OpenRouter Model Management.
-Fetches live models from OpenRouter and allows assigning them to agents.
-"""
-
-import os
-import requests
-from typing import Annotated
-from fastapi import APIRouter, HTTPException, Depends
-from app.core.database import execute_query, execute_insert
+import httpx
+from fastapi import APIRouter
 from app.api.deps import AdminUser
+from app.pipeline.ai_config import AI_MODELS
 
 router = APIRouter()
 
+# Simple Cache for OpenRouter models
+_cached_models = []
+_last_fetch = 0
+
 @router.get("/external")
 async def get_external_models():
-    """Fetch live models from OpenRouter API."""
+    """Fetch live models from OpenRouter API WITH local model hub fallback."""
+    global _cached_models, _last_fetch
+    
+    import time
+    now = time.time()
+    
+    # Return cache if fresh (2 minutes)
+    if _cached_models and (now - _last_fetch < 120):
+        return {"data": _cached_models}
+
+    # Start with local models
+    all_models = []
+    seen_ids = set()
+    
+    for provider, models in AI_MODELS.items():
+        for m in models:
+            m_id = f"{provider.lower()}/{m['name'].lower().replace(' ', '-')}"
+            all_models.append({
+                "id": m_id,
+                "name": f"{provider}: {m['name']}",
+                "context": m.get("context", 128000),
+                "pricing": {
+                    "prompt": m.get("input", 0),
+                    "completion": m.get("output", 0)
+                },
+                "provider": provider,
+                "is_local_hub": True
+            })
+            seen_ids.add(m_id)
+
+    # Try fetching from OpenRouter with a short timeout
     try:
-        response = requests.get("https://openrouter.ai/api/v1/models")
-        if response.ok:
-            return response.json()
-        return {"data": []}
+        async with httpx.AsyncClient() as client:
+            # Short timeout to prevent backend hang
+            response = await client.get("https://openrouter.ai/api/v1/models", timeout=2.5)
+            if response.status_code == 200:
+                external_data = response.json().get("data", [])
+                for ext in external_data[:40]:
+                    model_id = ext.get("id")
+                    if model_id not in seen_ids:
+                        all_models.append({
+                            "id": model_id,
+                            "name": ext.get("name"),
+                            "context": ext.get("context_length"),
+                            "pricing": ext.get("pricing"),
+                            "provider": "OpenRouter",
+                            "is_local_hub": False
+                        })
+                        seen_ids.add(model_id)
+        
+        # update cache only on success
+        _cached_models = all_models
+        _last_fetch = now
+        
     except Exception as e:
-        print(f"Error fetching OpenRouter models: {e}")
-        return {"data": []}
+        print(f"DEBUG: OpenRouter skip: {e}")
+        # Always return local models at minimum
+        if not _cached_models:
+             _cached_models = all_models
+
+    return {"data": _cached_models or all_models}
 
 @router.get("/config")
 async def get_agent_configs(user: AdminUser):
-    """List agent to model assignments for the org."""
-    rows = execute_query(
-        'SELECT * FROM "AgentConfig" WHERE "orgId" = %s',
-        (user["org_id"],)
-    )
-    return {"configs": rows}
-
-@router.post("/config")
-async def update_agent_config(
-    req: dict, # { agentId, primaryModel, fallbackModels, maxRetries, temperature }
-    user: AdminUser
-):
-    """Assign models to an OCR agent."""
-    org_id = user["org_id"]
-    agent_id = req["agent_id"]
-    primary = req["primary_model"]
-    fallbacks = req.get("fallback_models", [])
-    max_retries = req.get("max_retries", 3)
-    temp = req.get("temperature", 0.0)
-
-    import uuid
-    id = f"agcfg-{uuid.uuid4().hex[:8]}"
-
-    execute_query(
-        """
-        INSERT INTO "AgentConfig" 
-            (id, "orgId", "agentId", "primaryModel", "fallbackModels", "maxRetries", "temperature", "updatedAt")
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        ON CONFLICT ("orgId", "agentId") DO UPDATE SET
-            "primaryModel" = EXCLUDED."primaryModel",
-            "fallbackModels" = EXCLUDED."fallbackModels",
-            "maxRetries" = EXCLUDED."maxRetries",
-            "temperature" = EXCLUDED."temperature",
-            "updatedAt" = EXCLUDED."updatedAt"
-        """,
-        (id, org_id, agent_id, primary, fallbacks, max_retries, temp, "now()")
-    )
-
-    return {"status": "ok"}
+    """Placeholder for agent configurations."""
+    return {"configs": []}

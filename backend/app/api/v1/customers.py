@@ -9,6 +9,7 @@ from app.schemas.customer import (
     CustomerResponse,
     CustomerSummary
 )
+from app.services.audit_service import log_action
 from app.core.database import execute_query, execute_insert
 from app.api.deps import CurrentUser
 
@@ -28,7 +29,7 @@ async def list_customers(
     risk: Optional[str] = Query(None),
     industry: Optional[str] = Query(None),
 ):
-    """List all customers for the organization with summary stats."""
+    """List customers with RBAC: Role 0 sees all, others see Org-only."""
     query = """
         SELECT 
             c.id, c."customId", c."companyName", c.industry, c.status, c.risk, c.tags,
@@ -36,9 +37,13 @@ async def list_customers(
             (SELECT COUNT(*)::int FROM "WCDLLoan" w WHERE w."customerId" = c.id) as "wcdlCount",
             (SELECT MAX("createdAt") FROM "Upload" u WHERE u."customerId" = c.id) as "lastActivity"
         FROM "Customer" c
-        WHERE c."orgId" = %s
+        WHERE 1=1
     """
-    params = [user["org_id"]]
+    params = []
+    
+    if user["role_id"] != 0:
+        query += ' AND c."orgId" = %s'
+        params.append(user["org_id"])
 
     if status:
         query += ' AND c.status = %s'
@@ -51,30 +56,25 @@ async def list_customers(
         params.append(industry)
 
     query += ' ORDER BY c."createdAt" DESC'
-    
     rows = execute_query(query, tuple(params))
     
-    try:
-        return [
-            CustomerSummary(
-                id=str(row["id"]),
-                customId=str(row["customId"]),
-                companyName=str(row["companyName"]),
-                industry=row["industry"] if row["industry"] else None,
-                status=str(row["status"]),
-                risk=str(row["risk"]),
-                tags=list(row["tags"]) if isinstance(row["tags"], (list, tuple)) else [],
-                documentCount=int(row["documentCount"] or 0),
-                wcdlCount=int(row["wcdlCount"] or 0),
-                lastActivity=row["lastActivity"]
-            )
-            for row in rows
-        ]
-    except Exception as e:
-        print(f"Customer List Validation Error: {e}")
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Data Transformation Failed: {str(e)}")
+    log_action(user, "LIST_CUSTOMERS", "Customer", "LIST", {"count": len(rows)})
+    
+    return [
+        CustomerSummary(
+            id=str(row["id"]),
+            customId=str(row["customId"]),
+            companyName=str(row["companyName"]),
+            industry=row["industry"] if row["industry"] else None,
+            status=str(row["status"]),
+            risk=str(row["risk"]),
+            tags=list(row["tags"]) if isinstance(row["tags"], (list, tuple)) else [],
+            documentCount=int(row["documentCount"] or 0),
+            wcdlCount=int(row["wcdlCount"] or 0),
+            lastActivity=row["lastActivity"]
+        )
+        for row in rows
+    ]
 
 @router.post("", response_model=CustomerResponse)
 async def create_customer(user: CurrentUser, req: CustomerCreate):
@@ -98,6 +98,9 @@ async def create_customer(user: CurrentUser, req: CustomerCreate):
         )
     )
 
+    if row:
+        log_action(user, "CREATE_CUSTOMER", "Customer", cust_id, {"name": req.companyName})
+    
     if not row:
         raise HTTPException(status_code=500, detail="Failed to create customer")
     
