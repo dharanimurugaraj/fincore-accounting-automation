@@ -71,7 +71,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    // Layer 0: Perpetual Token Refresh (Ensures 403s don't block work)
+    const refreshInterval = setInterval(async () => {
+        if (auth && auth.currentUser) {
+            console.log("Auto-refreshing Auth Token...");
+            const token = await auth.currentUser.getIdToken(true);
+            setIdToken(token);
+            localStorage.setItem("fincore_token", token);
+        }
+    }, 1000 * 60 * 45); // Every 45 mins
+
+    return () => {
+        unsubscribe();
+        clearInterval(refreshInterval);
+    };
   }, []);
 
   const logout = async () => {

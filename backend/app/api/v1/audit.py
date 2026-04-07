@@ -1,155 +1,101 @@
-"""
-GET /audit-logs         — immutable audit log. Scoped by numeric role ID (0, 1, 2+).
-GET /audit-logs/export  — download audit log as CSV
-"""
-
-import csv
-import io
-from datetime import date
-from typing import Optional
-
+from typing import List, Optional
 from fastapi import APIRouter, HTTPException, Query
-from fastapi.responses import StreamingResponse
-
 from app.core.database import execute_query
 from app.api.deps import CurrentUser
 
 router = APIRouter()
 
 @router.get("")
-async def list_audit_log(
+async def list_audit_logs(
     user: CurrentUser,
-    user_id: Optional[str] = Query(None),
-    role_id_filter: Optional[int] = Query(None),
-    action: Optional[str] = Query(None),
-    time_filter: Optional[str] = Query(None), # 1d, 7d, 30d
     limit: int = Query(100, le=500),
     offset: int = Query(0),
+    action: Optional[str] = Query(None),
+    user_email: Optional[str] = Query(None),
 ):
-    """Return audit log entries with numeric RBAC access controls."""
-    org_id = user["org_id"]
-    current_role = user.get("role_id", 2)
-    current_uid = user["id"]
+
+    """
+    List audit logs with RBAC filtering. Includes User Email and Role name.
+    """
+    # Security Gate: SuperAdmin (0), Admin (1) can see broader logs.
+    # Analyst (2) can only see THEIR OWN logs.
+    if user["role_id"] > 2:
+        raise HTTPException(status_code=403, detail="Insufficient permissions to view audit logs")
 
     query = """
-        SELECT al.id, al."orgId", al."userId", al.action,
-               al."entityType", al."entityId", al.metadata, al."createdAt",
-               u.email as user_email, u."roleId", r.name as role_name
-        FROM "AuditLog" al
-        LEFT JOIN "User" u ON u.id = al."userId"
+        SELECT 
+            l.id, l.action, l."entityType" as entity_type, l."entityId" as entity_id, 
+            l.metadata, l."createdAt" as created_at,
+            u.id as user_id, u.email as user_email,
+            r.id as user_role_id, r.name as user_role_name
+        FROM "AuditLog" l
+        LEFT JOIN "User" u ON l."userId" = u.id
         LEFT JOIN "Role" r ON u."roleId" = r.id
         WHERE 1=1
     """
-    params: list = []
+    params = []
 
-    # 1. Access Scoping
-    if current_role == 0:
-        # Super Admin sees everything across the platform
-        pass
-    elif current_role == 1:
-        # Admin sees everyone in their org
-        query += ' AND al."orgId" = %s'
-        params.append(org_id)
-    else:
-        # Analyst / Viewer sees only their own
-        query += ' AND al."userId" = %s'
-        params.append(current_uid)
-
-    # 2. Add requested filters
-    if current_role <= 1 and user_id:
-        query += ' AND al."userId" = %s'
-        params.append(user_id)
-
-    if current_role <= 1 and role_id_filter is not None:
-        query += ' AND u."roleId" = %s'
-        params.append(role_id_filter)
-
+    # RBAC Filtering
+    if user["role_id"] == 1:
+        # Admin: Only their org
+        query += ' AND l."orgId" = %s'
+        params.append(user["org_id"])
+    elif user["role_id"] == 2:
+        # Analyst: ONLY their own logs
+        query += ' AND l."userId" = %s'
+        params.append(user["id"])
+    
     if action:
-        query += " AND al.action = %s"
-        params.append(action.upper())
-        
-    if time_filter == "1d":
-        query += " AND al.\"createdAt\" >= NOW() - INTERVAL '1 day'"
-    elif time_filter == "7d":
-        query += " AND al.\"createdAt\" >= NOW() - INTERVAL '7 days'"
-    elif time_filter == "30d":
-        query += " AND al.\"createdAt\" >= NOW() - INTERVAL '30 days'"
+        query += ' AND l.action = %s'
+        params.append(action)
 
-    from_idx = query.upper().find("FROM")
-    count_q = "SELECT COUNT(*) \n        " + query[from_idx:]
 
-    query += ' ORDER BY al."createdAt" DESC LIMIT %s OFFSET %s'
-    rows = execute_query(query, tuple(params + [limit, offset]))
-    count_rows = execute_query(count_q, tuple(params))
-    total = count_rows[0]["count"] if count_rows else 0
+    query += ' ORDER BY l."createdAt" DESC LIMIT %s OFFSET %s'
+    params.extend([limit, offset])
 
-    entries = [
-        {
-            "id": r["id"],
-            "org_id": r["orgId"],
-            "user_id": r["userId"],
-            "user_email": r["user_email"] or "System",
-            "user_role_id": r["roleId"],
-            "user_role_name": r["role_name"] or "Unknown",
-            "action": r["action"],
-            "entity_type": r["entityType"],
-            "entity_id": r["entityId"],
-            "metadata": r["metadata"],
-            "created_at": r["createdAt"].isoformat() if r["createdAt"] else None,
-        }
-        for r in rows
-    ]
+    rows = execute_query(query, tuple(params))
+    
+    entries = []
+    for r in rows:
+        entry = dict(r)
+        if entry.get("created_at"):
+            dt = entry["created_at"]
+            # Force ISO format with 'Z' for UTC
+            if hasattr(dt, 'strftime'):
+                entry["created_at"] = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+        entries.append(entry)
 
-    return {"entries": entries, "total": total}
-
-@router.get("/export")
-async def export_audit_log(
-    user: CurrentUser,
-    time_filter: Optional[str] = Query(None),
-):
-    """Download full audit log as CSV. Admins (0, 1) only."""
-    current_role = user.get("role_id", 2)
-    if current_role > 1:
-        raise HTTPException(status_code=403, detail="Admin access required")
-
-    org_id = user["org_id"]
-    query = """
-        SELECT al.id, al."userId", u.email as user_email, al.action,
-               al."entityType", al."entityId", al."createdAt", r.name as role_name
-        FROM "AuditLog" al
-        LEFT JOIN "User" u ON u.id = al."userId"
-        LEFT JOIN "Role" r ON u."roleId" = r.id
+    # Simple count for total
+    count_query = """
+        SELECT COUNT(*) 
+        FROM "AuditLog" l 
+        LEFT JOIN "User" u ON l."userId" = u.id 
         WHERE 1=1
     """
-    params: list = []
+    count_params = []
+    if user["role_id"] == 1:
+        count_query += ' AND l."orgId" = %s'
+        count_params.append(user["org_id"])
+    elif user["role_id"] == 2:
+        count_query += ' AND l."userId" = %s'
+        count_params.append(user["id"])
+    
+    if action:
+        count_query += ' AND l.action = %s'
+        count_params.append(action)
+    
+    if user_email:
+        count_query += ' AND u.email ILIKE %s'
+        count_params.append(f"%{user_email}%")
+    
+    total_rows = execute_query(count_query, tuple(count_params))
+    total = total_rows[0]["count"] if total_rows else 0
 
-    if current_role == 1:
-        query += ' AND al."orgId" = %s'
-        params.append(org_id)
+    return {
+        "entries": entries,
+        "total": total
+    }
 
-    if time_filter == "1d":
-        query += " AND al.\"createdAt\" >= NOW() - INTERVAL '1 day'"
-    elif time_filter == "7d":
-        query += " AND al.\"createdAt\" >= NOW() - INTERVAL '7 days'"
-    elif time_filter == "30d":
-        query += " AND al.\"createdAt\" >= NOW() - INTERVAL '30 days'"
 
-    query += ' ORDER BY al."createdAt" DESC LIMIT 5000'
-    rows = execute_query(query, tuple(params))
 
-    output = io.StringIO()
-    writer = csv.writer(output)
-    writer.writerow(["ID", "User ID", "User Email", "Role", "Action", "Entity Type", "Entity ID", "Timestamp"])
-    for r in rows:
-        writer.writerow([
-            r["id"], r["userId"], r["user_email"], r["role_name"], r["action"],
-            r["entityType"], r["entityId"],
-            r["createdAt"].isoformat() if r["createdAt"] else "",
-        ])
 
-    output.seek(0)
-    return StreamingResponse(
-        iter([output.getvalue()]),
-        media_type="text/csv",
-        headers={"Content-Disposition": f"attachment; filename=audit_log_{date.today()}.csv"},
-    )

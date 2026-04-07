@@ -1,69 +1,64 @@
-/**
- * Universal Proxy for Next.js 16 - Handles all methods and segments.
- */
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest, context: any) {
-    return handle(request, context, "GET");
+/**
+ * Universal API Proxy Route (Next.js 16 Compatible)
+ */
+
+export const dynamic = "force-dynamic";
+
+// Next.js 15/16: params is now a Promise
+type RouteProps = {
+    params: Promise<{ path: string[] }>;
+};
+
+export async function GET(request: NextRequest, props: RouteProps) {
+    return handle(request, props.params);
 }
 
-export async function POST(request: NextRequest, context: any) {
-    return handle(request, context, "POST");
+export async function POST(request: NextRequest, props: RouteProps) {
+    return handle(request, props.params);
 }
 
-export async function PUT(request: NextRequest, context: any) {
-    return handle(request, context, "PUT");
+export async function PUT(request: NextRequest, props: RouteProps) {
+    return handle(request, props.params);
 }
 
-export async function PATCH(request: NextRequest, context: any) {
-    return handle(request, context, "PATCH");
+export async function PATCH(request: NextRequest, props: RouteProps) {
+    return handle(request, props.params);
 }
 
-export async function DELETE(request: NextRequest, context: any) {
-    return handle(request, context, "DELETE");
+export async function DELETE(request: NextRequest, props: RouteProps) {
+    return handle(request, props.params);
 }
 
-async function handle(request: NextRequest, context: any, method: string) {
-    // 1. In Next.js 15, params is a Promise
-    const params = await context.params || {};
-    const segments = (params.path as string[]) || [];
+async function handle(request: NextRequest, paramsPromise: Promise<{ path: string[] }>) {
+    const params = await paramsPromise;
+    const segments = params.path || [];
     const path = segments.join("/") || "unresolved";
+    const method = request.method;
 
-    
-    // 2. Discover Backend URL — PRIORITIZE USER'S OVERRIDE & PORT
-    const backendUrlEnv = process.env.BACKEND_URL;
-    const isLocal = process.env.NODE_ENV === "development" || !process.env.VERCEL_URL;
-    
-    // In local dev, we want the default FastAPI port (8000). 
-    // In Vercel production, we want to hit the mapped /_/backend prefix.
     let host = "";
+    const backendUrlEnv = process.env.NEXT_PUBLIC_BACKEND_URL;
+    const isLocal = process.env.NODE_ENV === "development";
     
     if (backendUrlEnv) {
         host = backendUrlEnv;
     } else if (isLocal) {
-        host = "127.0.0.1:8000";
+        host = "localhost:8000";
     } else {
-        // Production Vercel: use current domain/hostname
-        host = process.env.VERCEL_PROJECT_PRODUCTION_URL || request.headers.get("host") || process.env.VERCEL_URL || "127.0.0.1:8000";
+        host = process.env.VERCEL_PROJECT_PRODUCTION_URL || request.headers.get("host") || process.env.VERCEL_URL || "localhost:8000";
     }
 
-    // Auto-detect protocol
     const protocol = host.includes("127.0.0.1") || host.includes("localhost") || host.startsWith("http://") ? "http" : "https";
-    
-    // Clean up host (remove protocol if included in manual env, will prepend later)
     host = host.replace(/^https?:\/\//, "");
 
-    // Append default routePrefix ONLY for production cloud hosting
     if (!host.includes("_/backend") && !isLocal) {
         host = `${host}/_/backend`;
     }
 
-    
     const url = new URL(request.url);
-    // Remove duplicate v1 if already present in segments
     const cleanPath = path.startsWith("v1/") ? path : `v1/${path}`;
     
-    // Final constructed URL (ensuring we don't double /api if host already has it)
     let backendUrl = "";
     if (host.includes("/api")) {
         backendUrl = `${protocol}://${host}/${cleanPath}${url.search}`;
@@ -71,12 +66,15 @@ async function handle(request: NextRequest, context: any, method: string) {
         backendUrl = `${protocol}://${host}/api/${cleanPath}${url.search}`;
     }
 
-
     console.log(`[Proxy] ${method} -> ${backendUrl}`);
 
     try {
         const headers = new Headers(request.headers);
         headers.set("host", new URL(backendUrl).host);
+        
+        if (method === "GET" || method === "DELETE" || method === "HEAD") {
+            headers.delete("content-type");
+        }
 
         const options: RequestInit = {
             method,
@@ -86,52 +84,62 @@ async function handle(request: NextRequest, context: any, method: string) {
 
         if (method !== "GET" && method !== "HEAD") {
             try {
-                options.body = await request.blob();
+                options.body = await request.arrayBuffer();
             } catch (bodyErr) {
                 console.error("[Proxy Body Error]", bodyErr);
             }
         }
 
         const response = await fetch(backendUrl, options);
-        
-        // Handle Non-JSON responses gracefully (Vercel error pages)
+        console.log(`[Proxy Response] ${backendUrl} -> ${response.status} ${response.statusText}`);
+
+        if (response.headers.get("content-type")?.includes("text/event-stream")) {
+            return response;
+        }
+
         const contentType = response.headers.get("content-type") || "";
-        let responseData: any;
-        
+        let responseData: any = null;
+
         if (contentType.includes("application/json")) {
-            responseData = await response.json().catch(() => null);
-        }
-
-        if (!response.ok) {
-            const detailText = responseData ? JSON.stringify(responseData) : await response.text().catch(() => "N/A");
-            console.error(`[Proxy Backend Error] ${response.status}:`, detailText.substring(0, 500));
-            
-            return NextResponse.json({ 
-                error: `Backend ${response.status}`, 
-                detail: detailText.substring(0, 1000), // Clip long HTML errors
-                target: backendUrl 
-            }, { status: response.status });
-        }
-
-        if (responseData) {
-            return NextResponse.json(responseData);
+            try {
+                responseData = await response.json();
+            } catch (e) {
+                responseData = { error: "Failed to parse JSON" };
+            }
         } else {
-            // Fallback for non-JSON success?
-            const textData = await response.text();
-            return new NextResponse(textData, { 
+            const blob = await response.blob();
+            return new Response(blob, {
                 status: response.status,
-                headers: { "Content-Type": contentType }
+                statusText: response.statusText,
+                headers: response.headers
             });
         }
 
+        if (!response.ok) {
+            return NextResponse.json({ 
+                error: responseData?.detail || responseData?.error || "Backend Error",
+                status: response.status 
+            }, { status: response.status });
+        }
+
+        return NextResponse.json(responseData);
+
     } catch (err: any) {
-        console.error(`[Proxy Critical Failure] ${backendUrl}:`, err.message);
+        console.error(`[Proxy Failure] ${backendUrl}:`, err.message);
+        
+        if (backendUrl.includes("localhost")) {
+            try {
+                const altUrl = backendUrl.replace("localhost", "127.0.0.1");
+                console.log(`[Proxy Fallback] Trying ${altUrl}...`);
+                const altRes = await fetch(altUrl, { method, headers: request.headers });
+                if (altRes.ok) return altRes;
+            } catch (e2) {}
+        }
+
         return NextResponse.json({ 
             error: "Backend Connectivity Failed", 
-            message: err.message,
-            target: backendUrl,
-            hint: "Check environment variables and Vercel Multi-Project settings."
+            detail: err.message,
+            url: backendUrl 
         }, { status: 504 });
     }
-
 }

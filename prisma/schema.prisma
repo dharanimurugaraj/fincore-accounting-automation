@@ -132,6 +132,11 @@ model PipelineRun {
   checksum          String?
   startedAt         DateTime?      @map("startedAt")
   completedAt       DateTime?      @map("completedAt")
+  metadata          Json?          @map("metadata")
+  progressPercent  Int?           @default(0) @map("progressPercent")
+  progressMessage  String?        @map("progressMessage")
+  progressSubsteps Json?          @map("progressSubsteps")
+  updatedAt         DateTime       @default(now()) @updatedAt @map("updatedAt")
   createdAt         DateTime       @default(now()) @map("createdAt")
   uploads           Upload[]
   wcdlLoans         WCDLLoan[]
@@ -139,8 +144,46 @@ model PipelineRun {
   approvals         Approval[]
   customerId        String?        @map("customerId")
   customer          Customer?      @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  parsedAccounts    ParsedAccount[]
 
   @@map("PipelineRun")
+}
+
+model ParsedAccount {
+  id           String        @id @default(uuid())
+  runId        String        @map("runId")
+  pipelineRun  PipelineRun   @relation(fields: [runId], references: [id], onDelete: Cascade)
+  bankName     String        @map("bankName")
+  accountNo    String        @map("accountNo")
+  accountType  String        @map("accountType") // CC_PRIMARY, CA_NORMAL, etc.
+  periodFrom   DateTime?     @map("periodFrom")
+  periodTo     DateTime?     @map("periodTo")
+  openingBal   Decimal?      @map("openingBal") @db.Decimal(15, 2)
+  closingBal   Decimal?      @map("closingBal") @db.Decimal(15, 2)
+  transactions Transaction[]
+  createdAt    DateTime      @default(now()) @map("createdAt")
+
+  @@map("ParsedAccount")
+}
+
+model Transaction {
+  id             String        @id @default(uuid())
+  accountId      String        @map("accountId")
+  account        ParsedAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  date           DateTime      @db.Date
+  narration      String
+  refNumber      String?       @map("refNumber")
+  withdrawal     Decimal?      @db.Decimal(15, 2)
+  deposit        Decimal?      @db.Decimal(15, 2)
+  closingBalance Decimal       @map("closingBalance") @db.Decimal(15, 2)
+  drCrFlag       String        @map("drCrFlag") // DR or CR
+  ccValue        Decimal?      @map("ccValue") @db.Decimal(15, 2)
+  posBalance     Decimal?      @map("posBalance") @db.Decimal(15, 2)
+  noOfDays       Int?          @map("noOfDays")
+  category       String?
+  createdAt      DateTime      @default(now()) @map("createdAt")
+
+  @@map("Transaction")
 }
 
 model Upload {
@@ -161,6 +204,7 @@ model Upload {
   pipelineRun    PipelineRun? @relation(fields: [runId], references: [id], onDelete: SetNull)
   customerId     String?      @map("customerId")
   customer       Customer?    @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  pdfPassword    String?      @map("pdfPassword")
   createdAt      DateTime     @default(now()) @map("createdAt")
 
   @@map("Upload")
@@ -235,7 +279,7 @@ model AgentConfig {
 
 model AIUsageLog {
   id           String       @id @default(uuid())
-  userId       String       @map("userId")
+  userId       String?      @map("userId")
   userEmail    String       @map("userEmail")
   orgId        String       @map("orgId")
   model        String
@@ -244,9 +288,10 @@ model AIUsageLog {
   costUsd      Decimal?     @default(0.0) @map("costUsd") @db.Decimal(15, 6)
   action       String?
   sessionId    String?      @map("sessionId")
+  agentId      String?      @map("agentId")
   createdAt    DateTime     @default(now()) @map("createdAt")
   organisation Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("AIUsageLog")
 }

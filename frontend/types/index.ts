@@ -5,12 +5,14 @@ export type UploadStatus =
   | "OCR_RUNNING"
   | "OCR_COMPLETE"
   | "OCR_FAILED"
-  | "NEEDS_REVIEW";
+  | "NEEDS_REVIEW"
+  | "LOCKED";
 
 export type RunStatus =
   | "PENDING"
   | "STAGE1_RUNNING"
   | "STAGE1_REVIEW"
+  | "LOCKED_REVIEW"
   | "STAGE2_RUNNING"
   | "STAGE3_RUNNING"
   | "VALIDATION_FAILED"

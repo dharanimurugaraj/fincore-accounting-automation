@@ -74,8 +74,10 @@ async def get_current_user(res: HTTPAuthorizationCredentials = Security(security
     
     token = res.credentials
     try:
-        # 1. Verify Firebase Token
-        decoded_token = auth.verify_id_token(token)
+        # 1. Verify Firebase Token with large clock skew tolerance (60s) for Windows sync jitter
+        decoded_token = auth.verify_id_token(token, clock_skew_seconds=60)
+
+
         fb_uid = decoded_token['uid']
         email = decoded_token.get('email')
         name = decoded_token.get('name', '')
@@ -104,6 +106,7 @@ async def get_current_user(res: HTTPAuthorizationCredentials = Security(security
                 """,
                 (internal_id, email, name, photo_url, fb_uid, 'default-org', pending_role_id, datetime.utcnow()),
             )
+            print(f"[auth] Created NEW user: {email} (Role: {pending_role_id})")
             return {
                 "id": internal_id, 
                 "org_id": 'default-org', 
@@ -115,6 +118,7 @@ async def get_current_user(res: HTTPAuthorizationCredentials = Security(security
             }
 
         user = rows[0]
+        print(f"[auth] User Identity Verified: {email} (Role: {user['roleId']})")
         return {
             "id": user["id"],
             "org_id": user["orgId"],
@@ -125,10 +129,14 @@ async def get_current_user(res: HTTPAuthorizationCredentials = Security(security
             "photo_url": photo_url,
         }
 
+
     except Exception as e:
         import traceback
         traceback.print_exc()
         print(f"Auth Error: {e}")
+        # Log the token for debugging (only first 10 chars for security)
+        safe_token = f"{token[:10]}..." if token else "None"
+        print(f"Token involved: {safe_token}")
         raise HTTPException(
             status_code=403,
             detail=f"Could not validate credentials: {str(e)}",

@@ -18,8 +18,8 @@ import {
   Users,
   UserCog
 } from "lucide-react";
-import { useState } from "react";
 import { useAuth } from "@/components/auth/AuthContext";
+import { useLayout } from "@/components/layout/LayoutContext";
 
 const CORE_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -49,8 +49,9 @@ const adminItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, toggleSidebar } = useLayout();
   const { profile } = useAuth();
+
 
   const canShow = (label: string) => {
     if (!profile) return false;
@@ -107,9 +108,10 @@ export default function Sidebar() {
           </Link>
         )}
         <button
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={toggleSidebar}
           className="rounded-md p-1.5 text-t-muted hover:bg-neutral-row hover:text-t-heading"
         >
+
           <ChevronLeft
             className={`h-4 w-4 transition-transform ${
               collapsed ? "rotate-180" : ""

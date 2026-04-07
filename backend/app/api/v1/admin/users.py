@@ -8,14 +8,14 @@ from fastapi import APIRouter, HTTPException, Body
 from app.core.database import execute_query
 from app.api.deps import AdminUser
 
+from app.services.audit_service import log_action
+
 router = APIRouter()
 
 @router.get("")
 async def list_users(user: AdminUser):
     """
     List users on the platform.
-    Super Admins (0) see all users globally.
-    Admins (1) see users exactly in their organization.
     """
     current_role = user.get("role_id", 2)
     org_id = user["org_id"]
@@ -57,39 +57,46 @@ async def update_user_role(
     role_id: int = Body(..., embed=True)
 ):
     """
-    Change a user's role.
-    Super Admin (0) can assign any role.
-    Admin (1) can only assign roles > 1, to users strictly in their org.
+    Change a user's role with detailed audit logging.
     """
     current_role = user.get("role_id", 2)
     org_id = user["org_id"]
 
     # 1. Fetch User Target
-    target = execute_query('SELECT "orgId", "roleId" FROM "User" WHERE id = %s', (target_user_id,))
+    target = execute_query('SELECT email, "orgId", "roleId" FROM "User" WHERE id = %s', (target_user_id,))
     if not target:
         raise HTTPException(status_code=404, detail="User not found")
         
+    target_email = target[0]["email"]
     target_org = target[0]["orgId"]
     target_curr_role = target[0]["roleId"]
 
     # 2. Check Permissions
     if current_role == 1:
-        # Admins can only touch their own org
         if target_org != org_id:
             raise HTTPException(status_code=403, detail="Cannot edit users outside your organization")
-        # Admins cannot edit other Admins or Super Admins
         if target_curr_role <= 1:
             raise HTTPException(status_code=403, detail="Admins cannot override peer or senior administrator roles")
-        # Admins cannot promote someone to Admin or Super Admin
         if role_id <= 1:
             raise HTTPException(status_code=403, detail="Admins cannot promote users to Administrator tiers")
 
-    # 3. Check if target Role exists
-    role_check = execute_query('SELECT id FROM "Role" WHERE id = %s', (role_id,))
+    # 3. Check Role Exists
+    role_check = execute_query('SELECT name FROM "Role" WHERE id = %s', (role_id,))
     if not role_check:
         raise HTTPException(status_code=400, detail="Invalid role ID provided")
+    
+    new_role_name = role_check[0]["name"]
 
     # 4. Perform Update
     execute_query('UPDATE "User" SET "roleId" = %s WHERE id = %s', (role_id, target_user_id))
     
+    # Audit log the action
+    log_action(user, "UPDATE_USER_ROLE", "User", target_user_id, {
+        "target_email": target_email,
+        "old_role": target_curr_role,
+        "new_role": role_id,
+        "new_role_name": new_role_name
+    })
+    
     return {"status": "success", "message": "Role updated"}
+
