@@ -189,8 +189,43 @@ exports.Prisma.PipelineRunScalarFieldEnum = {
   checksum: 'checksum',
   startedAt: 'startedAt',
   completedAt: 'completedAt',
+  metadata: 'metadata',
+  progressPercent: 'progressPercent',
+  progressMessage: 'progressMessage',
+  progressSubsteps: 'progressSubsteps',
+  updatedAt: 'updatedAt',
   createdAt: 'createdAt',
   customerId: 'customerId'
+};
+
+exports.Prisma.ParsedAccountScalarFieldEnum = {
+  id: 'id',
+  runId: 'runId',
+  bankName: 'bankName',
+  accountNo: 'accountNo',
+  accountType: 'accountType',
+  periodFrom: 'periodFrom',
+  periodTo: 'periodTo',
+  openingBal: 'openingBal',
+  closingBal: 'closingBal',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TransactionScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  date: 'date',
+  narration: 'narration',
+  refNumber: 'refNumber',
+  withdrawal: 'withdrawal',
+  deposit: 'deposit',
+  closingBalance: 'closingBalance',
+  drCrFlag: 'drCrFlag',
+  ccValue: 'ccValue',
+  posBalance: 'posBalance',
+  noOfDays: 'noOfDays',
+  category: 'category',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.UploadScalarFieldEnum = {
@@ -207,6 +242,7 @@ exports.Prisma.UploadScalarFieldEnum = {
   status: 'status',
   runId: 'runId',
   customerId: 'customerId',
+  pdfPassword: 'pdfPassword',
   createdAt: 'createdAt'
 };
 
@@ -275,6 +311,7 @@ exports.Prisma.AIUsageLogScalarFieldEnum = {
   costUsd: 'costUsd',
   action: 'action',
   sessionId: 'sessionId',
+  agentId: 'agentId',
   createdAt: 'createdAt'
 };
 
@@ -360,6 +397,8 @@ exports.Prisma.ModelName = {
   Customer: 'Customer',
   User: 'User',
   PipelineRun: 'PipelineRun',
+  ParsedAccount: 'ParsedAccount',
+  Transaction: 'Transaction',
   Upload: 'Upload',
   WCDLLoan: 'WCDLLoan',
   ForexTransaction: 'ForexTransaction',

@@ -39,6 +39,16 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type PipelineRun = $Result.DefaultSelection<Prisma.$PipelineRunPayload>
 /**
+ * Model ParsedAccount
+ * 
+ */
+export type ParsedAccount = $Result.DefaultSelection<Prisma.$ParsedAccountPayload>
+/**
+ * Model Transaction
+ * 
+ */
+export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
+/**
  * Model Upload
  * 
  */
@@ -288,6 +298,26 @@ export class PrismaClient<
     * ```
     */
   get pipelineRun(): Prisma.PipelineRunDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.parsedAccount`: Exposes CRUD operations for the **ParsedAccount** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ParsedAccounts
+    * const parsedAccounts = await prisma.parsedAccount.findMany()
+    * ```
+    */
+  get parsedAccount(): Prisma.ParsedAccountDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.transaction`: Exposes CRUD operations for the **Transaction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Transactions
+    * const transactions = await prisma.transaction.findMany()
+    * ```
+    */
+  get transaction(): Prisma.TransactionDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.upload`: Exposes CRUD operations for the **Upload** model.
@@ -807,6 +837,8 @@ export namespace Prisma {
     Customer: 'Customer',
     User: 'User',
     PipelineRun: 'PipelineRun',
+    ParsedAccount: 'ParsedAccount',
+    Transaction: 'Transaction',
     Upload: 'Upload',
     WCDLLoan: 'WCDLLoan',
     ForexTransaction: 'ForexTransaction',
@@ -830,7 +862,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "role" | "organisation" | "customer" | "user" | "pipelineRun" | "upload" | "wCDLLoan" | "forexTransaction" | "agentConfig" | "aIUsageLog" | "auditLog" | "approval" | "formulaConfiguration"
+      modelProps: "role" | "organisation" | "customer" | "user" | "pipelineRun" | "parsedAccount" | "transaction" | "upload" | "wCDLLoan" | "forexTransaction" | "agentConfig" | "aIUsageLog" | "auditLog" | "approval" | "formulaConfiguration"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1201,6 +1233,154 @@ export namespace Prisma {
           count: {
             args: Prisma.PipelineRunCountArgs<ExtArgs>
             result: $Utils.Optional<PipelineRunCountAggregateOutputType> | number
+          }
+        }
+      }
+      ParsedAccount: {
+        payload: Prisma.$ParsedAccountPayload<ExtArgs>
+        fields: Prisma.ParsedAccountFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ParsedAccountFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParsedAccountPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ParsedAccountFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParsedAccountPayload>
+          }
+          findFirst: {
+            args: Prisma.ParsedAccountFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParsedAccountPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ParsedAccountFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParsedAccountPayload>
+          }
+          findMany: {
+            args: Prisma.ParsedAccountFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParsedAccountPayload>[]
+          }
+          create: {
+            args: Prisma.ParsedAccountCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParsedAccountPayload>
+          }
+          createMany: {
+            args: Prisma.ParsedAccountCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ParsedAccountCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParsedAccountPayload>[]
+          }
+          delete: {
+            args: Prisma.ParsedAccountDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParsedAccountPayload>
+          }
+          update: {
+            args: Prisma.ParsedAccountUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParsedAccountPayload>
+          }
+          deleteMany: {
+            args: Prisma.ParsedAccountDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ParsedAccountUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ParsedAccountUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParsedAccountPayload>[]
+          }
+          upsert: {
+            args: Prisma.ParsedAccountUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParsedAccountPayload>
+          }
+          aggregate: {
+            args: Prisma.ParsedAccountAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateParsedAccount>
+          }
+          groupBy: {
+            args: Prisma.ParsedAccountGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ParsedAccountGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ParsedAccountCountArgs<ExtArgs>
+            result: $Utils.Optional<ParsedAccountCountAggregateOutputType> | number
+          }
+        }
+      }
+      Transaction: {
+        payload: Prisma.$TransactionPayload<ExtArgs>
+        fields: Prisma.TransactionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TransactionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransactionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TransactionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransactionPayload>
+          }
+          findFirst: {
+            args: Prisma.TransactionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransactionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TransactionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransactionPayload>
+          }
+          findMany: {
+            args: Prisma.TransactionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransactionPayload>[]
+          }
+          create: {
+            args: Prisma.TransactionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransactionPayload>
+          }
+          createMany: {
+            args: Prisma.TransactionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TransactionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransactionPayload>[]
+          }
+          delete: {
+            args: Prisma.TransactionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransactionPayload>
+          }
+          update: {
+            args: Prisma.TransactionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransactionPayload>
+          }
+          deleteMany: {
+            args: Prisma.TransactionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TransactionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TransactionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransactionPayload>[]
+          }
+          upsert: {
+            args: Prisma.TransactionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransactionPayload>
+          }
+          aggregate: {
+            args: Prisma.TransactionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTransaction>
+          }
+          groupBy: {
+            args: Prisma.TransactionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TransactionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TransactionCountArgs<ExtArgs>
+            result: $Utils.Optional<TransactionCountAggregateOutputType> | number
           }
         }
       }
@@ -1909,6 +2089,8 @@ export namespace Prisma {
     customer?: CustomerOmit
     user?: UserOmit
     pipelineRun?: PipelineRunOmit
+    parsedAccount?: ParsedAccountOmit
+    transaction?: TransactionOmit
     upload?: UploadOmit
     wCDLLoan?: WCDLLoanOmit
     forexTransaction?: ForexTransactionOmit
@@ -2242,6 +2424,7 @@ export namespace Prisma {
     wcdlLoans: number
     forexTrans: number
     approvals: number
+    parsedAccounts: number
   }
 
   export type PipelineRunCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2249,6 +2432,7 @@ export namespace Prisma {
     wcdlLoans?: boolean | PipelineRunCountOutputTypeCountWcdlLoansArgs
     forexTrans?: boolean | PipelineRunCountOutputTypeCountForexTransArgs
     approvals?: boolean | PipelineRunCountOutputTypeCountApprovalsArgs
+    parsedAccounts?: boolean | PipelineRunCountOutputTypeCountParsedAccountsArgs
   }
 
   // Custom InputTypes
@@ -2288,6 +2472,44 @@ export namespace Prisma {
    */
   export type PipelineRunCountOutputTypeCountApprovalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ApprovalWhereInput
+  }
+
+  /**
+   * PipelineRunCountOutputType without action
+   */
+  export type PipelineRunCountOutputTypeCountParsedAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParsedAccountWhereInput
+  }
+
+
+  /**
+   * Count Type ParsedAccountCountOutputType
+   */
+
+  export type ParsedAccountCountOutputType = {
+    transactions: number
+  }
+
+  export type ParsedAccountCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transactions?: boolean | ParsedAccountCountOutputTypeCountTransactionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ParsedAccountCountOutputType without action
+   */
+  export type ParsedAccountCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccountCountOutputType
+     */
+    select?: ParsedAccountCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ParsedAccountCountOutputType without action
+   */
+  export type ParsedAccountCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransactionWhereInput
   }
 
 
@@ -7359,10 +7581,12 @@ export namespace Prisma {
 
   export type PipelineRunAvgAggregateOutputType = {
     stage: number | null
+    progressPercent: number | null
   }
 
   export type PipelineRunSumAggregateOutputType = {
     stage: number | null
+    progressPercent: number | null
   }
 
   export type PipelineRunMinAggregateOutputType = {
@@ -7380,6 +7604,9 @@ export namespace Prisma {
     checksum: string | null
     startedAt: Date | null
     completedAt: Date | null
+    progressPercent: number | null
+    progressMessage: string | null
+    updatedAt: Date | null
     createdAt: Date | null
     customerId: string | null
   }
@@ -7399,6 +7626,9 @@ export namespace Prisma {
     checksum: string | null
     startedAt: Date | null
     completedAt: Date | null
+    progressPercent: number | null
+    progressMessage: string | null
+    updatedAt: Date | null
     createdAt: Date | null
     customerId: string | null
   }
@@ -7418,6 +7648,11 @@ export namespace Prisma {
     checksum: number
     startedAt: number
     completedAt: number
+    metadata: number
+    progressPercent: number
+    progressMessage: number
+    progressSubsteps: number
+    updatedAt: number
     createdAt: number
     customerId: number
     _all: number
@@ -7426,10 +7661,12 @@ export namespace Prisma {
 
   export type PipelineRunAvgAggregateInputType = {
     stage?: true
+    progressPercent?: true
   }
 
   export type PipelineRunSumAggregateInputType = {
     stage?: true
+    progressPercent?: true
   }
 
   export type PipelineRunMinAggregateInputType = {
@@ -7447,6 +7684,9 @@ export namespace Prisma {
     checksum?: true
     startedAt?: true
     completedAt?: true
+    progressPercent?: true
+    progressMessage?: true
+    updatedAt?: true
     createdAt?: true
     customerId?: true
   }
@@ -7466,6 +7706,9 @@ export namespace Prisma {
     checksum?: true
     startedAt?: true
     completedAt?: true
+    progressPercent?: true
+    progressMessage?: true
+    updatedAt?: true
     createdAt?: true
     customerId?: true
   }
@@ -7485,6 +7728,11 @@ export namespace Prisma {
     checksum?: true
     startedAt?: true
     completedAt?: true
+    metadata?: true
+    progressPercent?: true
+    progressMessage?: true
+    progressSubsteps?: true
+    updatedAt?: true
     createdAt?: true
     customerId?: true
     _all?: true
@@ -7591,6 +7839,11 @@ export namespace Prisma {
     checksum: string | null
     startedAt: Date | null
     completedAt: Date | null
+    metadata: JsonValue | null
+    progressPercent: number | null
+    progressMessage: string | null
+    progressSubsteps: JsonValue | null
+    updatedAt: Date
     createdAt: Date
     customerId: string | null
     _count: PipelineRunCountAggregateOutputType | null
@@ -7629,6 +7882,11 @@ export namespace Prisma {
     checksum?: boolean
     startedAt?: boolean
     completedAt?: boolean
+    metadata?: boolean
+    progressPercent?: boolean
+    progressMessage?: boolean
+    progressSubsteps?: boolean
+    updatedAt?: boolean
     createdAt?: boolean
     customerId?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
@@ -7637,6 +7895,7 @@ export namespace Prisma {
     forexTrans?: boolean | PipelineRun$forexTransArgs<ExtArgs>
     approvals?: boolean | PipelineRun$approvalsArgs<ExtArgs>
     customer?: boolean | PipelineRun$customerArgs<ExtArgs>
+    parsedAccounts?: boolean | PipelineRun$parsedAccountsArgs<ExtArgs>
     _count?: boolean | PipelineRunCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pipelineRun"]>
 
@@ -7655,6 +7914,11 @@ export namespace Prisma {
     checksum?: boolean
     startedAt?: boolean
     completedAt?: boolean
+    metadata?: boolean
+    progressPercent?: boolean
+    progressMessage?: boolean
+    progressSubsteps?: boolean
+    updatedAt?: boolean
     createdAt?: boolean
     customerId?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
@@ -7676,6 +7940,11 @@ export namespace Prisma {
     checksum?: boolean
     startedAt?: boolean
     completedAt?: boolean
+    metadata?: boolean
+    progressPercent?: boolean
+    progressMessage?: boolean
+    progressSubsteps?: boolean
+    updatedAt?: boolean
     createdAt?: boolean
     customerId?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
@@ -7697,11 +7966,16 @@ export namespace Prisma {
     checksum?: boolean
     startedAt?: boolean
     completedAt?: boolean
+    metadata?: boolean
+    progressPercent?: boolean
+    progressMessage?: boolean
+    progressSubsteps?: boolean
+    updatedAt?: boolean
     createdAt?: boolean
     customerId?: boolean
   }
 
-  export type PipelineRunOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "statementMonth" | "status" | "stage" | "statementExcelKey" | "workingSheetKey" | "bankingReportKey" | "validationResult" | "errorMessage" | "reportSummary" | "checksum" | "startedAt" | "completedAt" | "createdAt" | "customerId", ExtArgs["result"]["pipelineRun"]>
+  export type PipelineRunOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "statementMonth" | "status" | "stage" | "statementExcelKey" | "workingSheetKey" | "bankingReportKey" | "validationResult" | "errorMessage" | "reportSummary" | "checksum" | "startedAt" | "completedAt" | "metadata" | "progressPercent" | "progressMessage" | "progressSubsteps" | "updatedAt" | "createdAt" | "customerId", ExtArgs["result"]["pipelineRun"]>
   export type PipelineRunInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     uploads?: boolean | PipelineRun$uploadsArgs<ExtArgs>
@@ -7709,6 +7983,7 @@ export namespace Prisma {
     forexTrans?: boolean | PipelineRun$forexTransArgs<ExtArgs>
     approvals?: boolean | PipelineRun$approvalsArgs<ExtArgs>
     customer?: boolean | PipelineRun$customerArgs<ExtArgs>
+    parsedAccounts?: boolean | PipelineRun$parsedAccountsArgs<ExtArgs>
     _count?: boolean | PipelineRunCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PipelineRunIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7729,6 +8004,7 @@ export namespace Prisma {
       forexTrans: Prisma.$ForexTransactionPayload<ExtArgs>[]
       approvals: Prisma.$ApprovalPayload<ExtArgs>[]
       customer: Prisma.$CustomerPayload<ExtArgs> | null
+      parsedAccounts: Prisma.$ParsedAccountPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7745,6 +8021,11 @@ export namespace Prisma {
       checksum: string | null
       startedAt: Date | null
       completedAt: Date | null
+      metadata: Prisma.JsonValue | null
+      progressPercent: number | null
+      progressMessage: string | null
+      progressSubsteps: Prisma.JsonValue | null
+      updatedAt: Date
       createdAt: Date
       customerId: string | null
     }, ExtArgs["result"]["pipelineRun"]>
@@ -8147,6 +8428,7 @@ export namespace Prisma {
     forexTrans<T extends PipelineRun$forexTransArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$forexTransArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ForexTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     approvals<T extends PipelineRun$approvalsArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$approvalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     customer<T extends PipelineRun$customerArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$customerArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    parsedAccounts<T extends PipelineRun$parsedAccountsArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRun$parsedAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8190,6 +8472,11 @@ export namespace Prisma {
     readonly checksum: FieldRef<"PipelineRun", 'String'>
     readonly startedAt: FieldRef<"PipelineRun", 'DateTime'>
     readonly completedAt: FieldRef<"PipelineRun", 'DateTime'>
+    readonly metadata: FieldRef<"PipelineRun", 'Json'>
+    readonly progressPercent: FieldRef<"PipelineRun", 'Int'>
+    readonly progressMessage: FieldRef<"PipelineRun", 'String'>
+    readonly progressSubsteps: FieldRef<"PipelineRun", 'Json'>
+    readonly updatedAt: FieldRef<"PipelineRun", 'DateTime'>
     readonly createdAt: FieldRef<"PipelineRun", 'DateTime'>
     readonly customerId: FieldRef<"PipelineRun", 'String'>
   }
@@ -8708,6 +8995,30 @@ export namespace Prisma {
   }
 
   /**
+   * PipelineRun.parsedAccounts
+   */
+  export type PipelineRun$parsedAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountInclude<ExtArgs> | null
+    where?: ParsedAccountWhereInput
+    orderBy?: ParsedAccountOrderByWithRelationInput | ParsedAccountOrderByWithRelationInput[]
+    cursor?: ParsedAccountWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ParsedAccountScalarFieldEnum | ParsedAccountScalarFieldEnum[]
+  }
+
+  /**
    * PipelineRun without action
    */
   export type PipelineRunDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8723,6 +9034,2436 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: PipelineRunInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ParsedAccount
+   */
+
+  export type AggregateParsedAccount = {
+    _count: ParsedAccountCountAggregateOutputType | null
+    _avg: ParsedAccountAvgAggregateOutputType | null
+    _sum: ParsedAccountSumAggregateOutputType | null
+    _min: ParsedAccountMinAggregateOutputType | null
+    _max: ParsedAccountMaxAggregateOutputType | null
+  }
+
+  export type ParsedAccountAvgAggregateOutputType = {
+    openingBal: Decimal | null
+    closingBal: Decimal | null
+  }
+
+  export type ParsedAccountSumAggregateOutputType = {
+    openingBal: Decimal | null
+    closingBal: Decimal | null
+  }
+
+  export type ParsedAccountMinAggregateOutputType = {
+    id: string | null
+    runId: string | null
+    bankName: string | null
+    accountNo: string | null
+    accountType: string | null
+    periodFrom: Date | null
+    periodTo: Date | null
+    openingBal: Decimal | null
+    closingBal: Decimal | null
+    createdAt: Date | null
+  }
+
+  export type ParsedAccountMaxAggregateOutputType = {
+    id: string | null
+    runId: string | null
+    bankName: string | null
+    accountNo: string | null
+    accountType: string | null
+    periodFrom: Date | null
+    periodTo: Date | null
+    openingBal: Decimal | null
+    closingBal: Decimal | null
+    createdAt: Date | null
+  }
+
+  export type ParsedAccountCountAggregateOutputType = {
+    id: number
+    runId: number
+    bankName: number
+    accountNo: number
+    accountType: number
+    periodFrom: number
+    periodTo: number
+    openingBal: number
+    closingBal: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ParsedAccountAvgAggregateInputType = {
+    openingBal?: true
+    closingBal?: true
+  }
+
+  export type ParsedAccountSumAggregateInputType = {
+    openingBal?: true
+    closingBal?: true
+  }
+
+  export type ParsedAccountMinAggregateInputType = {
+    id?: true
+    runId?: true
+    bankName?: true
+    accountNo?: true
+    accountType?: true
+    periodFrom?: true
+    periodTo?: true
+    openingBal?: true
+    closingBal?: true
+    createdAt?: true
+  }
+
+  export type ParsedAccountMaxAggregateInputType = {
+    id?: true
+    runId?: true
+    bankName?: true
+    accountNo?: true
+    accountType?: true
+    periodFrom?: true
+    periodTo?: true
+    openingBal?: true
+    closingBal?: true
+    createdAt?: true
+  }
+
+  export type ParsedAccountCountAggregateInputType = {
+    id?: true
+    runId?: true
+    bankName?: true
+    accountNo?: true
+    accountType?: true
+    periodFrom?: true
+    periodTo?: true
+    openingBal?: true
+    closingBal?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ParsedAccountAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ParsedAccount to aggregate.
+     */
+    where?: ParsedAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParsedAccounts to fetch.
+     */
+    orderBy?: ParsedAccountOrderByWithRelationInput | ParsedAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ParsedAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParsedAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParsedAccounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ParsedAccounts
+    **/
+    _count?: true | ParsedAccountCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ParsedAccountAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ParsedAccountSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ParsedAccountMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ParsedAccountMaxAggregateInputType
+  }
+
+  export type GetParsedAccountAggregateType<T extends ParsedAccountAggregateArgs> = {
+        [P in keyof T & keyof AggregateParsedAccount]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateParsedAccount[P]>
+      : GetScalarType<T[P], AggregateParsedAccount[P]>
+  }
+
+
+
+
+  export type ParsedAccountGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParsedAccountWhereInput
+    orderBy?: ParsedAccountOrderByWithAggregationInput | ParsedAccountOrderByWithAggregationInput[]
+    by: ParsedAccountScalarFieldEnum[] | ParsedAccountScalarFieldEnum
+    having?: ParsedAccountScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ParsedAccountCountAggregateInputType | true
+    _avg?: ParsedAccountAvgAggregateInputType
+    _sum?: ParsedAccountSumAggregateInputType
+    _min?: ParsedAccountMinAggregateInputType
+    _max?: ParsedAccountMaxAggregateInputType
+  }
+
+  export type ParsedAccountGroupByOutputType = {
+    id: string
+    runId: string
+    bankName: string
+    accountNo: string
+    accountType: string
+    periodFrom: Date | null
+    periodTo: Date | null
+    openingBal: Decimal | null
+    closingBal: Decimal | null
+    createdAt: Date
+    _count: ParsedAccountCountAggregateOutputType | null
+    _avg: ParsedAccountAvgAggregateOutputType | null
+    _sum: ParsedAccountSumAggregateOutputType | null
+    _min: ParsedAccountMinAggregateOutputType | null
+    _max: ParsedAccountMaxAggregateOutputType | null
+  }
+
+  type GetParsedAccountGroupByPayload<T extends ParsedAccountGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ParsedAccountGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ParsedAccountGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ParsedAccountGroupByOutputType[P]>
+            : GetScalarType<T[P], ParsedAccountGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ParsedAccountSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    runId?: boolean
+    bankName?: boolean
+    accountNo?: boolean
+    accountType?: boolean
+    periodFrom?: boolean
+    periodTo?: boolean
+    openingBal?: boolean
+    closingBal?: boolean
+    createdAt?: boolean
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+    transactions?: boolean | ParsedAccount$transactionsArgs<ExtArgs>
+    _count?: boolean | ParsedAccountCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parsedAccount"]>
+
+  export type ParsedAccountSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    runId?: boolean
+    bankName?: boolean
+    accountNo?: boolean
+    accountType?: boolean
+    periodFrom?: boolean
+    periodTo?: boolean
+    openingBal?: boolean
+    closingBal?: boolean
+    createdAt?: boolean
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parsedAccount"]>
+
+  export type ParsedAccountSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    runId?: boolean
+    bankName?: boolean
+    accountNo?: boolean
+    accountType?: boolean
+    periodFrom?: boolean
+    periodTo?: boolean
+    openingBal?: boolean
+    closingBal?: boolean
+    createdAt?: boolean
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parsedAccount"]>
+
+  export type ParsedAccountSelectScalar = {
+    id?: boolean
+    runId?: boolean
+    bankName?: boolean
+    accountNo?: boolean
+    accountType?: boolean
+    periodFrom?: boolean
+    periodTo?: boolean
+    openingBal?: boolean
+    closingBal?: boolean
+    createdAt?: boolean
+  }
+
+  export type ParsedAccountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "runId" | "bankName" | "accountNo" | "accountType" | "periodFrom" | "periodTo" | "openingBal" | "closingBal" | "createdAt", ExtArgs["result"]["parsedAccount"]>
+  export type ParsedAccountInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+    transactions?: boolean | ParsedAccount$transactionsArgs<ExtArgs>
+    _count?: boolean | ParsedAccountCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ParsedAccountIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+  }
+  export type ParsedAccountIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pipelineRun?: boolean | PipelineRunDefaultArgs<ExtArgs>
+  }
+
+  export type $ParsedAccountPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ParsedAccount"
+    objects: {
+      pipelineRun: Prisma.$PipelineRunPayload<ExtArgs>
+      transactions: Prisma.$TransactionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      runId: string
+      bankName: string
+      accountNo: string
+      accountType: string
+      periodFrom: Date | null
+      periodTo: Date | null
+      openingBal: Prisma.Decimal | null
+      closingBal: Prisma.Decimal | null
+      createdAt: Date
+    }, ExtArgs["result"]["parsedAccount"]>
+    composites: {}
+  }
+
+  type ParsedAccountGetPayload<S extends boolean | null | undefined | ParsedAccountDefaultArgs> = $Result.GetResult<Prisma.$ParsedAccountPayload, S>
+
+  type ParsedAccountCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ParsedAccountFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ParsedAccountCountAggregateInputType | true
+    }
+
+  export interface ParsedAccountDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ParsedAccount'], meta: { name: 'ParsedAccount' } }
+    /**
+     * Find zero or one ParsedAccount that matches the filter.
+     * @param {ParsedAccountFindUniqueArgs} args - Arguments to find a ParsedAccount
+     * @example
+     * // Get one ParsedAccount
+     * const parsedAccount = await prisma.parsedAccount.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ParsedAccountFindUniqueArgs>(args: SelectSubset<T, ParsedAccountFindUniqueArgs<ExtArgs>>): Prisma__ParsedAccountClient<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ParsedAccount that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ParsedAccountFindUniqueOrThrowArgs} args - Arguments to find a ParsedAccount
+     * @example
+     * // Get one ParsedAccount
+     * const parsedAccount = await prisma.parsedAccount.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ParsedAccountFindUniqueOrThrowArgs>(args: SelectSubset<T, ParsedAccountFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ParsedAccountClient<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ParsedAccount that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParsedAccountFindFirstArgs} args - Arguments to find a ParsedAccount
+     * @example
+     * // Get one ParsedAccount
+     * const parsedAccount = await prisma.parsedAccount.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ParsedAccountFindFirstArgs>(args?: SelectSubset<T, ParsedAccountFindFirstArgs<ExtArgs>>): Prisma__ParsedAccountClient<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ParsedAccount that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParsedAccountFindFirstOrThrowArgs} args - Arguments to find a ParsedAccount
+     * @example
+     * // Get one ParsedAccount
+     * const parsedAccount = await prisma.parsedAccount.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ParsedAccountFindFirstOrThrowArgs>(args?: SelectSubset<T, ParsedAccountFindFirstOrThrowArgs<ExtArgs>>): Prisma__ParsedAccountClient<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ParsedAccounts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParsedAccountFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ParsedAccounts
+     * const parsedAccounts = await prisma.parsedAccount.findMany()
+     * 
+     * // Get first 10 ParsedAccounts
+     * const parsedAccounts = await prisma.parsedAccount.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const parsedAccountWithIdOnly = await prisma.parsedAccount.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ParsedAccountFindManyArgs>(args?: SelectSubset<T, ParsedAccountFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ParsedAccount.
+     * @param {ParsedAccountCreateArgs} args - Arguments to create a ParsedAccount.
+     * @example
+     * // Create one ParsedAccount
+     * const ParsedAccount = await prisma.parsedAccount.create({
+     *   data: {
+     *     // ... data to create a ParsedAccount
+     *   }
+     * })
+     * 
+     */
+    create<T extends ParsedAccountCreateArgs>(args: SelectSubset<T, ParsedAccountCreateArgs<ExtArgs>>): Prisma__ParsedAccountClient<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ParsedAccounts.
+     * @param {ParsedAccountCreateManyArgs} args - Arguments to create many ParsedAccounts.
+     * @example
+     * // Create many ParsedAccounts
+     * const parsedAccount = await prisma.parsedAccount.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ParsedAccountCreateManyArgs>(args?: SelectSubset<T, ParsedAccountCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ParsedAccounts and returns the data saved in the database.
+     * @param {ParsedAccountCreateManyAndReturnArgs} args - Arguments to create many ParsedAccounts.
+     * @example
+     * // Create many ParsedAccounts
+     * const parsedAccount = await prisma.parsedAccount.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ParsedAccounts and only return the `id`
+     * const parsedAccountWithIdOnly = await prisma.parsedAccount.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ParsedAccountCreateManyAndReturnArgs>(args?: SelectSubset<T, ParsedAccountCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ParsedAccount.
+     * @param {ParsedAccountDeleteArgs} args - Arguments to delete one ParsedAccount.
+     * @example
+     * // Delete one ParsedAccount
+     * const ParsedAccount = await prisma.parsedAccount.delete({
+     *   where: {
+     *     // ... filter to delete one ParsedAccount
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ParsedAccountDeleteArgs>(args: SelectSubset<T, ParsedAccountDeleteArgs<ExtArgs>>): Prisma__ParsedAccountClient<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ParsedAccount.
+     * @param {ParsedAccountUpdateArgs} args - Arguments to update one ParsedAccount.
+     * @example
+     * // Update one ParsedAccount
+     * const parsedAccount = await prisma.parsedAccount.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ParsedAccountUpdateArgs>(args: SelectSubset<T, ParsedAccountUpdateArgs<ExtArgs>>): Prisma__ParsedAccountClient<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ParsedAccounts.
+     * @param {ParsedAccountDeleteManyArgs} args - Arguments to filter ParsedAccounts to delete.
+     * @example
+     * // Delete a few ParsedAccounts
+     * const { count } = await prisma.parsedAccount.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ParsedAccountDeleteManyArgs>(args?: SelectSubset<T, ParsedAccountDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ParsedAccounts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParsedAccountUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ParsedAccounts
+     * const parsedAccount = await prisma.parsedAccount.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ParsedAccountUpdateManyArgs>(args: SelectSubset<T, ParsedAccountUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ParsedAccounts and returns the data updated in the database.
+     * @param {ParsedAccountUpdateManyAndReturnArgs} args - Arguments to update many ParsedAccounts.
+     * @example
+     * // Update many ParsedAccounts
+     * const parsedAccount = await prisma.parsedAccount.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ParsedAccounts and only return the `id`
+     * const parsedAccountWithIdOnly = await prisma.parsedAccount.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ParsedAccountUpdateManyAndReturnArgs>(args: SelectSubset<T, ParsedAccountUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ParsedAccount.
+     * @param {ParsedAccountUpsertArgs} args - Arguments to update or create a ParsedAccount.
+     * @example
+     * // Update or create a ParsedAccount
+     * const parsedAccount = await prisma.parsedAccount.upsert({
+     *   create: {
+     *     // ... data to create a ParsedAccount
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ParsedAccount we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ParsedAccountUpsertArgs>(args: SelectSubset<T, ParsedAccountUpsertArgs<ExtArgs>>): Prisma__ParsedAccountClient<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ParsedAccounts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParsedAccountCountArgs} args - Arguments to filter ParsedAccounts to count.
+     * @example
+     * // Count the number of ParsedAccounts
+     * const count = await prisma.parsedAccount.count({
+     *   where: {
+     *     // ... the filter for the ParsedAccounts we want to count
+     *   }
+     * })
+    **/
+    count<T extends ParsedAccountCountArgs>(
+      args?: Subset<T, ParsedAccountCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ParsedAccountCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ParsedAccount.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParsedAccountAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ParsedAccountAggregateArgs>(args: Subset<T, ParsedAccountAggregateArgs>): Prisma.PrismaPromise<GetParsedAccountAggregateType<T>>
+
+    /**
+     * Group by ParsedAccount.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParsedAccountGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ParsedAccountGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ParsedAccountGroupByArgs['orderBy'] }
+        : { orderBy?: ParsedAccountGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ParsedAccountGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetParsedAccountGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ParsedAccount model
+   */
+  readonly fields: ParsedAccountFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ParsedAccount.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ParsedAccountClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    pipelineRun<T extends PipelineRunDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PipelineRunDefaultArgs<ExtArgs>>): Prisma__PipelineRunClient<$Result.GetResult<Prisma.$PipelineRunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    transactions<T extends ParsedAccount$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, ParsedAccount$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ParsedAccount model
+   */
+  interface ParsedAccountFieldRefs {
+    readonly id: FieldRef<"ParsedAccount", 'String'>
+    readonly runId: FieldRef<"ParsedAccount", 'String'>
+    readonly bankName: FieldRef<"ParsedAccount", 'String'>
+    readonly accountNo: FieldRef<"ParsedAccount", 'String'>
+    readonly accountType: FieldRef<"ParsedAccount", 'String'>
+    readonly periodFrom: FieldRef<"ParsedAccount", 'DateTime'>
+    readonly periodTo: FieldRef<"ParsedAccount", 'DateTime'>
+    readonly openingBal: FieldRef<"ParsedAccount", 'Decimal'>
+    readonly closingBal: FieldRef<"ParsedAccount", 'Decimal'>
+    readonly createdAt: FieldRef<"ParsedAccount", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ParsedAccount findUnique
+   */
+  export type ParsedAccountFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which ParsedAccount to fetch.
+     */
+    where: ParsedAccountWhereUniqueInput
+  }
+
+  /**
+   * ParsedAccount findUniqueOrThrow
+   */
+  export type ParsedAccountFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which ParsedAccount to fetch.
+     */
+    where: ParsedAccountWhereUniqueInput
+  }
+
+  /**
+   * ParsedAccount findFirst
+   */
+  export type ParsedAccountFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which ParsedAccount to fetch.
+     */
+    where?: ParsedAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParsedAccounts to fetch.
+     */
+    orderBy?: ParsedAccountOrderByWithRelationInput | ParsedAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParsedAccounts.
+     */
+    cursor?: ParsedAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParsedAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParsedAccounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParsedAccounts.
+     */
+    distinct?: ParsedAccountScalarFieldEnum | ParsedAccountScalarFieldEnum[]
+  }
+
+  /**
+   * ParsedAccount findFirstOrThrow
+   */
+  export type ParsedAccountFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which ParsedAccount to fetch.
+     */
+    where?: ParsedAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParsedAccounts to fetch.
+     */
+    orderBy?: ParsedAccountOrderByWithRelationInput | ParsedAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParsedAccounts.
+     */
+    cursor?: ParsedAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParsedAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParsedAccounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParsedAccounts.
+     */
+    distinct?: ParsedAccountScalarFieldEnum | ParsedAccountScalarFieldEnum[]
+  }
+
+  /**
+   * ParsedAccount findMany
+   */
+  export type ParsedAccountFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which ParsedAccounts to fetch.
+     */
+    where?: ParsedAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParsedAccounts to fetch.
+     */
+    orderBy?: ParsedAccountOrderByWithRelationInput | ParsedAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ParsedAccounts.
+     */
+    cursor?: ParsedAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParsedAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParsedAccounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParsedAccounts.
+     */
+    distinct?: ParsedAccountScalarFieldEnum | ParsedAccountScalarFieldEnum[]
+  }
+
+  /**
+   * ParsedAccount create
+   */
+  export type ParsedAccountCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ParsedAccount.
+     */
+    data: XOR<ParsedAccountCreateInput, ParsedAccountUncheckedCreateInput>
+  }
+
+  /**
+   * ParsedAccount createMany
+   */
+  export type ParsedAccountCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ParsedAccounts.
+     */
+    data: ParsedAccountCreateManyInput | ParsedAccountCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ParsedAccount createManyAndReturn
+   */
+  export type ParsedAccountCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * The data used to create many ParsedAccounts.
+     */
+    data: ParsedAccountCreateManyInput | ParsedAccountCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ParsedAccount update
+   */
+  export type ParsedAccountUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ParsedAccount.
+     */
+    data: XOR<ParsedAccountUpdateInput, ParsedAccountUncheckedUpdateInput>
+    /**
+     * Choose, which ParsedAccount to update.
+     */
+    where: ParsedAccountWhereUniqueInput
+  }
+
+  /**
+   * ParsedAccount updateMany
+   */
+  export type ParsedAccountUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ParsedAccounts.
+     */
+    data: XOR<ParsedAccountUpdateManyMutationInput, ParsedAccountUncheckedUpdateManyInput>
+    /**
+     * Filter which ParsedAccounts to update
+     */
+    where?: ParsedAccountWhereInput
+    /**
+     * Limit how many ParsedAccounts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ParsedAccount updateManyAndReturn
+   */
+  export type ParsedAccountUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * The data used to update ParsedAccounts.
+     */
+    data: XOR<ParsedAccountUpdateManyMutationInput, ParsedAccountUncheckedUpdateManyInput>
+    /**
+     * Filter which ParsedAccounts to update
+     */
+    where?: ParsedAccountWhereInput
+    /**
+     * Limit how many ParsedAccounts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ParsedAccount upsert
+   */
+  export type ParsedAccountUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ParsedAccount to update in case it exists.
+     */
+    where: ParsedAccountWhereUniqueInput
+    /**
+     * In case the ParsedAccount found by the `where` argument doesn't exist, create a new ParsedAccount with this data.
+     */
+    create: XOR<ParsedAccountCreateInput, ParsedAccountUncheckedCreateInput>
+    /**
+     * In case the ParsedAccount was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ParsedAccountUpdateInput, ParsedAccountUncheckedUpdateInput>
+  }
+
+  /**
+   * ParsedAccount delete
+   */
+  export type ParsedAccountDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountInclude<ExtArgs> | null
+    /**
+     * Filter which ParsedAccount to delete.
+     */
+    where: ParsedAccountWhereUniqueInput
+  }
+
+  /**
+   * ParsedAccount deleteMany
+   */
+  export type ParsedAccountDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ParsedAccounts to delete
+     */
+    where?: ParsedAccountWhereInput
+    /**
+     * Limit how many ParsedAccounts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ParsedAccount.transactions
+   */
+  export type ParsedAccount$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    where?: TransactionWhereInput
+    orderBy?: TransactionOrderByWithRelationInput | TransactionOrderByWithRelationInput[]
+    cursor?: TransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * ParsedAccount without action
+   */
+  export type ParsedAccountDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParsedAccount
+     */
+    select?: ParsedAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ParsedAccount
+     */
+    omit?: ParsedAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParsedAccountInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Transaction
+   */
+
+  export type AggregateTransaction = {
+    _count: TransactionCountAggregateOutputType | null
+    _avg: TransactionAvgAggregateOutputType | null
+    _sum: TransactionSumAggregateOutputType | null
+    _min: TransactionMinAggregateOutputType | null
+    _max: TransactionMaxAggregateOutputType | null
+  }
+
+  export type TransactionAvgAggregateOutputType = {
+    withdrawal: Decimal | null
+    deposit: Decimal | null
+    closingBalance: Decimal | null
+    ccValue: Decimal | null
+    posBalance: Decimal | null
+    noOfDays: number | null
+  }
+
+  export type TransactionSumAggregateOutputType = {
+    withdrawal: Decimal | null
+    deposit: Decimal | null
+    closingBalance: Decimal | null
+    ccValue: Decimal | null
+    posBalance: Decimal | null
+    noOfDays: number | null
+  }
+
+  export type TransactionMinAggregateOutputType = {
+    id: string | null
+    accountId: string | null
+    date: Date | null
+    narration: string | null
+    refNumber: string | null
+    withdrawal: Decimal | null
+    deposit: Decimal | null
+    closingBalance: Decimal | null
+    drCrFlag: string | null
+    ccValue: Decimal | null
+    posBalance: Decimal | null
+    noOfDays: number | null
+    category: string | null
+    createdAt: Date | null
+  }
+
+  export type TransactionMaxAggregateOutputType = {
+    id: string | null
+    accountId: string | null
+    date: Date | null
+    narration: string | null
+    refNumber: string | null
+    withdrawal: Decimal | null
+    deposit: Decimal | null
+    closingBalance: Decimal | null
+    drCrFlag: string | null
+    ccValue: Decimal | null
+    posBalance: Decimal | null
+    noOfDays: number | null
+    category: string | null
+    createdAt: Date | null
+  }
+
+  export type TransactionCountAggregateOutputType = {
+    id: number
+    accountId: number
+    date: number
+    narration: number
+    refNumber: number
+    withdrawal: number
+    deposit: number
+    closingBalance: number
+    drCrFlag: number
+    ccValue: number
+    posBalance: number
+    noOfDays: number
+    category: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type TransactionAvgAggregateInputType = {
+    withdrawal?: true
+    deposit?: true
+    closingBalance?: true
+    ccValue?: true
+    posBalance?: true
+    noOfDays?: true
+  }
+
+  export type TransactionSumAggregateInputType = {
+    withdrawal?: true
+    deposit?: true
+    closingBalance?: true
+    ccValue?: true
+    posBalance?: true
+    noOfDays?: true
+  }
+
+  export type TransactionMinAggregateInputType = {
+    id?: true
+    accountId?: true
+    date?: true
+    narration?: true
+    refNumber?: true
+    withdrawal?: true
+    deposit?: true
+    closingBalance?: true
+    drCrFlag?: true
+    ccValue?: true
+    posBalance?: true
+    noOfDays?: true
+    category?: true
+    createdAt?: true
+  }
+
+  export type TransactionMaxAggregateInputType = {
+    id?: true
+    accountId?: true
+    date?: true
+    narration?: true
+    refNumber?: true
+    withdrawal?: true
+    deposit?: true
+    closingBalance?: true
+    drCrFlag?: true
+    ccValue?: true
+    posBalance?: true
+    noOfDays?: true
+    category?: true
+    createdAt?: true
+  }
+
+  export type TransactionCountAggregateInputType = {
+    id?: true
+    accountId?: true
+    date?: true
+    narration?: true
+    refNumber?: true
+    withdrawal?: true
+    deposit?: true
+    closingBalance?: true
+    drCrFlag?: true
+    ccValue?: true
+    posBalance?: true
+    noOfDays?: true
+    category?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type TransactionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Transaction to aggregate.
+     */
+    where?: TransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Transactions to fetch.
+     */
+    orderBy?: TransactionOrderByWithRelationInput | TransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Transactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Transactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Transactions
+    **/
+    _count?: true | TransactionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TransactionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TransactionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TransactionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TransactionMaxAggregateInputType
+  }
+
+  export type GetTransactionAggregateType<T extends TransactionAggregateArgs> = {
+        [P in keyof T & keyof AggregateTransaction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTransaction[P]>
+      : GetScalarType<T[P], AggregateTransaction[P]>
+  }
+
+
+
+
+  export type TransactionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransactionWhereInput
+    orderBy?: TransactionOrderByWithAggregationInput | TransactionOrderByWithAggregationInput[]
+    by: TransactionScalarFieldEnum[] | TransactionScalarFieldEnum
+    having?: TransactionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TransactionCountAggregateInputType | true
+    _avg?: TransactionAvgAggregateInputType
+    _sum?: TransactionSumAggregateInputType
+    _min?: TransactionMinAggregateInputType
+    _max?: TransactionMaxAggregateInputType
+  }
+
+  export type TransactionGroupByOutputType = {
+    id: string
+    accountId: string
+    date: Date
+    narration: string
+    refNumber: string | null
+    withdrawal: Decimal | null
+    deposit: Decimal | null
+    closingBalance: Decimal
+    drCrFlag: string
+    ccValue: Decimal | null
+    posBalance: Decimal | null
+    noOfDays: number | null
+    category: string | null
+    createdAt: Date
+    _count: TransactionCountAggregateOutputType | null
+    _avg: TransactionAvgAggregateOutputType | null
+    _sum: TransactionSumAggregateOutputType | null
+    _min: TransactionMinAggregateOutputType | null
+    _max: TransactionMaxAggregateOutputType | null
+  }
+
+  type GetTransactionGroupByPayload<T extends TransactionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TransactionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TransactionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TransactionGroupByOutputType[P]>
+            : GetScalarType<T[P], TransactionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TransactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    accountId?: boolean
+    date?: boolean
+    narration?: boolean
+    refNumber?: boolean
+    withdrawal?: boolean
+    deposit?: boolean
+    closingBalance?: boolean
+    drCrFlag?: boolean
+    ccValue?: boolean
+    posBalance?: boolean
+    noOfDays?: boolean
+    category?: boolean
+    createdAt?: boolean
+    account?: boolean | ParsedAccountDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["transaction"]>
+
+  export type TransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    accountId?: boolean
+    date?: boolean
+    narration?: boolean
+    refNumber?: boolean
+    withdrawal?: boolean
+    deposit?: boolean
+    closingBalance?: boolean
+    drCrFlag?: boolean
+    ccValue?: boolean
+    posBalance?: boolean
+    noOfDays?: boolean
+    category?: boolean
+    createdAt?: boolean
+    account?: boolean | ParsedAccountDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["transaction"]>
+
+  export type TransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    accountId?: boolean
+    date?: boolean
+    narration?: boolean
+    refNumber?: boolean
+    withdrawal?: boolean
+    deposit?: boolean
+    closingBalance?: boolean
+    drCrFlag?: boolean
+    ccValue?: boolean
+    posBalance?: boolean
+    noOfDays?: boolean
+    category?: boolean
+    createdAt?: boolean
+    account?: boolean | ParsedAccountDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["transaction"]>
+
+  export type TransactionSelectScalar = {
+    id?: boolean
+    accountId?: boolean
+    date?: boolean
+    narration?: boolean
+    refNumber?: boolean
+    withdrawal?: boolean
+    deposit?: boolean
+    closingBalance?: boolean
+    drCrFlag?: boolean
+    ccValue?: boolean
+    posBalance?: boolean
+    noOfDays?: boolean
+    category?: boolean
+    createdAt?: boolean
+  }
+
+  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "accountId" | "date" | "narration" | "refNumber" | "withdrawal" | "deposit" | "closingBalance" | "drCrFlag" | "ccValue" | "posBalance" | "noOfDays" | "category" | "createdAt", ExtArgs["result"]["transaction"]>
+  export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    account?: boolean | ParsedAccountDefaultArgs<ExtArgs>
+  }
+  export type TransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    account?: boolean | ParsedAccountDefaultArgs<ExtArgs>
+  }
+  export type TransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    account?: boolean | ParsedAccountDefaultArgs<ExtArgs>
+  }
+
+  export type $TransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Transaction"
+    objects: {
+      account: Prisma.$ParsedAccountPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      accountId: string
+      date: Date
+      narration: string
+      refNumber: string | null
+      withdrawal: Prisma.Decimal | null
+      deposit: Prisma.Decimal | null
+      closingBalance: Prisma.Decimal
+      drCrFlag: string
+      ccValue: Prisma.Decimal | null
+      posBalance: Prisma.Decimal | null
+      noOfDays: number | null
+      category: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["transaction"]>
+    composites: {}
+  }
+
+  type TransactionGetPayload<S extends boolean | null | undefined | TransactionDefaultArgs> = $Result.GetResult<Prisma.$TransactionPayload, S>
+
+  type TransactionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TransactionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TransactionCountAggregateInputType | true
+    }
+
+  export interface TransactionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Transaction'], meta: { name: 'Transaction' } }
+    /**
+     * Find zero or one Transaction that matches the filter.
+     * @param {TransactionFindUniqueArgs} args - Arguments to find a Transaction
+     * @example
+     * // Get one Transaction
+     * const transaction = await prisma.transaction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TransactionFindUniqueArgs>(args: SelectSubset<T, TransactionFindUniqueArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Transaction that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TransactionFindUniqueOrThrowArgs} args - Arguments to find a Transaction
+     * @example
+     * // Get one Transaction
+     * const transaction = await prisma.transaction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TransactionFindUniqueOrThrowArgs>(args: SelectSubset<T, TransactionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Transaction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransactionFindFirstArgs} args - Arguments to find a Transaction
+     * @example
+     * // Get one Transaction
+     * const transaction = await prisma.transaction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TransactionFindFirstArgs>(args?: SelectSubset<T, TransactionFindFirstArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Transaction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransactionFindFirstOrThrowArgs} args - Arguments to find a Transaction
+     * @example
+     * // Get one Transaction
+     * const transaction = await prisma.transaction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TransactionFindFirstOrThrowArgs>(args?: SelectSubset<T, TransactionFindFirstOrThrowArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Transactions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransactionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Transactions
+     * const transactions = await prisma.transaction.findMany()
+     * 
+     * // Get first 10 Transactions
+     * const transactions = await prisma.transaction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const transactionWithIdOnly = await prisma.transaction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TransactionFindManyArgs>(args?: SelectSubset<T, TransactionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Transaction.
+     * @param {TransactionCreateArgs} args - Arguments to create a Transaction.
+     * @example
+     * // Create one Transaction
+     * const Transaction = await prisma.transaction.create({
+     *   data: {
+     *     // ... data to create a Transaction
+     *   }
+     * })
+     * 
+     */
+    create<T extends TransactionCreateArgs>(args: SelectSubset<T, TransactionCreateArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Transactions.
+     * @param {TransactionCreateManyArgs} args - Arguments to create many Transactions.
+     * @example
+     * // Create many Transactions
+     * const transaction = await prisma.transaction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TransactionCreateManyArgs>(args?: SelectSubset<T, TransactionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Transactions and returns the data saved in the database.
+     * @param {TransactionCreateManyAndReturnArgs} args - Arguments to create many Transactions.
+     * @example
+     * // Create many Transactions
+     * const transaction = await prisma.transaction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Transactions and only return the `id`
+     * const transactionWithIdOnly = await prisma.transaction.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TransactionCreateManyAndReturnArgs>(args?: SelectSubset<T, TransactionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Transaction.
+     * @param {TransactionDeleteArgs} args - Arguments to delete one Transaction.
+     * @example
+     * // Delete one Transaction
+     * const Transaction = await prisma.transaction.delete({
+     *   where: {
+     *     // ... filter to delete one Transaction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TransactionDeleteArgs>(args: SelectSubset<T, TransactionDeleteArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Transaction.
+     * @param {TransactionUpdateArgs} args - Arguments to update one Transaction.
+     * @example
+     * // Update one Transaction
+     * const transaction = await prisma.transaction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TransactionUpdateArgs>(args: SelectSubset<T, TransactionUpdateArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Transactions.
+     * @param {TransactionDeleteManyArgs} args - Arguments to filter Transactions to delete.
+     * @example
+     * // Delete a few Transactions
+     * const { count } = await prisma.transaction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TransactionDeleteManyArgs>(args?: SelectSubset<T, TransactionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Transactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransactionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Transactions
+     * const transaction = await prisma.transaction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TransactionUpdateManyArgs>(args: SelectSubset<T, TransactionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Transactions and returns the data updated in the database.
+     * @param {TransactionUpdateManyAndReturnArgs} args - Arguments to update many Transactions.
+     * @example
+     * // Update many Transactions
+     * const transaction = await prisma.transaction.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Transactions and only return the `id`
+     * const transactionWithIdOnly = await prisma.transaction.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TransactionUpdateManyAndReturnArgs>(args: SelectSubset<T, TransactionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Transaction.
+     * @param {TransactionUpsertArgs} args - Arguments to update or create a Transaction.
+     * @example
+     * // Update or create a Transaction
+     * const transaction = await prisma.transaction.upsert({
+     *   create: {
+     *     // ... data to create a Transaction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Transaction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TransactionUpsertArgs>(args: SelectSubset<T, TransactionUpsertArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Transactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransactionCountArgs} args - Arguments to filter Transactions to count.
+     * @example
+     * // Count the number of Transactions
+     * const count = await prisma.transaction.count({
+     *   where: {
+     *     // ... the filter for the Transactions we want to count
+     *   }
+     * })
+    **/
+    count<T extends TransactionCountArgs>(
+      args?: Subset<T, TransactionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TransactionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Transaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransactionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TransactionAggregateArgs>(args: Subset<T, TransactionAggregateArgs>): Prisma.PrismaPromise<GetTransactionAggregateType<T>>
+
+    /**
+     * Group by Transaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransactionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TransactionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TransactionGroupByArgs['orderBy'] }
+        : { orderBy?: TransactionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TransactionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTransactionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Transaction model
+   */
+  readonly fields: TransactionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Transaction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    account<T extends ParsedAccountDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ParsedAccountDefaultArgs<ExtArgs>>): Prisma__ParsedAccountClient<$Result.GetResult<Prisma.$ParsedAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Transaction model
+   */
+  interface TransactionFieldRefs {
+    readonly id: FieldRef<"Transaction", 'String'>
+    readonly accountId: FieldRef<"Transaction", 'String'>
+    readonly date: FieldRef<"Transaction", 'DateTime'>
+    readonly narration: FieldRef<"Transaction", 'String'>
+    readonly refNumber: FieldRef<"Transaction", 'String'>
+    readonly withdrawal: FieldRef<"Transaction", 'Decimal'>
+    readonly deposit: FieldRef<"Transaction", 'Decimal'>
+    readonly closingBalance: FieldRef<"Transaction", 'Decimal'>
+    readonly drCrFlag: FieldRef<"Transaction", 'String'>
+    readonly ccValue: FieldRef<"Transaction", 'Decimal'>
+    readonly posBalance: FieldRef<"Transaction", 'Decimal'>
+    readonly noOfDays: FieldRef<"Transaction", 'Int'>
+    readonly category: FieldRef<"Transaction", 'String'>
+    readonly createdAt: FieldRef<"Transaction", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Transaction findUnique
+   */
+  export type TransactionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which Transaction to fetch.
+     */
+    where: TransactionWhereUniqueInput
+  }
+
+  /**
+   * Transaction findUniqueOrThrow
+   */
+  export type TransactionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which Transaction to fetch.
+     */
+    where: TransactionWhereUniqueInput
+  }
+
+  /**
+   * Transaction findFirst
+   */
+  export type TransactionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which Transaction to fetch.
+     */
+    where?: TransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Transactions to fetch.
+     */
+    orderBy?: TransactionOrderByWithRelationInput | TransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Transactions.
+     */
+    cursor?: TransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Transactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Transactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Transactions.
+     */
+    distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * Transaction findFirstOrThrow
+   */
+  export type TransactionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which Transaction to fetch.
+     */
+    where?: TransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Transactions to fetch.
+     */
+    orderBy?: TransactionOrderByWithRelationInput | TransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Transactions.
+     */
+    cursor?: TransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Transactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Transactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Transactions.
+     */
+    distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * Transaction findMany
+   */
+  export type TransactionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which Transactions to fetch.
+     */
+    where?: TransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Transactions to fetch.
+     */
+    orderBy?: TransactionOrderByWithRelationInput | TransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Transactions.
+     */
+    cursor?: TransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Transactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Transactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Transactions.
+     */
+    distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * Transaction create
+   */
+  export type TransactionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Transaction.
+     */
+    data: XOR<TransactionCreateInput, TransactionUncheckedCreateInput>
+  }
+
+  /**
+   * Transaction createMany
+   */
+  export type TransactionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Transactions.
+     */
+    data: TransactionCreateManyInput | TransactionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Transaction createManyAndReturn
+   */
+  export type TransactionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * The data used to create many Transactions.
+     */
+    data: TransactionCreateManyInput | TransactionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Transaction update
+   */
+  export type TransactionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Transaction.
+     */
+    data: XOR<TransactionUpdateInput, TransactionUncheckedUpdateInput>
+    /**
+     * Choose, which Transaction to update.
+     */
+    where: TransactionWhereUniqueInput
+  }
+
+  /**
+   * Transaction updateMany
+   */
+  export type TransactionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Transactions.
+     */
+    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which Transactions to update
+     */
+    where?: TransactionWhereInput
+    /**
+     * Limit how many Transactions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Transaction updateManyAndReturn
+   */
+  export type TransactionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * The data used to update Transactions.
+     */
+    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which Transactions to update
+     */
+    where?: TransactionWhereInput
+    /**
+     * Limit how many Transactions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Transaction upsert
+   */
+  export type TransactionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Transaction to update in case it exists.
+     */
+    where: TransactionWhereUniqueInput
+    /**
+     * In case the Transaction found by the `where` argument doesn't exist, create a new Transaction with this data.
+     */
+    create: XOR<TransactionCreateInput, TransactionUncheckedCreateInput>
+    /**
+     * In case the Transaction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TransactionUpdateInput, TransactionUncheckedUpdateInput>
+  }
+
+  /**
+   * Transaction delete
+   */
+  export type TransactionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    /**
+     * Filter which Transaction to delete.
+     */
+    where: TransactionWhereUniqueInput
+  }
+
+  /**
+   * Transaction deleteMany
+   */
+  export type TransactionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Transactions to delete
+     */
+    where?: TransactionWhereInput
+    /**
+     * Limit how many Transactions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Transaction without action
+   */
+  export type TransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
   }
 
 
@@ -8760,6 +11501,7 @@ export namespace Prisma {
     status: $Enums.UploadStatus | null
     runId: string | null
     customerId: string | null
+    pdfPassword: string | null
     createdAt: Date | null
   }
 
@@ -8777,6 +11519,7 @@ export namespace Prisma {
     status: $Enums.UploadStatus | null
     runId: string | null
     customerId: string | null
+    pdfPassword: string | null
     createdAt: Date | null
   }
 
@@ -8794,6 +11537,7 @@ export namespace Prisma {
     status: number
     runId: number
     customerId: number
+    pdfPassword: number
     createdAt: number
     _all: number
   }
@@ -8821,6 +11565,7 @@ export namespace Prisma {
     status?: true
     runId?: true
     customerId?: true
+    pdfPassword?: true
     createdAt?: true
   }
 
@@ -8838,6 +11583,7 @@ export namespace Prisma {
     status?: true
     runId?: true
     customerId?: true
+    pdfPassword?: true
     createdAt?: true
   }
 
@@ -8855,6 +11601,7 @@ export namespace Prisma {
     status?: true
     runId?: true
     customerId?: true
+    pdfPassword?: true
     createdAt?: true
     _all?: true
   }
@@ -8959,6 +11706,7 @@ export namespace Prisma {
     status: $Enums.UploadStatus | null
     runId: string | null
     customerId: string | null
+    pdfPassword: string | null
     createdAt: Date
     _count: UploadCountAggregateOutputType | null
     _avg: UploadAvgAggregateOutputType | null
@@ -8995,6 +11743,7 @@ export namespace Prisma {
     status?: boolean
     runId?: boolean
     customerId?: boolean
+    pdfPassword?: boolean
     createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -9016,6 +11765,7 @@ export namespace Prisma {
     status?: boolean
     runId?: boolean
     customerId?: boolean
+    pdfPassword?: boolean
     createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -9037,6 +11787,7 @@ export namespace Prisma {
     status?: boolean
     runId?: boolean
     customerId?: boolean
+    pdfPassword?: boolean
     createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -9058,10 +11809,11 @@ export namespace Prisma {
     status?: boolean
     runId?: boolean
     customerId?: boolean
+    pdfPassword?: boolean
     createdAt?: boolean
   }
 
-  export type UploadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "uploadedById" | "filename" | "s3Key" | "bankName" | "accountType" | "accountId" | "statementMonth" | "fileSizeBytes" | "status" | "runId" | "customerId" | "createdAt", ExtArgs["result"]["upload"]>
+  export type UploadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orgId" | "uploadedById" | "filename" | "s3Key" | "bankName" | "accountType" | "accountId" | "statementMonth" | "fileSizeBytes" | "status" | "runId" | "customerId" | "pdfPassword" | "createdAt", ExtArgs["result"]["upload"]>
   export type UploadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -9103,6 +11855,7 @@ export namespace Prisma {
       status: $Enums.UploadStatus | null
       runId: string | null
       customerId: string | null
+      pdfPassword: string | null
       createdAt: Date
     }, ExtArgs["result"]["upload"]>
     composites: {}
@@ -9544,6 +12297,7 @@ export namespace Prisma {
     readonly status: FieldRef<"Upload", 'UploadStatus'>
     readonly runId: FieldRef<"Upload", 'String'>
     readonly customerId: FieldRef<"Upload", 'String'>
+    readonly pdfPassword: FieldRef<"Upload", 'String'>
     readonly createdAt: FieldRef<"Upload", 'DateTime'>
   }
     
@@ -13843,6 +16597,7 @@ export namespace Prisma {
     costUsd: Decimal | null
     action: string | null
     sessionId: string | null
+    agentId: string | null
     createdAt: Date | null
   }
 
@@ -13857,6 +16612,7 @@ export namespace Prisma {
     costUsd: Decimal | null
     action: string | null
     sessionId: string | null
+    agentId: string | null
     createdAt: Date | null
   }
 
@@ -13871,6 +16627,7 @@ export namespace Prisma {
     costUsd: number
     action: number
     sessionId: number
+    agentId: number
     createdAt: number
     _all: number
   }
@@ -13899,6 +16656,7 @@ export namespace Prisma {
     costUsd?: true
     action?: true
     sessionId?: true
+    agentId?: true
     createdAt?: true
   }
 
@@ -13913,6 +16671,7 @@ export namespace Prisma {
     costUsd?: true
     action?: true
     sessionId?: true
+    agentId?: true
     createdAt?: true
   }
 
@@ -13927,6 +16686,7 @@ export namespace Prisma {
     costUsd?: true
     action?: true
     sessionId?: true
+    agentId?: true
     createdAt?: true
     _all?: true
   }
@@ -14019,7 +16779,7 @@ export namespace Prisma {
 
   export type AIUsageLogGroupByOutputType = {
     id: string
-    userId: string
+    userId: string | null
     userEmail: string
     orgId: string
     model: string
@@ -14028,6 +16788,7 @@ export namespace Prisma {
     costUsd: Decimal | null
     action: string | null
     sessionId: string | null
+    agentId: string | null
     createdAt: Date
     _count: AIUsageLogCountAggregateOutputType | null
     _avg: AIUsageLogAvgAggregateOutputType | null
@@ -14061,9 +16822,10 @@ export namespace Prisma {
     costUsd?: boolean
     action?: boolean
     sessionId?: boolean
+    agentId?: boolean
     createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | AIUsageLog$userArgs<ExtArgs>
   }, ExtArgs["result"]["aIUsageLog"]>
 
   export type AIUsageLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14077,9 +16839,10 @@ export namespace Prisma {
     costUsd?: boolean
     action?: boolean
     sessionId?: boolean
+    agentId?: boolean
     createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | AIUsageLog$userArgs<ExtArgs>
   }, ExtArgs["result"]["aIUsageLog"]>
 
   export type AIUsageLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14093,9 +16856,10 @@ export namespace Prisma {
     costUsd?: boolean
     action?: boolean
     sessionId?: boolean
+    agentId?: boolean
     createdAt?: boolean
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | AIUsageLog$userArgs<ExtArgs>
   }, ExtArgs["result"]["aIUsageLog"]>
 
   export type AIUsageLogSelectScalar = {
@@ -14109,32 +16873,33 @@ export namespace Prisma {
     costUsd?: boolean
     action?: boolean
     sessionId?: boolean
+    agentId?: boolean
     createdAt?: boolean
   }
 
-  export type AIUsageLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "userEmail" | "orgId" | "model" | "tokensIn" | "tokensOut" | "costUsd" | "action" | "sessionId" | "createdAt", ExtArgs["result"]["aIUsageLog"]>
+  export type AIUsageLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "userEmail" | "orgId" | "model" | "tokensIn" | "tokensOut" | "costUsd" | "action" | "sessionId" | "agentId" | "createdAt", ExtArgs["result"]["aIUsageLog"]>
   export type AIUsageLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | AIUsageLog$userArgs<ExtArgs>
   }
   export type AIUsageLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | AIUsageLog$userArgs<ExtArgs>
   }
   export type AIUsageLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organisation?: boolean | OrganisationDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | AIUsageLog$userArgs<ExtArgs>
   }
 
   export type $AIUsageLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "AIUsageLog"
     objects: {
       organisation: Prisma.$OrganisationPayload<ExtArgs>
-      user: Prisma.$UserPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      userId: string
+      userId: string | null
       userEmail: string
       orgId: string
       model: string
@@ -14143,6 +16908,7 @@ export namespace Prisma {
       costUsd: Prisma.Decimal | null
       action: string | null
       sessionId: string | null
+      agentId: string | null
       createdAt: Date
     }, ExtArgs["result"]["aIUsageLog"]>
     composites: {}
@@ -14539,7 +17305,7 @@ export namespace Prisma {
   export interface Prisma__AIUsageLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     organisation<T extends OrganisationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganisationDefaultArgs<ExtArgs>>): Prisma__OrganisationClient<$Result.GetResult<Prisma.$OrganisationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends AIUsageLog$userArgs<ExtArgs> = {}>(args?: Subset<T, AIUsageLog$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14579,6 +17345,7 @@ export namespace Prisma {
     readonly costUsd: FieldRef<"AIUsageLog", 'Decimal'>
     readonly action: FieldRef<"AIUsageLog", 'String'>
     readonly sessionId: FieldRef<"AIUsageLog", 'String'>
+    readonly agentId: FieldRef<"AIUsageLog", 'String'>
     readonly createdAt: FieldRef<"AIUsageLog", 'DateTime'>
   }
     
@@ -14978,6 +17745,25 @@ export namespace Prisma {
      * Limit how many AIUsageLogs to delete.
      */
     limit?: number
+  }
+
+  /**
+   * AIUsageLog.user
+   */
+  export type AIUsageLog$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -18427,11 +21213,52 @@ export namespace Prisma {
     checksum: 'checksum',
     startedAt: 'startedAt',
     completedAt: 'completedAt',
+    metadata: 'metadata',
+    progressPercent: 'progressPercent',
+    progressMessage: 'progressMessage',
+    progressSubsteps: 'progressSubsteps',
+    updatedAt: 'updatedAt',
     createdAt: 'createdAt',
     customerId: 'customerId'
   };
 
   export type PipelineRunScalarFieldEnum = (typeof PipelineRunScalarFieldEnum)[keyof typeof PipelineRunScalarFieldEnum]
+
+
+  export const ParsedAccountScalarFieldEnum: {
+    id: 'id',
+    runId: 'runId',
+    bankName: 'bankName',
+    accountNo: 'accountNo',
+    accountType: 'accountType',
+    periodFrom: 'periodFrom',
+    periodTo: 'periodTo',
+    openingBal: 'openingBal',
+    closingBal: 'closingBal',
+    createdAt: 'createdAt'
+  };
+
+  export type ParsedAccountScalarFieldEnum = (typeof ParsedAccountScalarFieldEnum)[keyof typeof ParsedAccountScalarFieldEnum]
+
+
+  export const TransactionScalarFieldEnum: {
+    id: 'id',
+    accountId: 'accountId',
+    date: 'date',
+    narration: 'narration',
+    refNumber: 'refNumber',
+    withdrawal: 'withdrawal',
+    deposit: 'deposit',
+    closingBalance: 'closingBalance',
+    drCrFlag: 'drCrFlag',
+    ccValue: 'ccValue',
+    posBalance: 'posBalance',
+    noOfDays: 'noOfDays',
+    category: 'category',
+    createdAt: 'createdAt'
+  };
+
+  export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
 
 
   export const UploadScalarFieldEnum: {
@@ -18448,6 +21275,7 @@ export namespace Prisma {
     status: 'status',
     runId: 'runId',
     customerId: 'customerId',
+    pdfPassword: 'pdfPassword',
     createdAt: 'createdAt'
   };
 
@@ -18528,6 +21356,7 @@ export namespace Prisma {
     costUsd: 'costUsd',
     action: 'action',
     sessionId: 'sessionId',
+    agentId: 'agentId',
     createdAt: 'createdAt'
   };
 
@@ -18684,6 +21513,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal'
+   */
+  export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+  /**
+   * Reference to a field of type 'Decimal[]'
+   */
+  export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+  /**
    * Reference to a field of type 'BigInt'
    */
   export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
@@ -18708,34 +21565,6 @@ export namespace Prisma {
    * Reference to a field of type 'UploadStatus[]'
    */
   export type ListEnumUploadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UploadStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Decimal'
-   */
-  export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
-    
-
-
-  /**
-   * Reference to a field of type 'Decimal[]'
-   */
-  export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Json'
-   */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-  /**
-   * Reference to a field of type 'QueryMode'
-   */
-  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -19156,6 +21985,11 @@ export namespace Prisma {
     checksum?: StringNullableFilter<"PipelineRun"> | string | null
     startedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
     completedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
+    metadata?: JsonNullableFilter<"PipelineRun">
+    progressPercent?: IntNullableFilter<"PipelineRun"> | number | null
+    progressMessage?: StringNullableFilter<"PipelineRun"> | string | null
+    progressSubsteps?: JsonNullableFilter<"PipelineRun">
+    updatedAt?: DateTimeFilter<"PipelineRun"> | Date | string
     createdAt?: DateTimeFilter<"PipelineRun"> | Date | string
     customerId?: StringNullableFilter<"PipelineRun"> | string | null
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
@@ -19164,6 +21998,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionListRelationFilter
     approvals?: ApprovalListRelationFilter
     customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+    parsedAccounts?: ParsedAccountListRelationFilter
   }
 
   export type PipelineRunOrderByWithRelationInput = {
@@ -19181,6 +22016,11 @@ export namespace Prisma {
     checksum?: SortOrderInput | SortOrder
     startedAt?: SortOrderInput | SortOrder
     completedAt?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    progressPercent?: SortOrderInput | SortOrder
+    progressMessage?: SortOrderInput | SortOrder
+    progressSubsteps?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
     createdAt?: SortOrder
     customerId?: SortOrderInput | SortOrder
     organisation?: OrganisationOrderByWithRelationInput
@@ -19189,6 +22029,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionOrderByRelationAggregateInput
     approvals?: ApprovalOrderByRelationAggregateInput
     customer?: CustomerOrderByWithRelationInput
+    parsedAccounts?: ParsedAccountOrderByRelationAggregateInput
   }
 
   export type PipelineRunWhereUniqueInput = Prisma.AtLeast<{
@@ -19209,6 +22050,11 @@ export namespace Prisma {
     checksum?: StringNullableFilter<"PipelineRun"> | string | null
     startedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
     completedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
+    metadata?: JsonNullableFilter<"PipelineRun">
+    progressPercent?: IntNullableFilter<"PipelineRun"> | number | null
+    progressMessage?: StringNullableFilter<"PipelineRun"> | string | null
+    progressSubsteps?: JsonNullableFilter<"PipelineRun">
+    updatedAt?: DateTimeFilter<"PipelineRun"> | Date | string
     createdAt?: DateTimeFilter<"PipelineRun"> | Date | string
     customerId?: StringNullableFilter<"PipelineRun"> | string | null
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
@@ -19217,6 +22063,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionListRelationFilter
     approvals?: ApprovalListRelationFilter
     customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+    parsedAccounts?: ParsedAccountListRelationFilter
   }, "id">
 
   export type PipelineRunOrderByWithAggregationInput = {
@@ -19234,6 +22081,11 @@ export namespace Prisma {
     checksum?: SortOrderInput | SortOrder
     startedAt?: SortOrderInput | SortOrder
     completedAt?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    progressPercent?: SortOrderInput | SortOrder
+    progressMessage?: SortOrderInput | SortOrder
+    progressSubsteps?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
     createdAt?: SortOrder
     customerId?: SortOrderInput | SortOrder
     _count?: PipelineRunCountOrderByAggregateInput
@@ -19261,8 +22113,200 @@ export namespace Prisma {
     checksum?: StringNullableWithAggregatesFilter<"PipelineRun"> | string | null
     startedAt?: DateTimeNullableWithAggregatesFilter<"PipelineRun"> | Date | string | null
     completedAt?: DateTimeNullableWithAggregatesFilter<"PipelineRun"> | Date | string | null
+    metadata?: JsonNullableWithAggregatesFilter<"PipelineRun">
+    progressPercent?: IntNullableWithAggregatesFilter<"PipelineRun"> | number | null
+    progressMessage?: StringNullableWithAggregatesFilter<"PipelineRun"> | string | null
+    progressSubsteps?: JsonNullableWithAggregatesFilter<"PipelineRun">
+    updatedAt?: DateTimeWithAggregatesFilter<"PipelineRun"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"PipelineRun"> | Date | string
     customerId?: StringNullableWithAggregatesFilter<"PipelineRun"> | string | null
+  }
+
+  export type ParsedAccountWhereInput = {
+    AND?: ParsedAccountWhereInput | ParsedAccountWhereInput[]
+    OR?: ParsedAccountWhereInput[]
+    NOT?: ParsedAccountWhereInput | ParsedAccountWhereInput[]
+    id?: StringFilter<"ParsedAccount"> | string
+    runId?: StringFilter<"ParsedAccount"> | string
+    bankName?: StringFilter<"ParsedAccount"> | string
+    accountNo?: StringFilter<"ParsedAccount"> | string
+    accountType?: StringFilter<"ParsedAccount"> | string
+    periodFrom?: DateTimeNullableFilter<"ParsedAccount"> | Date | string | null
+    periodTo?: DateTimeNullableFilter<"ParsedAccount"> | Date | string | null
+    openingBal?: DecimalNullableFilter<"ParsedAccount"> | Decimal | DecimalJsLike | number | string | null
+    closingBal?: DecimalNullableFilter<"ParsedAccount"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"ParsedAccount"> | Date | string
+    pipelineRun?: XOR<PipelineRunScalarRelationFilter, PipelineRunWhereInput>
+    transactions?: TransactionListRelationFilter
+  }
+
+  export type ParsedAccountOrderByWithRelationInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    bankName?: SortOrder
+    accountNo?: SortOrder
+    accountType?: SortOrder
+    periodFrom?: SortOrderInput | SortOrder
+    periodTo?: SortOrderInput | SortOrder
+    openingBal?: SortOrderInput | SortOrder
+    closingBal?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    pipelineRun?: PipelineRunOrderByWithRelationInput
+    transactions?: TransactionOrderByRelationAggregateInput
+  }
+
+  export type ParsedAccountWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ParsedAccountWhereInput | ParsedAccountWhereInput[]
+    OR?: ParsedAccountWhereInput[]
+    NOT?: ParsedAccountWhereInput | ParsedAccountWhereInput[]
+    runId?: StringFilter<"ParsedAccount"> | string
+    bankName?: StringFilter<"ParsedAccount"> | string
+    accountNo?: StringFilter<"ParsedAccount"> | string
+    accountType?: StringFilter<"ParsedAccount"> | string
+    periodFrom?: DateTimeNullableFilter<"ParsedAccount"> | Date | string | null
+    periodTo?: DateTimeNullableFilter<"ParsedAccount"> | Date | string | null
+    openingBal?: DecimalNullableFilter<"ParsedAccount"> | Decimal | DecimalJsLike | number | string | null
+    closingBal?: DecimalNullableFilter<"ParsedAccount"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"ParsedAccount"> | Date | string
+    pipelineRun?: XOR<PipelineRunScalarRelationFilter, PipelineRunWhereInput>
+    transactions?: TransactionListRelationFilter
+  }, "id">
+
+  export type ParsedAccountOrderByWithAggregationInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    bankName?: SortOrder
+    accountNo?: SortOrder
+    accountType?: SortOrder
+    periodFrom?: SortOrderInput | SortOrder
+    periodTo?: SortOrderInput | SortOrder
+    openingBal?: SortOrderInput | SortOrder
+    closingBal?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: ParsedAccountCountOrderByAggregateInput
+    _avg?: ParsedAccountAvgOrderByAggregateInput
+    _max?: ParsedAccountMaxOrderByAggregateInput
+    _min?: ParsedAccountMinOrderByAggregateInput
+    _sum?: ParsedAccountSumOrderByAggregateInput
+  }
+
+  export type ParsedAccountScalarWhereWithAggregatesInput = {
+    AND?: ParsedAccountScalarWhereWithAggregatesInput | ParsedAccountScalarWhereWithAggregatesInput[]
+    OR?: ParsedAccountScalarWhereWithAggregatesInput[]
+    NOT?: ParsedAccountScalarWhereWithAggregatesInput | ParsedAccountScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ParsedAccount"> | string
+    runId?: StringWithAggregatesFilter<"ParsedAccount"> | string
+    bankName?: StringWithAggregatesFilter<"ParsedAccount"> | string
+    accountNo?: StringWithAggregatesFilter<"ParsedAccount"> | string
+    accountType?: StringWithAggregatesFilter<"ParsedAccount"> | string
+    periodFrom?: DateTimeNullableWithAggregatesFilter<"ParsedAccount"> | Date | string | null
+    periodTo?: DateTimeNullableWithAggregatesFilter<"ParsedAccount"> | Date | string | null
+    openingBal?: DecimalNullableWithAggregatesFilter<"ParsedAccount"> | Decimal | DecimalJsLike | number | string | null
+    closingBal?: DecimalNullableWithAggregatesFilter<"ParsedAccount"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ParsedAccount"> | Date | string
+  }
+
+  export type TransactionWhereInput = {
+    AND?: TransactionWhereInput | TransactionWhereInput[]
+    OR?: TransactionWhereInput[]
+    NOT?: TransactionWhereInput | TransactionWhereInput[]
+    id?: StringFilter<"Transaction"> | string
+    accountId?: StringFilter<"Transaction"> | string
+    date?: DateTimeFilter<"Transaction"> | Date | string
+    narration?: StringFilter<"Transaction"> | string
+    refNumber?: StringNullableFilter<"Transaction"> | string | null
+    withdrawal?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    deposit?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    closingBalance?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
+    drCrFlag?: StringFilter<"Transaction"> | string
+    ccValue?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    posBalance?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    noOfDays?: IntNullableFilter<"Transaction"> | number | null
+    category?: StringNullableFilter<"Transaction"> | string | null
+    createdAt?: DateTimeFilter<"Transaction"> | Date | string
+    account?: XOR<ParsedAccountScalarRelationFilter, ParsedAccountWhereInput>
+  }
+
+  export type TransactionOrderByWithRelationInput = {
+    id?: SortOrder
+    accountId?: SortOrder
+    date?: SortOrder
+    narration?: SortOrder
+    refNumber?: SortOrderInput | SortOrder
+    withdrawal?: SortOrderInput | SortOrder
+    deposit?: SortOrderInput | SortOrder
+    closingBalance?: SortOrder
+    drCrFlag?: SortOrder
+    ccValue?: SortOrderInput | SortOrder
+    posBalance?: SortOrderInput | SortOrder
+    noOfDays?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    account?: ParsedAccountOrderByWithRelationInput
+  }
+
+  export type TransactionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TransactionWhereInput | TransactionWhereInput[]
+    OR?: TransactionWhereInput[]
+    NOT?: TransactionWhereInput | TransactionWhereInput[]
+    accountId?: StringFilter<"Transaction"> | string
+    date?: DateTimeFilter<"Transaction"> | Date | string
+    narration?: StringFilter<"Transaction"> | string
+    refNumber?: StringNullableFilter<"Transaction"> | string | null
+    withdrawal?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    deposit?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    closingBalance?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
+    drCrFlag?: StringFilter<"Transaction"> | string
+    ccValue?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    posBalance?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    noOfDays?: IntNullableFilter<"Transaction"> | number | null
+    category?: StringNullableFilter<"Transaction"> | string | null
+    createdAt?: DateTimeFilter<"Transaction"> | Date | string
+    account?: XOR<ParsedAccountScalarRelationFilter, ParsedAccountWhereInput>
+  }, "id">
+
+  export type TransactionOrderByWithAggregationInput = {
+    id?: SortOrder
+    accountId?: SortOrder
+    date?: SortOrder
+    narration?: SortOrder
+    refNumber?: SortOrderInput | SortOrder
+    withdrawal?: SortOrderInput | SortOrder
+    deposit?: SortOrderInput | SortOrder
+    closingBalance?: SortOrder
+    drCrFlag?: SortOrder
+    ccValue?: SortOrderInput | SortOrder
+    posBalance?: SortOrderInput | SortOrder
+    noOfDays?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: TransactionCountOrderByAggregateInput
+    _avg?: TransactionAvgOrderByAggregateInput
+    _max?: TransactionMaxOrderByAggregateInput
+    _min?: TransactionMinOrderByAggregateInput
+    _sum?: TransactionSumOrderByAggregateInput
+  }
+
+  export type TransactionScalarWhereWithAggregatesInput = {
+    AND?: TransactionScalarWhereWithAggregatesInput | TransactionScalarWhereWithAggregatesInput[]
+    OR?: TransactionScalarWhereWithAggregatesInput[]
+    NOT?: TransactionScalarWhereWithAggregatesInput | TransactionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Transaction"> | string
+    accountId?: StringWithAggregatesFilter<"Transaction"> | string
+    date?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
+    narration?: StringWithAggregatesFilter<"Transaction"> | string
+    refNumber?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
+    withdrawal?: DecimalNullableWithAggregatesFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    deposit?: DecimalNullableWithAggregatesFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    closingBalance?: DecimalWithAggregatesFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
+    drCrFlag?: StringWithAggregatesFilter<"Transaction"> | string
+    ccValue?: DecimalNullableWithAggregatesFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    posBalance?: DecimalNullableWithAggregatesFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    noOfDays?: IntNullableWithAggregatesFilter<"Transaction"> | number | null
+    category?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
   }
 
   export type UploadWhereInput = {
@@ -19282,6 +22326,7 @@ export namespace Prisma {
     status?: EnumUploadStatusNullableFilter<"Upload"> | $Enums.UploadStatus | null
     runId?: StringNullableFilter<"Upload"> | string | null
     customerId?: StringNullableFilter<"Upload"> | string | null
+    pdfPassword?: StringNullableFilter<"Upload"> | string | null
     createdAt?: DateTimeFilter<"Upload"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -19303,6 +22348,7 @@ export namespace Prisma {
     status?: SortOrderInput | SortOrder
     runId?: SortOrderInput | SortOrder
     customerId?: SortOrderInput | SortOrder
+    pdfPassword?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     organisation?: OrganisationOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
@@ -19327,6 +22373,7 @@ export namespace Prisma {
     status?: EnumUploadStatusNullableFilter<"Upload"> | $Enums.UploadStatus | null
     runId?: StringNullableFilter<"Upload"> | string | null
     customerId?: StringNullableFilter<"Upload"> | string | null
+    pdfPassword?: StringNullableFilter<"Upload"> | string | null
     createdAt?: DateTimeFilter<"Upload"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -19348,6 +22395,7 @@ export namespace Prisma {
     status?: SortOrderInput | SortOrder
     runId?: SortOrderInput | SortOrder
     customerId?: SortOrderInput | SortOrder
+    pdfPassword?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: UploadCountOrderByAggregateInput
     _avg?: UploadAvgOrderByAggregateInput
@@ -19373,6 +22421,7 @@ export namespace Prisma {
     status?: EnumUploadStatusNullableWithAggregatesFilter<"Upload"> | $Enums.UploadStatus | null
     runId?: StringNullableWithAggregatesFilter<"Upload"> | string | null
     customerId?: StringNullableWithAggregatesFilter<"Upload"> | string | null
+    pdfPassword?: StringNullableWithAggregatesFilter<"Upload"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Upload"> | Date | string
   }
 
@@ -19712,7 +22761,7 @@ export namespace Prisma {
     OR?: AIUsageLogWhereInput[]
     NOT?: AIUsageLogWhereInput | AIUsageLogWhereInput[]
     id?: StringFilter<"AIUsageLog"> | string
-    userId?: StringFilter<"AIUsageLog"> | string
+    userId?: StringNullableFilter<"AIUsageLog"> | string | null
     userEmail?: StringFilter<"AIUsageLog"> | string
     orgId?: StringFilter<"AIUsageLog"> | string
     model?: StringFilter<"AIUsageLog"> | string
@@ -19721,14 +22770,15 @@ export namespace Prisma {
     costUsd?: DecimalNullableFilter<"AIUsageLog"> | Decimal | DecimalJsLike | number | string | null
     action?: StringNullableFilter<"AIUsageLog"> | string | null
     sessionId?: StringNullableFilter<"AIUsageLog"> | string | null
+    agentId?: StringNullableFilter<"AIUsageLog"> | string | null
     createdAt?: DateTimeFilter<"AIUsageLog"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type AIUsageLogOrderByWithRelationInput = {
     id?: SortOrder
-    userId?: SortOrder
+    userId?: SortOrderInput | SortOrder
     userEmail?: SortOrder
     orgId?: SortOrder
     model?: SortOrder
@@ -19737,6 +22787,7 @@ export namespace Prisma {
     costUsd?: SortOrderInput | SortOrder
     action?: SortOrderInput | SortOrder
     sessionId?: SortOrderInput | SortOrder
+    agentId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     organisation?: OrganisationOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
@@ -19747,7 +22798,7 @@ export namespace Prisma {
     AND?: AIUsageLogWhereInput | AIUsageLogWhereInput[]
     OR?: AIUsageLogWhereInput[]
     NOT?: AIUsageLogWhereInput | AIUsageLogWhereInput[]
-    userId?: StringFilter<"AIUsageLog"> | string
+    userId?: StringNullableFilter<"AIUsageLog"> | string | null
     userEmail?: StringFilter<"AIUsageLog"> | string
     orgId?: StringFilter<"AIUsageLog"> | string
     model?: StringFilter<"AIUsageLog"> | string
@@ -19756,14 +22807,15 @@ export namespace Prisma {
     costUsd?: DecimalNullableFilter<"AIUsageLog"> | Decimal | DecimalJsLike | number | string | null
     action?: StringNullableFilter<"AIUsageLog"> | string | null
     sessionId?: StringNullableFilter<"AIUsageLog"> | string | null
+    agentId?: StringNullableFilter<"AIUsageLog"> | string | null
     createdAt?: DateTimeFilter<"AIUsageLog"> | Date | string
     organisation?: XOR<OrganisationScalarRelationFilter, OrganisationWhereInput>
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type AIUsageLogOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
+    userId?: SortOrderInput | SortOrder
     userEmail?: SortOrder
     orgId?: SortOrder
     model?: SortOrder
@@ -19772,6 +22824,7 @@ export namespace Prisma {
     costUsd?: SortOrderInput | SortOrder
     action?: SortOrderInput | SortOrder
     sessionId?: SortOrderInput | SortOrder
+    agentId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: AIUsageLogCountOrderByAggregateInput
     _avg?: AIUsageLogAvgOrderByAggregateInput
@@ -19785,7 +22838,7 @@ export namespace Prisma {
     OR?: AIUsageLogScalarWhereWithAggregatesInput[]
     NOT?: AIUsageLogScalarWhereWithAggregatesInput | AIUsageLogScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"AIUsageLog"> | string
-    userId?: StringWithAggregatesFilter<"AIUsageLog"> | string
+    userId?: StringNullableWithAggregatesFilter<"AIUsageLog"> | string | null
     userEmail?: StringWithAggregatesFilter<"AIUsageLog"> | string
     orgId?: StringWithAggregatesFilter<"AIUsageLog"> | string
     model?: StringWithAggregatesFilter<"AIUsageLog"> | string
@@ -19794,6 +22847,7 @@ export namespace Prisma {
     costUsd?: DecimalNullableWithAggregatesFilter<"AIUsageLog"> | Decimal | DecimalJsLike | number | string | null
     action?: StringNullableWithAggregatesFilter<"AIUsageLog"> | string | null
     sessionId?: StringNullableWithAggregatesFilter<"AIUsageLog"> | string | null
+    agentId?: StringNullableWithAggregatesFilter<"AIUsageLog"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"AIUsageLog"> | Date | string
   }
 
@@ -20456,6 +23510,11 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
@@ -20463,6 +23522,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
     customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
+    parsedAccounts?: ParsedAccountCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateInput = {
@@ -20480,12 +23540,18 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     customerId?: string | null
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
+    parsedAccounts?: ParsedAccountUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUpdateInput = {
@@ -20502,6 +23568,11 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
@@ -20509,6 +23580,7 @@ export namespace Prisma {
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
     customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
+    parsedAccounts?: ParsedAccountUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateInput = {
@@ -20526,12 +23598,18 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
+    parsedAccounts?: ParsedAccountUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunCreateManyInput = {
@@ -20549,6 +23627,11 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     customerId?: string | null
   }
@@ -20567,6 +23650,11 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -20585,8 +23673,225 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ParsedAccountCreateInput = {
+    id?: string
+    bankName: string
+    accountNo: string
+    accountType: string
+    periodFrom?: Date | string | null
+    periodTo?: Date | string | null
+    openingBal?: Decimal | DecimalJsLike | number | string | null
+    closingBal?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    pipelineRun: PipelineRunCreateNestedOneWithoutParsedAccountsInput
+    transactions?: TransactionCreateNestedManyWithoutAccountInput
+  }
+
+  export type ParsedAccountUncheckedCreateInput = {
+    id?: string
+    runId: string
+    bankName: string
+    accountNo: string
+    accountType: string
+    periodFrom?: Date | string | null
+    periodTo?: Date | string | null
+    openingBal?: Decimal | DecimalJsLike | number | string | null
+    closingBal?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    transactions?: TransactionUncheckedCreateNestedManyWithoutAccountInput
+  }
+
+  export type ParsedAccountUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountType?: StringFieldUpdateOperationsInput | string
+    periodFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    periodTo?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pipelineRun?: PipelineRunUpdateOneRequiredWithoutParsedAccountsNestedInput
+    transactions?: TransactionUpdateManyWithoutAccountNestedInput
+  }
+
+  export type ParsedAccountUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    runId?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountType?: StringFieldUpdateOperationsInput | string
+    periodFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    periodTo?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactions?: TransactionUncheckedUpdateManyWithoutAccountNestedInput
+  }
+
+  export type ParsedAccountCreateManyInput = {
+    id?: string
+    runId: string
+    bankName: string
+    accountNo: string
+    accountType: string
+    periodFrom?: Date | string | null
+    periodTo?: Date | string | null
+    openingBal?: Decimal | DecimalJsLike | number | string | null
+    closingBal?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+  }
+
+  export type ParsedAccountUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountType?: StringFieldUpdateOperationsInput | string
+    periodFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    periodTo?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParsedAccountUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    runId?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountType?: StringFieldUpdateOperationsInput | string
+    periodFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    periodTo?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionCreateInput = {
+    id?: string
+    date: Date | string
+    narration: string
+    refNumber?: string | null
+    withdrawal?: Decimal | DecimalJsLike | number | string | null
+    deposit?: Decimal | DecimalJsLike | number | string | null
+    closingBalance: Decimal | DecimalJsLike | number | string
+    drCrFlag: string
+    ccValue?: Decimal | DecimalJsLike | number | string | null
+    posBalance?: Decimal | DecimalJsLike | number | string | null
+    noOfDays?: number | null
+    category?: string | null
+    createdAt?: Date | string
+    account: ParsedAccountCreateNestedOneWithoutTransactionsInput
+  }
+
+  export type TransactionUncheckedCreateInput = {
+    id?: string
+    accountId: string
+    date: Date | string
+    narration: string
+    refNumber?: string | null
+    withdrawal?: Decimal | DecimalJsLike | number | string | null
+    deposit?: Decimal | DecimalJsLike | number | string | null
+    closingBalance: Decimal | DecimalJsLike | number | string
+    drCrFlag: string
+    ccValue?: Decimal | DecimalJsLike | number | string | null
+    posBalance?: Decimal | DecimalJsLike | number | string | null
+    noOfDays?: number | null
+    category?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TransactionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    narration?: StringFieldUpdateOperationsInput | string
+    refNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    withdrawal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    deposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    drCrFlag?: StringFieldUpdateOperationsInput | string
+    ccValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    posBalance?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    noOfDays?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    account?: ParsedAccountUpdateOneRequiredWithoutTransactionsNestedInput
+  }
+
+  export type TransactionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accountId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    narration?: StringFieldUpdateOperationsInput | string
+    refNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    withdrawal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    deposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    drCrFlag?: StringFieldUpdateOperationsInput | string
+    ccValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    posBalance?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    noOfDays?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionCreateManyInput = {
+    id?: string
+    accountId: string
+    date: Date | string
+    narration: string
+    refNumber?: string | null
+    withdrawal?: Decimal | DecimalJsLike | number | string | null
+    deposit?: Decimal | DecimalJsLike | number | string | null
+    closingBalance: Decimal | DecimalJsLike | number | string
+    drCrFlag: string
+    ccValue?: Decimal | DecimalJsLike | number | string | null
+    posBalance?: Decimal | DecimalJsLike | number | string | null
+    noOfDays?: number | null
+    category?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TransactionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    narration?: StringFieldUpdateOperationsInput | string
+    refNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    withdrawal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    deposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    drCrFlag?: StringFieldUpdateOperationsInput | string
+    ccValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    posBalance?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    noOfDays?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    accountId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    narration?: StringFieldUpdateOperationsInput | string
+    refNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    withdrawal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    deposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    drCrFlag?: StringFieldUpdateOperationsInput | string
+    ccValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    posBalance?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    noOfDays?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UploadCreateInput = {
@@ -20599,6 +23904,7 @@ export namespace Prisma {
     statementMonth?: string | null
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
+    pdfPassword?: string | null
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutUploadsInput
     user: UserCreateNestedOneWithoutUploadsInput
@@ -20620,6 +23926,7 @@ export namespace Prisma {
     status?: $Enums.UploadStatus | null
     runId?: string | null
     customerId?: string | null
+    pdfPassword?: string | null
     createdAt?: Date | string
   }
 
@@ -20633,6 +23940,7 @@ export namespace Prisma {
     statementMonth?: NullableStringFieldUpdateOperationsInput | string | null
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutUploadsNestedInput
     user?: UserUpdateOneRequiredWithoutUploadsNestedInput
@@ -20654,6 +23962,7 @@ export namespace Prisma {
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -20671,6 +23980,7 @@ export namespace Prisma {
     status?: $Enums.UploadStatus | null
     runId?: string | null
     customerId?: string | null
+    pdfPassword?: string | null
     createdAt?: Date | string
   }
 
@@ -20684,6 +23994,7 @@ export namespace Prisma {
     statementMonth?: NullableStringFieldUpdateOperationsInput | string | null
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -20701,6 +24012,7 @@ export namespace Prisma {
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -21085,14 +24397,15 @@ export namespace Prisma {
     costUsd?: Decimal | DecimalJsLike | number | string | null
     action?: string | null
     sessionId?: string | null
+    agentId?: string | null
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutAiUsageLogsInput
-    user: UserCreateNestedOneWithoutAiUsageLogsInput
+    user?: UserCreateNestedOneWithoutAiUsageLogsInput
   }
 
   export type AIUsageLogUncheckedCreateInput = {
     id?: string
-    userId: string
+    userId?: string | null
     userEmail: string
     orgId: string
     model: string
@@ -21101,6 +24414,7 @@ export namespace Prisma {
     costUsd?: Decimal | DecimalJsLike | number | string | null
     action?: string | null
     sessionId?: string | null
+    agentId?: string | null
     createdAt?: Date | string
   }
 
@@ -21113,14 +24427,15 @@ export namespace Prisma {
     costUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     action?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutAiUsageLogsNestedInput
-    user?: UserUpdateOneRequiredWithoutAiUsageLogsNestedInput
+    user?: UserUpdateOneWithoutAiUsageLogsNestedInput
   }
 
   export type AIUsageLogUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     userEmail?: StringFieldUpdateOperationsInput | string
     orgId?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
@@ -21129,12 +24444,13 @@ export namespace Prisma {
     costUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     action?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AIUsageLogCreateManyInput = {
     id?: string
-    userId: string
+    userId?: string | null
     userEmail: string
     orgId: string
     model: string
@@ -21143,6 +24459,7 @@ export namespace Prisma {
     costUsd?: Decimal | DecimalJsLike | number | string | null
     action?: string | null
     sessionId?: string | null
+    agentId?: string | null
     createdAt?: Date | string
   }
 
@@ -21155,12 +24472,13 @@ export namespace Prisma {
     costUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     action?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AIUsageLogUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     userEmail?: StringFieldUpdateOperationsInput | string
     orgId?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
@@ -21169,6 +24487,7 @@ export namespace Prisma {
     costUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     action?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -21853,6 +25172,29 @@ export namespace Prisma {
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type ApprovalListRelationFilter = {
     every?: ApprovalWhereInput
@@ -21865,7 +25207,17 @@ export namespace Prisma {
     isNot?: CustomerWhereInput | null
   }
 
+  export type ParsedAccountListRelationFilter = {
+    every?: ParsedAccountWhereInput
+    some?: ParsedAccountWhereInput
+    none?: ParsedAccountWhereInput
+  }
+
   export type ApprovalOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ParsedAccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21884,12 +25236,18 @@ export namespace Prisma {
     checksum?: SortOrder
     startedAt?: SortOrder
     completedAt?: SortOrder
+    metadata?: SortOrder
+    progressPercent?: SortOrder
+    progressMessage?: SortOrder
+    progressSubsteps?: SortOrder
+    updatedAt?: SortOrder
     createdAt?: SortOrder
     customerId?: SortOrder
   }
 
   export type PipelineRunAvgOrderByAggregateInput = {
     stage?: SortOrder
+    progressPercent?: SortOrder
   }
 
   export type PipelineRunMaxOrderByAggregateInput = {
@@ -21907,6 +25265,9 @@ export namespace Prisma {
     checksum?: SortOrder
     startedAt?: SortOrder
     completedAt?: SortOrder
+    progressPercent?: SortOrder
+    progressMessage?: SortOrder
+    updatedAt?: SortOrder
     createdAt?: SortOrder
     customerId?: SortOrder
   }
@@ -21926,12 +25287,16 @@ export namespace Prisma {
     checksum?: SortOrder
     startedAt?: SortOrder
     completedAt?: SortOrder
+    progressPercent?: SortOrder
+    progressMessage?: SortOrder
+    updatedAt?: SortOrder
     createdAt?: SortOrder
     customerId?: SortOrder
   }
 
   export type PipelineRunSumOrderByAggregateInput = {
     stage?: SortOrder
+    progressPercent?: SortOrder
   }
 
   export type EnumRunStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -21958,6 +25323,224 @@ export namespace Prisma {
     _sum?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedIntNullableFilter<$PrismaModel>
     _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type DecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type PipelineRunScalarRelationFilter = {
+    is?: PipelineRunWhereInput
+    isNot?: PipelineRunWhereInput
+  }
+
+  export type TransactionListRelationFilter = {
+    every?: TransactionWhereInput
+    some?: TransactionWhereInput
+    none?: TransactionWhereInput
+  }
+
+  export type TransactionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ParsedAccountCountOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    bankName?: SortOrder
+    accountNo?: SortOrder
+    accountType?: SortOrder
+    periodFrom?: SortOrder
+    periodTo?: SortOrder
+    openingBal?: SortOrder
+    closingBal?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ParsedAccountAvgOrderByAggregateInput = {
+    openingBal?: SortOrder
+    closingBal?: SortOrder
+  }
+
+  export type ParsedAccountMaxOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    bankName?: SortOrder
+    accountNo?: SortOrder
+    accountType?: SortOrder
+    periodFrom?: SortOrder
+    periodTo?: SortOrder
+    openingBal?: SortOrder
+    closingBal?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ParsedAccountMinOrderByAggregateInput = {
+    id?: SortOrder
+    runId?: SortOrder
+    bankName?: SortOrder
+    accountNo?: SortOrder
+    accountType?: SortOrder
+    periodFrom?: SortOrder
+    periodTo?: SortOrder
+    openingBal?: SortOrder
+    closingBal?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ParsedAccountSumOrderByAggregateInput = {
+    openingBal?: SortOrder
+    closingBal?: SortOrder
+  }
+
+  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type DecimalFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+  }
+
+  export type ParsedAccountScalarRelationFilter = {
+    is?: ParsedAccountWhereInput
+    isNot?: ParsedAccountWhereInput
+  }
+
+  export type TransactionCountOrderByAggregateInput = {
+    id?: SortOrder
+    accountId?: SortOrder
+    date?: SortOrder
+    narration?: SortOrder
+    refNumber?: SortOrder
+    withdrawal?: SortOrder
+    deposit?: SortOrder
+    closingBalance?: SortOrder
+    drCrFlag?: SortOrder
+    ccValue?: SortOrder
+    posBalance?: SortOrder
+    noOfDays?: SortOrder
+    category?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TransactionAvgOrderByAggregateInput = {
+    withdrawal?: SortOrder
+    deposit?: SortOrder
+    closingBalance?: SortOrder
+    ccValue?: SortOrder
+    posBalance?: SortOrder
+    noOfDays?: SortOrder
+  }
+
+  export type TransactionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    accountId?: SortOrder
+    date?: SortOrder
+    narration?: SortOrder
+    refNumber?: SortOrder
+    withdrawal?: SortOrder
+    deposit?: SortOrder
+    closingBalance?: SortOrder
+    drCrFlag?: SortOrder
+    ccValue?: SortOrder
+    posBalance?: SortOrder
+    noOfDays?: SortOrder
+    category?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TransactionMinOrderByAggregateInput = {
+    id?: SortOrder
+    accountId?: SortOrder
+    date?: SortOrder
+    narration?: SortOrder
+    refNumber?: SortOrder
+    withdrawal?: SortOrder
+    deposit?: SortOrder
+    closingBalance?: SortOrder
+    drCrFlag?: SortOrder
+    ccValue?: SortOrder
+    posBalance?: SortOrder
+    noOfDays?: SortOrder
+    category?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TransactionSumOrderByAggregateInput = {
+    withdrawal?: SortOrder
+    deposit?: SortOrder
+    closingBalance?: SortOrder
+    ccValue?: SortOrder
+    posBalance?: SortOrder
+    noOfDays?: SortOrder
+  }
+
+  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
   }
 
   export type BigIntNullableFilter<$PrismaModel = never> = {
@@ -22002,6 +25585,7 @@ export namespace Prisma {
     status?: SortOrder
     runId?: SortOrder
     customerId?: SortOrder
+    pdfPassword?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -22023,6 +25607,7 @@ export namespace Prisma {
     status?: SortOrder
     runId?: SortOrder
     customerId?: SortOrder
+    pdfPassword?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -22040,6 +25625,7 @@ export namespace Prisma {
     status?: SortOrder
     runId?: SortOrder
     customerId?: SortOrder
+    pdfPassword?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -22071,17 +25657,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumUploadStatusNullableFilter<$PrismaModel>
     _max?: NestedEnumUploadStatusNullableFilter<$PrismaModel>
-  }
-
-  export type DecimalFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
   }
 
   export type WCDLLoanCountOrderByAggregateInput = {
@@ -22146,33 +25721,6 @@ export namespace Prisma {
   export type WCDLLoanSumOrderByAggregateInput = {
     principalAmount?: SortOrder
     roi?: SortOrder
-  }
-
-  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedDecimalFilter<$PrismaModel>
-    _sum?: NestedDecimalFilter<$PrismaModel>
-    _min?: NestedDecimalFilter<$PrismaModel>
-    _max?: NestedDecimalFilter<$PrismaModel>
-  }
-
-  export type DecimalNullableFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
   export type ForexTransactionCountOrderByAggregateInput = {
@@ -22275,22 +25823,6 @@ export namespace Prisma {
     totalAmtINR?: SortOrder
   }
 
-  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedDecimalNullableFilter<$PrismaModel>
-    _sum?: NestedDecimalNullableFilter<$PrismaModel>
-    _min?: NestedDecimalNullableFilter<$PrismaModel>
-    _max?: NestedDecimalNullableFilter<$PrismaModel>
-  }
-
   export type AgentConfigOrgIdAgentIdCompoundUniqueInput = {
     orgId: string
     agentId: string
@@ -22340,6 +25872,11 @@ export namespace Prisma {
     temperature?: SortOrder
   }
 
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
   export type AIUsageLogCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
@@ -22351,6 +25888,7 @@ export namespace Prisma {
     costUsd?: SortOrder
     action?: SortOrder
     sessionId?: SortOrder
+    agentId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -22371,6 +25909,7 @@ export namespace Prisma {
     costUsd?: SortOrder
     action?: SortOrder
     sessionId?: SortOrder
+    agentId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -22385,6 +25924,7 @@ export namespace Prisma {
     costUsd?: SortOrder
     action?: SortOrder
     sessionId?: SortOrder
+    agentId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -22392,34 +25932,6 @@ export namespace Prisma {
     tokensIn?: SortOrder
     tokensOut?: SortOrder
     costUsd?: SortOrder
-  }
-  export type JsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
-
-  export type UserNullableScalarRelationFilter = {
-    is?: UserWhereInput | null
-    isNot?: UserWhereInput | null
   }
 
   export type AuditLogCountOrderByAggregateInput = {
@@ -22451,37 +25963,6 @@ export namespace Prisma {
     entityType?: SortOrder
     entityId?: SortOrder
     createdAt?: SortOrder
-  }
-  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedJsonNullableFilter<$PrismaModel>
-    _max?: NestedJsonNullableFilter<$PrismaModel>
-  }
-
-  export type PipelineRunScalarRelationFilter = {
-    is?: PipelineRunWhereInput
-    isNot?: PipelineRunWhereInput
   }
 
   export type ApprovalCountOrderByAggregateInput = {
@@ -23401,6 +26882,13 @@ export namespace Prisma {
     connect?: CustomerWhereUniqueInput
   }
 
+  export type ParsedAccountCreateNestedManyWithoutPipelineRunInput = {
+    create?: XOR<ParsedAccountCreateWithoutPipelineRunInput, ParsedAccountUncheckedCreateWithoutPipelineRunInput> | ParsedAccountCreateWithoutPipelineRunInput[] | ParsedAccountUncheckedCreateWithoutPipelineRunInput[]
+    connectOrCreate?: ParsedAccountCreateOrConnectWithoutPipelineRunInput | ParsedAccountCreateOrConnectWithoutPipelineRunInput[]
+    createMany?: ParsedAccountCreateManyPipelineRunInputEnvelope
+    connect?: ParsedAccountWhereUniqueInput | ParsedAccountWhereUniqueInput[]
+  }
+
   export type UploadUncheckedCreateNestedManyWithoutPipelineRunInput = {
     create?: XOR<UploadCreateWithoutPipelineRunInput, UploadUncheckedCreateWithoutPipelineRunInput> | UploadCreateWithoutPipelineRunInput[] | UploadUncheckedCreateWithoutPipelineRunInput[]
     connectOrCreate?: UploadCreateOrConnectWithoutPipelineRunInput | UploadCreateOrConnectWithoutPipelineRunInput[]
@@ -23427,6 +26915,13 @@ export namespace Prisma {
     connectOrCreate?: ApprovalCreateOrConnectWithoutPipelineRunInput | ApprovalCreateOrConnectWithoutPipelineRunInput[]
     createMany?: ApprovalCreateManyPipelineRunInputEnvelope
     connect?: ApprovalWhereUniqueInput | ApprovalWhereUniqueInput[]
+  }
+
+  export type ParsedAccountUncheckedCreateNestedManyWithoutPipelineRunInput = {
+    create?: XOR<ParsedAccountCreateWithoutPipelineRunInput, ParsedAccountUncheckedCreateWithoutPipelineRunInput> | ParsedAccountCreateWithoutPipelineRunInput[] | ParsedAccountUncheckedCreateWithoutPipelineRunInput[]
+    connectOrCreate?: ParsedAccountCreateOrConnectWithoutPipelineRunInput | ParsedAccountCreateOrConnectWithoutPipelineRunInput[]
+    createMany?: ParsedAccountCreateManyPipelineRunInputEnvelope
+    connect?: ParsedAccountWhereUniqueInput | ParsedAccountWhereUniqueInput[]
   }
 
   export type NullableEnumRunStatusFieldUpdateOperationsInput = {
@@ -23515,6 +27010,20 @@ export namespace Prisma {
     update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutPipelineRunsInput, CustomerUpdateWithoutPipelineRunsInput>, CustomerUncheckedUpdateWithoutPipelineRunsInput>
   }
 
+  export type ParsedAccountUpdateManyWithoutPipelineRunNestedInput = {
+    create?: XOR<ParsedAccountCreateWithoutPipelineRunInput, ParsedAccountUncheckedCreateWithoutPipelineRunInput> | ParsedAccountCreateWithoutPipelineRunInput[] | ParsedAccountUncheckedCreateWithoutPipelineRunInput[]
+    connectOrCreate?: ParsedAccountCreateOrConnectWithoutPipelineRunInput | ParsedAccountCreateOrConnectWithoutPipelineRunInput[]
+    upsert?: ParsedAccountUpsertWithWhereUniqueWithoutPipelineRunInput | ParsedAccountUpsertWithWhereUniqueWithoutPipelineRunInput[]
+    createMany?: ParsedAccountCreateManyPipelineRunInputEnvelope
+    set?: ParsedAccountWhereUniqueInput | ParsedAccountWhereUniqueInput[]
+    disconnect?: ParsedAccountWhereUniqueInput | ParsedAccountWhereUniqueInput[]
+    delete?: ParsedAccountWhereUniqueInput | ParsedAccountWhereUniqueInput[]
+    connect?: ParsedAccountWhereUniqueInput | ParsedAccountWhereUniqueInput[]
+    update?: ParsedAccountUpdateWithWhereUniqueWithoutPipelineRunInput | ParsedAccountUpdateWithWhereUniqueWithoutPipelineRunInput[]
+    updateMany?: ParsedAccountUpdateManyWithWhereWithoutPipelineRunInput | ParsedAccountUpdateManyWithWhereWithoutPipelineRunInput[]
+    deleteMany?: ParsedAccountScalarWhereInput | ParsedAccountScalarWhereInput[]
+  }
+
   export type UploadUncheckedUpdateManyWithoutPipelineRunNestedInput = {
     create?: XOR<UploadCreateWithoutPipelineRunInput, UploadUncheckedCreateWithoutPipelineRunInput> | UploadCreateWithoutPipelineRunInput[] | UploadUncheckedCreateWithoutPipelineRunInput[]
     connectOrCreate?: UploadCreateOrConnectWithoutPipelineRunInput | UploadCreateOrConnectWithoutPipelineRunInput[]
@@ -23569,6 +27078,106 @@ export namespace Prisma {
     update?: ApprovalUpdateWithWhereUniqueWithoutPipelineRunInput | ApprovalUpdateWithWhereUniqueWithoutPipelineRunInput[]
     updateMany?: ApprovalUpdateManyWithWhereWithoutPipelineRunInput | ApprovalUpdateManyWithWhereWithoutPipelineRunInput[]
     deleteMany?: ApprovalScalarWhereInput | ApprovalScalarWhereInput[]
+  }
+
+  export type ParsedAccountUncheckedUpdateManyWithoutPipelineRunNestedInput = {
+    create?: XOR<ParsedAccountCreateWithoutPipelineRunInput, ParsedAccountUncheckedCreateWithoutPipelineRunInput> | ParsedAccountCreateWithoutPipelineRunInput[] | ParsedAccountUncheckedCreateWithoutPipelineRunInput[]
+    connectOrCreate?: ParsedAccountCreateOrConnectWithoutPipelineRunInput | ParsedAccountCreateOrConnectWithoutPipelineRunInput[]
+    upsert?: ParsedAccountUpsertWithWhereUniqueWithoutPipelineRunInput | ParsedAccountUpsertWithWhereUniqueWithoutPipelineRunInput[]
+    createMany?: ParsedAccountCreateManyPipelineRunInputEnvelope
+    set?: ParsedAccountWhereUniqueInput | ParsedAccountWhereUniqueInput[]
+    disconnect?: ParsedAccountWhereUniqueInput | ParsedAccountWhereUniqueInput[]
+    delete?: ParsedAccountWhereUniqueInput | ParsedAccountWhereUniqueInput[]
+    connect?: ParsedAccountWhereUniqueInput | ParsedAccountWhereUniqueInput[]
+    update?: ParsedAccountUpdateWithWhereUniqueWithoutPipelineRunInput | ParsedAccountUpdateWithWhereUniqueWithoutPipelineRunInput[]
+    updateMany?: ParsedAccountUpdateManyWithWhereWithoutPipelineRunInput | ParsedAccountUpdateManyWithWhereWithoutPipelineRunInput[]
+    deleteMany?: ParsedAccountScalarWhereInput | ParsedAccountScalarWhereInput[]
+  }
+
+  export type PipelineRunCreateNestedOneWithoutParsedAccountsInput = {
+    create?: XOR<PipelineRunCreateWithoutParsedAccountsInput, PipelineRunUncheckedCreateWithoutParsedAccountsInput>
+    connectOrCreate?: PipelineRunCreateOrConnectWithoutParsedAccountsInput
+    connect?: PipelineRunWhereUniqueInput
+  }
+
+  export type TransactionCreateNestedManyWithoutAccountInput = {
+    create?: XOR<TransactionCreateWithoutAccountInput, TransactionUncheckedCreateWithoutAccountInput> | TransactionCreateWithoutAccountInput[] | TransactionUncheckedCreateWithoutAccountInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutAccountInput | TransactionCreateOrConnectWithoutAccountInput[]
+    createMany?: TransactionCreateManyAccountInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type TransactionUncheckedCreateNestedManyWithoutAccountInput = {
+    create?: XOR<TransactionCreateWithoutAccountInput, TransactionUncheckedCreateWithoutAccountInput> | TransactionCreateWithoutAccountInput[] | TransactionUncheckedCreateWithoutAccountInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutAccountInput | TransactionCreateOrConnectWithoutAccountInput[]
+    createMany?: TransactionCreateManyAccountInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type NullableDecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string | null
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type PipelineRunUpdateOneRequiredWithoutParsedAccountsNestedInput = {
+    create?: XOR<PipelineRunCreateWithoutParsedAccountsInput, PipelineRunUncheckedCreateWithoutParsedAccountsInput>
+    connectOrCreate?: PipelineRunCreateOrConnectWithoutParsedAccountsInput
+    upsert?: PipelineRunUpsertWithoutParsedAccountsInput
+    connect?: PipelineRunWhereUniqueInput
+    update?: XOR<XOR<PipelineRunUpdateToOneWithWhereWithoutParsedAccountsInput, PipelineRunUpdateWithoutParsedAccountsInput>, PipelineRunUncheckedUpdateWithoutParsedAccountsInput>
+  }
+
+  export type TransactionUpdateManyWithoutAccountNestedInput = {
+    create?: XOR<TransactionCreateWithoutAccountInput, TransactionUncheckedCreateWithoutAccountInput> | TransactionCreateWithoutAccountInput[] | TransactionUncheckedCreateWithoutAccountInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutAccountInput | TransactionCreateOrConnectWithoutAccountInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutAccountInput | TransactionUpsertWithWhereUniqueWithoutAccountInput[]
+    createMany?: TransactionCreateManyAccountInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutAccountInput | TransactionUpdateWithWhereUniqueWithoutAccountInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutAccountInput | TransactionUpdateManyWithWhereWithoutAccountInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type TransactionUncheckedUpdateManyWithoutAccountNestedInput = {
+    create?: XOR<TransactionCreateWithoutAccountInput, TransactionUncheckedCreateWithoutAccountInput> | TransactionCreateWithoutAccountInput[] | TransactionUncheckedCreateWithoutAccountInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutAccountInput | TransactionCreateOrConnectWithoutAccountInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutAccountInput | TransactionUpsertWithWhereUniqueWithoutAccountInput[]
+    createMany?: TransactionCreateManyAccountInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutAccountInput | TransactionUpdateWithWhereUniqueWithoutAccountInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutAccountInput | TransactionUpdateManyWithWhereWithoutAccountInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type ParsedAccountCreateNestedOneWithoutTransactionsInput = {
+    create?: XOR<ParsedAccountCreateWithoutTransactionsInput, ParsedAccountUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: ParsedAccountCreateOrConnectWithoutTransactionsInput
+    connect?: ParsedAccountWhereUniqueInput
+  }
+
+  export type DecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type ParsedAccountUpdateOneRequiredWithoutTransactionsNestedInput = {
+    create?: XOR<ParsedAccountCreateWithoutTransactionsInput, ParsedAccountUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: ParsedAccountCreateOrConnectWithoutTransactionsInput
+    upsert?: ParsedAccountUpsertWithoutTransactionsInput
+    connect?: ParsedAccountWhereUniqueInput
+    update?: XOR<XOR<ParsedAccountUpdateToOneWithWhereWithoutTransactionsInput, ParsedAccountUpdateWithoutTransactionsInput>, ParsedAccountUncheckedUpdateWithoutTransactionsInput>
   }
 
   export type OrganisationCreateNestedOneWithoutUploadsInput = {
@@ -23661,14 +27270,6 @@ export namespace Prisma {
     connect?: CustomerWhereUniqueInput
   }
 
-  export type DecimalFieldUpdateOperationsInput = {
-    set?: Decimal | DecimalJsLike | number | string
-    increment?: Decimal | DecimalJsLike | number | string
-    decrement?: Decimal | DecimalJsLike | number | string
-    multiply?: Decimal | DecimalJsLike | number | string
-    divide?: Decimal | DecimalJsLike | number | string
-  }
-
   export type OrganisationUpdateOneRequiredWithoutWcdlLoansNestedInput = {
     create?: XOR<OrganisationCreateWithoutWcdlLoansInput, OrganisationUncheckedCreateWithoutWcdlLoansInput>
     connectOrCreate?: OrganisationCreateOrConnectWithoutWcdlLoansInput
@@ -23707,14 +27308,6 @@ export namespace Prisma {
     create?: XOR<PipelineRunCreateWithoutForexTransInput, PipelineRunUncheckedCreateWithoutForexTransInput>
     connectOrCreate?: PipelineRunCreateOrConnectWithoutForexTransInput
     connect?: PipelineRunWhereUniqueInput
-  }
-
-  export type NullableDecimalFieldUpdateOperationsInput = {
-    set?: Decimal | DecimalJsLike | number | string | null
-    increment?: Decimal | DecimalJsLike | number | string
-    decrement?: Decimal | DecimalJsLike | number | string
-    multiply?: Decimal | DecimalJsLike | number | string
-    divide?: Decimal | DecimalJsLike | number | string
   }
 
   export type OrganisationUpdateOneRequiredWithoutForexTransNestedInput = {
@@ -23778,10 +27371,12 @@ export namespace Prisma {
     update?: XOR<XOR<OrganisationUpdateToOneWithWhereWithoutAiUsageLogsInput, OrganisationUpdateWithoutAiUsageLogsInput>, OrganisationUncheckedUpdateWithoutAiUsageLogsInput>
   }
 
-  export type UserUpdateOneRequiredWithoutAiUsageLogsNestedInput = {
+  export type UserUpdateOneWithoutAiUsageLogsNestedInput = {
     create?: XOR<UserCreateWithoutAiUsageLogsInput, UserUncheckedCreateWithoutAiUsageLogsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAiUsageLogsInput
     upsert?: UserUpsertWithoutAiUsageLogsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAiUsageLogsInput, UserUpdateWithoutAiUsageLogsInput>, UserUncheckedUpdateWithoutAiUsageLogsInput>
   }
@@ -24061,6 +27656,83 @@ export namespace Prisma {
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDecimalFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+  }
+
+  export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
+  }
 
   export type NestedBigIntNullableFilter<$PrismaModel = never> = {
     equals?: bigint | number | BigIntFieldRefInput<$PrismaModel> | null
@@ -24104,83 +27776,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumUploadStatusNullableFilter<$PrismaModel>
     _max?: NestedEnumUploadStatusNullableFilter<$PrismaModel>
-  }
-
-  export type NestedDecimalFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
-  }
-
-  export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedDecimalFilter<$PrismaModel>
-    _sum?: NestedDecimalFilter<$PrismaModel>
-    _min?: NestedDecimalFilter<$PrismaModel>
-    _max?: NestedDecimalFilter<$PrismaModel>
-  }
-
-  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
-  }
-
-  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedDecimalNullableFilter<$PrismaModel>
-    _sum?: NestedDecimalNullableFilter<$PrismaModel>
-    _min?: NestedDecimalNullableFilter<$PrismaModel>
-    _max?: NestedDecimalNullableFilter<$PrismaModel>
-  }
-  export type NestedJsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<NestedJsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type UserCreateWithoutRoleInput = {
@@ -24334,12 +27929,18 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
     customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
+    parsedAccounts?: ParsedAccountCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateWithoutOrganisationInput = {
@@ -24356,12 +27957,18 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     customerId?: string | null
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
+    parsedAccounts?: ParsedAccountUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunCreateOrConnectWithoutOrganisationInput = {
@@ -24384,6 +27991,7 @@ export namespace Prisma {
     statementMonth?: string | null
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
+    pdfPassword?: string | null
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutUploadsInput
     pipelineRun?: PipelineRunCreateNestedOneWithoutUploadsInput
@@ -24403,6 +28011,7 @@ export namespace Prisma {
     status?: $Enums.UploadStatus | null
     runId?: string | null
     customerId?: string | null
+    pdfPassword?: string | null
     createdAt?: Date | string
   }
 
@@ -24591,13 +28200,14 @@ export namespace Prisma {
     costUsd?: Decimal | DecimalJsLike | number | string | null
     action?: string | null
     sessionId?: string | null
+    agentId?: string | null
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutAiUsageLogsInput
+    user?: UserCreateNestedOneWithoutAiUsageLogsInput
   }
 
   export type AIUsageLogUncheckedCreateWithoutOrganisationInput = {
     id?: string
-    userId: string
+    userId?: string | null
     userEmail: string
     model: string
     tokensIn?: number | null
@@ -24605,6 +28215,7 @@ export namespace Prisma {
     costUsd?: Decimal | DecimalJsLike | number | string | null
     action?: string | null
     sessionId?: string | null
+    agentId?: string | null
     createdAt?: Date | string
   }
 
@@ -24750,6 +28361,11 @@ export namespace Prisma {
     checksum?: StringNullableFilter<"PipelineRun"> | string | null
     startedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
     completedAt?: DateTimeNullableFilter<"PipelineRun"> | Date | string | null
+    metadata?: JsonNullableFilter<"PipelineRun">
+    progressPercent?: IntNullableFilter<"PipelineRun"> | number | null
+    progressMessage?: StringNullableFilter<"PipelineRun"> | string | null
+    progressSubsteps?: JsonNullableFilter<"PipelineRun">
+    updatedAt?: DateTimeFilter<"PipelineRun"> | Date | string
     createdAt?: DateTimeFilter<"PipelineRun"> | Date | string
     customerId?: StringNullableFilter<"PipelineRun"> | string | null
   }
@@ -24787,6 +28403,7 @@ export namespace Prisma {
     status?: EnumUploadStatusNullableFilter<"Upload"> | $Enums.UploadStatus | null
     runId?: StringNullableFilter<"Upload"> | string | null
     customerId?: StringNullableFilter<"Upload"> | string | null
+    pdfPassword?: StringNullableFilter<"Upload"> | string | null
     createdAt?: DateTimeFilter<"Upload"> | Date | string
   }
 
@@ -24954,7 +28571,7 @@ export namespace Prisma {
     OR?: AIUsageLogScalarWhereInput[]
     NOT?: AIUsageLogScalarWhereInput | AIUsageLogScalarWhereInput[]
     id?: StringFilter<"AIUsageLog"> | string
-    userId?: StringFilter<"AIUsageLog"> | string
+    userId?: StringNullableFilter<"AIUsageLog"> | string | null
     userEmail?: StringFilter<"AIUsageLog"> | string
     orgId?: StringFilter<"AIUsageLog"> | string
     model?: StringFilter<"AIUsageLog"> | string
@@ -24963,6 +28580,7 @@ export namespace Prisma {
     costUsd?: DecimalNullableFilter<"AIUsageLog"> | Decimal | DecimalJsLike | number | string | null
     action?: StringNullableFilter<"AIUsageLog"> | string | null
     sessionId?: StringNullableFilter<"AIUsageLog"> | string | null
+    agentId?: StringNullableFilter<"AIUsageLog"> | string | null
     createdAt?: DateTimeFilter<"AIUsageLog"> | Date | string
   }
 
@@ -25087,6 +28705,7 @@ export namespace Prisma {
     statementMonth?: string | null
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
+    pdfPassword?: string | null
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutUploadsInput
     user: UserCreateNestedOneWithoutUploadsInput
@@ -25106,6 +28725,7 @@ export namespace Prisma {
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
     runId?: string | null
+    pdfPassword?: string | null
     createdAt?: Date | string
   }
 
@@ -25133,12 +28753,18 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
+    parsedAccounts?: ParsedAccountCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateWithoutCustomerInput = {
@@ -25156,11 +28782,17 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
+    parsedAccounts?: ParsedAccountUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunCreateOrConnectWithoutCustomerInput = {
@@ -25385,6 +29017,7 @@ export namespace Prisma {
     statementMonth?: string | null
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
+    pdfPassword?: string | null
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutUploadsInput
     pipelineRun?: PipelineRunCreateNestedOneWithoutUploadsInput
@@ -25404,6 +29037,7 @@ export namespace Prisma {
     status?: $Enums.UploadStatus | null
     runId?: string | null
     customerId?: string | null
+    pdfPassword?: string | null
     createdAt?: Date | string
   }
 
@@ -25426,6 +29060,7 @@ export namespace Prisma {
     costUsd?: Decimal | DecimalJsLike | number | string | null
     action?: string | null
     sessionId?: string | null
+    agentId?: string | null
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutAiUsageLogsInput
   }
@@ -25440,6 +29075,7 @@ export namespace Prisma {
     costUsd?: Decimal | DecimalJsLike | number | string | null
     action?: string | null
     sessionId?: string | null
+    agentId?: string | null
     createdAt?: Date | string
   }
 
@@ -25657,6 +29293,7 @@ export namespace Prisma {
     statementMonth?: string | null
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
+    pdfPassword?: string | null
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutUploadsInput
     user: UserCreateNestedOneWithoutUploadsInput
@@ -25676,6 +29313,7 @@ export namespace Prisma {
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
     customerId?: string | null
+    pdfPassword?: string | null
     createdAt?: Date | string
   }
 
@@ -25858,6 +29496,42 @@ export namespace Prisma {
     create: XOR<CustomerCreateWithoutPipelineRunsInput, CustomerUncheckedCreateWithoutPipelineRunsInput>
   }
 
+  export type ParsedAccountCreateWithoutPipelineRunInput = {
+    id?: string
+    bankName: string
+    accountNo: string
+    accountType: string
+    periodFrom?: Date | string | null
+    periodTo?: Date | string | null
+    openingBal?: Decimal | DecimalJsLike | number | string | null
+    closingBal?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    transactions?: TransactionCreateNestedManyWithoutAccountInput
+  }
+
+  export type ParsedAccountUncheckedCreateWithoutPipelineRunInput = {
+    id?: string
+    bankName: string
+    accountNo: string
+    accountType: string
+    periodFrom?: Date | string | null
+    periodTo?: Date | string | null
+    openingBal?: Decimal | DecimalJsLike | number | string | null
+    closingBal?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    transactions?: TransactionUncheckedCreateNestedManyWithoutAccountInput
+  }
+
+  export type ParsedAccountCreateOrConnectWithoutPipelineRunInput = {
+    where: ParsedAccountWhereUniqueInput
+    create: XOR<ParsedAccountCreateWithoutPipelineRunInput, ParsedAccountUncheckedCreateWithoutPipelineRunInput>
+  }
+
+  export type ParsedAccountCreateManyPipelineRunInputEnvelope = {
+    data: ParsedAccountCreateManyPipelineRunInput | ParsedAccountCreateManyPipelineRunInput[]
+    skipDuplicates?: boolean
+  }
+
   export type OrganisationUpsertWithoutPipelineRunsInput = {
     update: XOR<OrganisationUpdateWithoutPipelineRunsInput, OrganisationUncheckedUpdateWithoutPipelineRunsInput>
     create: XOR<OrganisationCreateWithoutPipelineRunsInput, OrganisationUncheckedCreateWithoutPipelineRunsInput>
@@ -26034,6 +29708,312 @@ export namespace Prisma {
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
+  export type ParsedAccountUpsertWithWhereUniqueWithoutPipelineRunInput = {
+    where: ParsedAccountWhereUniqueInput
+    update: XOR<ParsedAccountUpdateWithoutPipelineRunInput, ParsedAccountUncheckedUpdateWithoutPipelineRunInput>
+    create: XOR<ParsedAccountCreateWithoutPipelineRunInput, ParsedAccountUncheckedCreateWithoutPipelineRunInput>
+  }
+
+  export type ParsedAccountUpdateWithWhereUniqueWithoutPipelineRunInput = {
+    where: ParsedAccountWhereUniqueInput
+    data: XOR<ParsedAccountUpdateWithoutPipelineRunInput, ParsedAccountUncheckedUpdateWithoutPipelineRunInput>
+  }
+
+  export type ParsedAccountUpdateManyWithWhereWithoutPipelineRunInput = {
+    where: ParsedAccountScalarWhereInput
+    data: XOR<ParsedAccountUpdateManyMutationInput, ParsedAccountUncheckedUpdateManyWithoutPipelineRunInput>
+  }
+
+  export type ParsedAccountScalarWhereInput = {
+    AND?: ParsedAccountScalarWhereInput | ParsedAccountScalarWhereInput[]
+    OR?: ParsedAccountScalarWhereInput[]
+    NOT?: ParsedAccountScalarWhereInput | ParsedAccountScalarWhereInput[]
+    id?: StringFilter<"ParsedAccount"> | string
+    runId?: StringFilter<"ParsedAccount"> | string
+    bankName?: StringFilter<"ParsedAccount"> | string
+    accountNo?: StringFilter<"ParsedAccount"> | string
+    accountType?: StringFilter<"ParsedAccount"> | string
+    periodFrom?: DateTimeNullableFilter<"ParsedAccount"> | Date | string | null
+    periodTo?: DateTimeNullableFilter<"ParsedAccount"> | Date | string | null
+    openingBal?: DecimalNullableFilter<"ParsedAccount"> | Decimal | DecimalJsLike | number | string | null
+    closingBal?: DecimalNullableFilter<"ParsedAccount"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"ParsedAccount"> | Date | string
+  }
+
+  export type PipelineRunCreateWithoutParsedAccountsInput = {
+    id?: string
+    statementMonth: string
+    status?: $Enums.RunStatus | null
+    stage?: number | null
+    statementExcelKey?: string | null
+    workingSheetKey?: string | null
+    bankingReportKey?: string | null
+    validationResult?: string | null
+    errorMessage?: string | null
+    reportSummary?: string | null
+    checksum?: string | null
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
+    createdAt?: Date | string
+    organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
+    uploads?: UploadCreateNestedManyWithoutPipelineRunInput
+    wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
+    forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
+    customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
+  }
+
+  export type PipelineRunUncheckedCreateWithoutParsedAccountsInput = {
+    id?: string
+    orgId: string
+    statementMonth: string
+    status?: $Enums.RunStatus | null
+    stage?: number | null
+    statementExcelKey?: string | null
+    workingSheetKey?: string | null
+    bankingReportKey?: string | null
+    validationResult?: string | null
+    errorMessage?: string | null
+    reportSummary?: string | null
+    checksum?: string | null
+    startedAt?: Date | string | null
+    completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
+    createdAt?: Date | string
+    customerId?: string | null
+    uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
+    wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
+    forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
+    approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
+  }
+
+  export type PipelineRunCreateOrConnectWithoutParsedAccountsInput = {
+    where: PipelineRunWhereUniqueInput
+    create: XOR<PipelineRunCreateWithoutParsedAccountsInput, PipelineRunUncheckedCreateWithoutParsedAccountsInput>
+  }
+
+  export type TransactionCreateWithoutAccountInput = {
+    id?: string
+    date: Date | string
+    narration: string
+    refNumber?: string | null
+    withdrawal?: Decimal | DecimalJsLike | number | string | null
+    deposit?: Decimal | DecimalJsLike | number | string | null
+    closingBalance: Decimal | DecimalJsLike | number | string
+    drCrFlag: string
+    ccValue?: Decimal | DecimalJsLike | number | string | null
+    posBalance?: Decimal | DecimalJsLike | number | string | null
+    noOfDays?: number | null
+    category?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TransactionUncheckedCreateWithoutAccountInput = {
+    id?: string
+    date: Date | string
+    narration: string
+    refNumber?: string | null
+    withdrawal?: Decimal | DecimalJsLike | number | string | null
+    deposit?: Decimal | DecimalJsLike | number | string | null
+    closingBalance: Decimal | DecimalJsLike | number | string
+    drCrFlag: string
+    ccValue?: Decimal | DecimalJsLike | number | string | null
+    posBalance?: Decimal | DecimalJsLike | number | string | null
+    noOfDays?: number | null
+    category?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TransactionCreateOrConnectWithoutAccountInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutAccountInput, TransactionUncheckedCreateWithoutAccountInput>
+  }
+
+  export type TransactionCreateManyAccountInputEnvelope = {
+    data: TransactionCreateManyAccountInput | TransactionCreateManyAccountInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PipelineRunUpsertWithoutParsedAccountsInput = {
+    update: XOR<PipelineRunUpdateWithoutParsedAccountsInput, PipelineRunUncheckedUpdateWithoutParsedAccountsInput>
+    create: XOR<PipelineRunCreateWithoutParsedAccountsInput, PipelineRunUncheckedCreateWithoutParsedAccountsInput>
+    where?: PipelineRunWhereInput
+  }
+
+  export type PipelineRunUpdateToOneWithWhereWithoutParsedAccountsInput = {
+    where?: PipelineRunWhereInput
+    data: XOR<PipelineRunUpdateWithoutParsedAccountsInput, PipelineRunUncheckedUpdateWithoutParsedAccountsInput>
+  }
+
+  export type PipelineRunUpdateWithoutParsedAccountsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    statementMonth?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumRunStatusFieldUpdateOperationsInput | $Enums.RunStatus | null
+    stage?: NullableIntFieldUpdateOperationsInput | number | null
+    statementExcelKey?: NullableStringFieldUpdateOperationsInput | string | null
+    workingSheetKey?: NullableStringFieldUpdateOperationsInput | string | null
+    bankingReportKey?: NullableStringFieldUpdateOperationsInput | string | null
+    validationResult?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    reportSummary?: NullableStringFieldUpdateOperationsInput | string | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
+    uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
+    wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
+    forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
+    customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
+  }
+
+  export type PipelineRunUncheckedUpdateWithoutParsedAccountsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orgId?: StringFieldUpdateOperationsInput | string
+    statementMonth?: StringFieldUpdateOperationsInput | string
+    status?: NullableEnumRunStatusFieldUpdateOperationsInput | $Enums.RunStatus | null
+    stage?: NullableIntFieldUpdateOperationsInput | number | null
+    statementExcelKey?: NullableStringFieldUpdateOperationsInput | string | null
+    workingSheetKey?: NullableStringFieldUpdateOperationsInput | string | null
+    bankingReportKey?: NullableStringFieldUpdateOperationsInput | string | null
+    validationResult?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    reportSummary?: NullableStringFieldUpdateOperationsInput | string | null
+    checksum?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
+    wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
+    forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
+    approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
+  }
+
+  export type TransactionUpsertWithWhereUniqueWithoutAccountInput = {
+    where: TransactionWhereUniqueInput
+    update: XOR<TransactionUpdateWithoutAccountInput, TransactionUncheckedUpdateWithoutAccountInput>
+    create: XOR<TransactionCreateWithoutAccountInput, TransactionUncheckedCreateWithoutAccountInput>
+  }
+
+  export type TransactionUpdateWithWhereUniqueWithoutAccountInput = {
+    where: TransactionWhereUniqueInput
+    data: XOR<TransactionUpdateWithoutAccountInput, TransactionUncheckedUpdateWithoutAccountInput>
+  }
+
+  export type TransactionUpdateManyWithWhereWithoutAccountInput = {
+    where: TransactionScalarWhereInput
+    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutAccountInput>
+  }
+
+  export type TransactionScalarWhereInput = {
+    AND?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+    OR?: TransactionScalarWhereInput[]
+    NOT?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+    id?: StringFilter<"Transaction"> | string
+    accountId?: StringFilter<"Transaction"> | string
+    date?: DateTimeFilter<"Transaction"> | Date | string
+    narration?: StringFilter<"Transaction"> | string
+    refNumber?: StringNullableFilter<"Transaction"> | string | null
+    withdrawal?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    deposit?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    closingBalance?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
+    drCrFlag?: StringFilter<"Transaction"> | string
+    ccValue?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    posBalance?: DecimalNullableFilter<"Transaction"> | Decimal | DecimalJsLike | number | string | null
+    noOfDays?: IntNullableFilter<"Transaction"> | number | null
+    category?: StringNullableFilter<"Transaction"> | string | null
+    createdAt?: DateTimeFilter<"Transaction"> | Date | string
+  }
+
+  export type ParsedAccountCreateWithoutTransactionsInput = {
+    id?: string
+    bankName: string
+    accountNo: string
+    accountType: string
+    periodFrom?: Date | string | null
+    periodTo?: Date | string | null
+    openingBal?: Decimal | DecimalJsLike | number | string | null
+    closingBal?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    pipelineRun: PipelineRunCreateNestedOneWithoutParsedAccountsInput
+  }
+
+  export type ParsedAccountUncheckedCreateWithoutTransactionsInput = {
+    id?: string
+    runId: string
+    bankName: string
+    accountNo: string
+    accountType: string
+    periodFrom?: Date | string | null
+    periodTo?: Date | string | null
+    openingBal?: Decimal | DecimalJsLike | number | string | null
+    closingBal?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+  }
+
+  export type ParsedAccountCreateOrConnectWithoutTransactionsInput = {
+    where: ParsedAccountWhereUniqueInput
+    create: XOR<ParsedAccountCreateWithoutTransactionsInput, ParsedAccountUncheckedCreateWithoutTransactionsInput>
+  }
+
+  export type ParsedAccountUpsertWithoutTransactionsInput = {
+    update: XOR<ParsedAccountUpdateWithoutTransactionsInput, ParsedAccountUncheckedUpdateWithoutTransactionsInput>
+    create: XOR<ParsedAccountCreateWithoutTransactionsInput, ParsedAccountUncheckedCreateWithoutTransactionsInput>
+    where?: ParsedAccountWhereInput
+  }
+
+  export type ParsedAccountUpdateToOneWithWhereWithoutTransactionsInput = {
+    where?: ParsedAccountWhereInput
+    data: XOR<ParsedAccountUpdateWithoutTransactionsInput, ParsedAccountUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type ParsedAccountUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountType?: StringFieldUpdateOperationsInput | string
+    periodFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    periodTo?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pipelineRun?: PipelineRunUpdateOneRequiredWithoutParsedAccountsNestedInput
+  }
+
+  export type ParsedAccountUncheckedUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    runId?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountType?: StringFieldUpdateOperationsInput | string
+    periodFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    periodTo?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type OrganisationCreateWithoutUploadsInput = {
     id?: string
     name: string
@@ -26136,12 +30116,18 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
     customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
+    parsedAccounts?: ParsedAccountCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateWithoutUploadsInput = {
@@ -26159,11 +30145,17 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     customerId?: string | null
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
+    parsedAccounts?: ParsedAccountUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunCreateOrConnectWithoutUploadsInput = {
@@ -26343,12 +30335,18 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
     customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
+    parsedAccounts?: ParsedAccountUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutUploadsInput = {
@@ -26366,11 +30364,17 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
+    parsedAccounts?: ParsedAccountUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type CustomerUpsertWithoutUploadsInput = {
@@ -26483,12 +30487,18 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
     customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
+    parsedAccounts?: ParsedAccountCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateWithoutWcdlLoansInput = {
@@ -26506,11 +30516,17 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     customerId?: string | null
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
+    parsedAccounts?: ParsedAccountUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunCreateOrConnectWithoutWcdlLoansInput = {
@@ -26639,12 +30655,18 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
     customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
+    parsedAccounts?: ParsedAccountUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutWcdlLoansInput = {
@@ -26662,11 +30684,17 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
+    parsedAccounts?: ParsedAccountUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type CustomerUpsertWithoutWcdlLoansInput = {
@@ -26779,12 +30807,18 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalCreateNestedManyWithoutPipelineRunInput
     customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
+    parsedAccounts?: ParsedAccountCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateWithoutForexTransInput = {
@@ -26802,11 +30836,17 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     customerId?: string | null
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     approvals?: ApprovalUncheckedCreateNestedManyWithoutPipelineRunInput
+    parsedAccounts?: ParsedAccountUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunCreateOrConnectWithoutForexTransInput = {
@@ -26888,12 +30928,18 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
     customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
+    parsedAccounts?: ParsedAccountUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutForexTransInput = {
@@ -26911,11 +30957,17 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
+    parsedAccounts?: ParsedAccountUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type OrganisationCreateWithoutAgentConfigsInput = {
@@ -27400,12 +31452,18 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     organisation: OrganisationCreateNestedOneWithoutPipelineRunsInput
     uploads?: UploadCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionCreateNestedManyWithoutPipelineRunInput
     customer?: CustomerCreateNestedOneWithoutPipelineRunsInput
+    parsedAccounts?: ParsedAccountCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunUncheckedCreateWithoutApprovalsInput = {
@@ -27423,11 +31481,17 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     customerId?: string | null
     uploads?: UploadUncheckedCreateNestedManyWithoutPipelineRunInput
     wcdlLoans?: WCDLLoanUncheckedCreateNestedManyWithoutPipelineRunInput
     forexTrans?: ForexTransactionUncheckedCreateNestedManyWithoutPipelineRunInput
+    parsedAccounts?: ParsedAccountUncheckedCreateNestedManyWithoutPipelineRunInput
   }
 
   export type PipelineRunCreateOrConnectWithoutApprovalsInput = {
@@ -27460,12 +31524,18 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
     customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
+    parsedAccounts?: ParsedAccountUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutApprovalsInput = {
@@ -27483,11 +31553,17 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
+    parsedAccounts?: ParsedAccountUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type OrganisationCreateWithoutFormulaConfigsInput = {
@@ -27687,6 +31763,11 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
     customerId?: string | null
   }
@@ -27704,6 +31785,7 @@ export namespace Prisma {
     status?: $Enums.UploadStatus | null
     runId?: string | null
     customerId?: string | null
+    pdfPassword?: string | null
     createdAt?: Date | string
   }
 
@@ -27772,7 +31854,7 @@ export namespace Prisma {
 
   export type AIUsageLogCreateManyOrganisationInput = {
     id?: string
-    userId: string
+    userId?: string | null
     userEmail: string
     model: string
     tokensIn?: number | null
@@ -27780,6 +31862,7 @@ export namespace Prisma {
     costUsd?: Decimal | DecimalJsLike | number | string | null
     action?: string | null
     sessionId?: string | null
+    agentId?: string | null
     createdAt?: Date | string
   }
 
@@ -27882,12 +31965,18 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
     customer?: CustomerUpdateOneWithoutPipelineRunsNestedInput
+    parsedAccounts?: ParsedAccountUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutOrganisationInput = {
@@ -27904,12 +31993,18 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
+    parsedAccounts?: ParsedAccountUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateManyWithoutOrganisationInput = {
@@ -27926,6 +32021,11 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -27940,6 +32040,7 @@ export namespace Prisma {
     statementMonth?: NullableStringFieldUpdateOperationsInput | string | null
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutUploadsNestedInput
     pipelineRun?: PipelineRunUpdateOneWithoutUploadsNestedInput
@@ -27959,6 +32060,7 @@ export namespace Prisma {
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -27975,6 +32077,7 @@ export namespace Prisma {
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28176,13 +32279,14 @@ export namespace Prisma {
     costUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     action?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutAiUsageLogsNestedInput
+    user?: UserUpdateOneWithoutAiUsageLogsNestedInput
   }
 
   export type AIUsageLogUncheckedUpdateWithoutOrganisationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     userEmail?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     tokensIn?: NullableIntFieldUpdateOperationsInput | number | null
@@ -28190,12 +32294,13 @@ export namespace Prisma {
     costUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     action?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AIUsageLogUncheckedUpdateManyWithoutOrganisationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     userEmail?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     tokensIn?: NullableIntFieldUpdateOperationsInput | number | null
@@ -28203,6 +32308,7 @@ export namespace Prisma {
     costUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     action?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28309,6 +32415,7 @@ export namespace Prisma {
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
     runId?: string | null
+    pdfPassword?: string | null
     createdAt?: Date | string
   }
 
@@ -28327,6 +32434,11 @@ export namespace Prisma {
     checksum?: string | null
     startedAt?: Date | string | null
     completedAt?: Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: number | null
+    progressMessage?: string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
     createdAt?: Date | string
   }
 
@@ -28357,6 +32469,7 @@ export namespace Prisma {
     statementMonth?: NullableStringFieldUpdateOperationsInput | string | null
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutUploadsNestedInput
     user?: UserUpdateOneRequiredWithoutUploadsNestedInput
@@ -28376,6 +32489,7 @@ export namespace Prisma {
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28392,6 +32506,7 @@ export namespace Prisma {
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28409,12 +32524,18 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutPipelineRunsNestedInput
     uploads?: UploadUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUpdateManyWithoutPipelineRunNestedInput
+    parsedAccounts?: ParsedAccountUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateWithoutCustomerInput = {
@@ -28432,11 +32553,17 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploads?: UploadUncheckedUpdateManyWithoutPipelineRunNestedInput
     wcdlLoans?: WCDLLoanUncheckedUpdateManyWithoutPipelineRunNestedInput
     forexTrans?: ForexTransactionUncheckedUpdateManyWithoutPipelineRunNestedInput
     approvals?: ApprovalUncheckedUpdateManyWithoutPipelineRunNestedInput
+    parsedAccounts?: ParsedAccountUncheckedUpdateManyWithoutPipelineRunNestedInput
   }
 
   export type PipelineRunUncheckedUpdateManyWithoutCustomerInput = {
@@ -28454,6 +32581,11 @@ export namespace Prisma {
     checksum?: NullableStringFieldUpdateOperationsInput | string | null
     startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    progressPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    progressMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    progressSubsteps?: NullableJsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28521,6 +32653,7 @@ export namespace Prisma {
     status?: $Enums.UploadStatus | null
     runId?: string | null
     customerId?: string | null
+    pdfPassword?: string | null
     createdAt?: Date | string
   }
 
@@ -28534,6 +32667,7 @@ export namespace Prisma {
     costUsd?: Decimal | DecimalJsLike | number | string | null
     action?: string | null
     sessionId?: string | null
+    agentId?: string | null
     createdAt?: Date | string
   }
 
@@ -28557,6 +32691,7 @@ export namespace Prisma {
     statementMonth?: NullableStringFieldUpdateOperationsInput | string | null
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutUploadsNestedInput
     pipelineRun?: PipelineRunUpdateOneWithoutUploadsNestedInput
@@ -28576,6 +32711,7 @@ export namespace Prisma {
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28592,6 +32728,7 @@ export namespace Prisma {
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     runId?: NullableStringFieldUpdateOperationsInput | string | null
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28604,6 +32741,7 @@ export namespace Prisma {
     costUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     action?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutAiUsageLogsNestedInput
   }
@@ -28618,6 +32756,7 @@ export namespace Prisma {
     costUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     action?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28631,6 +32770,7 @@ export namespace Prisma {
     costUsd?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     action?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    agentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28677,6 +32817,7 @@ export namespace Prisma {
     fileSizeBytes?: bigint | number | null
     status?: $Enums.UploadStatus | null
     customerId?: string | null
+    pdfPassword?: string | null
     createdAt?: Date | string
   }
 
@@ -28726,6 +32867,18 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type ParsedAccountCreateManyPipelineRunInput = {
+    id?: string
+    bankName: string
+    accountNo: string
+    accountType: string
+    periodFrom?: Date | string | null
+    periodTo?: Date | string | null
+    openingBal?: Decimal | DecimalJsLike | number | string | null
+    closingBal?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+  }
+
   export type UploadUpdateWithoutPipelineRunInput = {
     id?: StringFieldUpdateOperationsInput | string
     filename?: StringFieldUpdateOperationsInput | string
@@ -28736,6 +32889,7 @@ export namespace Prisma {
     statementMonth?: NullableStringFieldUpdateOperationsInput | string | null
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organisation?: OrganisationUpdateOneRequiredWithoutUploadsNestedInput
     user?: UserUpdateOneRequiredWithoutUploadsNestedInput
@@ -28755,6 +32909,7 @@ export namespace Prisma {
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28771,6 +32926,7 @@ export namespace Prisma {
     fileSizeBytes?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: NullableEnumUploadStatusFieldUpdateOperationsInput | $Enums.UploadStatus | null
     customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    pdfPassword?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28909,6 +33065,108 @@ export namespace Prisma {
   export type ApprovalUncheckedUpdateManyWithoutPipelineRunInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ParsedAccountUpdateWithoutPipelineRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountType?: StringFieldUpdateOperationsInput | string
+    periodFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    periodTo?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactions?: TransactionUpdateManyWithoutAccountNestedInput
+  }
+
+  export type ParsedAccountUncheckedUpdateWithoutPipelineRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountType?: StringFieldUpdateOperationsInput | string
+    periodFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    periodTo?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactions?: TransactionUncheckedUpdateManyWithoutAccountNestedInput
+  }
+
+  export type ParsedAccountUncheckedUpdateManyWithoutPipelineRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bankName?: StringFieldUpdateOperationsInput | string
+    accountNo?: StringFieldUpdateOperationsInput | string
+    accountType?: StringFieldUpdateOperationsInput | string
+    periodFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    periodTo?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionCreateManyAccountInput = {
+    id?: string
+    date: Date | string
+    narration: string
+    refNumber?: string | null
+    withdrawal?: Decimal | DecimalJsLike | number | string | null
+    deposit?: Decimal | DecimalJsLike | number | string | null
+    closingBalance: Decimal | DecimalJsLike | number | string
+    drCrFlag: string
+    ccValue?: Decimal | DecimalJsLike | number | string | null
+    posBalance?: Decimal | DecimalJsLike | number | string | null
+    noOfDays?: number | null
+    category?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TransactionUpdateWithoutAccountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    narration?: StringFieldUpdateOperationsInput | string
+    refNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    withdrawal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    deposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    drCrFlag?: StringFieldUpdateOperationsInput | string
+    ccValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    posBalance?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    noOfDays?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionUncheckedUpdateWithoutAccountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    narration?: StringFieldUpdateOperationsInput | string
+    refNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    withdrawal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    deposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    drCrFlag?: StringFieldUpdateOperationsInput | string
+    ccValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    posBalance?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    noOfDays?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionUncheckedUpdateManyWithoutAccountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    narration?: StringFieldUpdateOperationsInput | string
+    refNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    withdrawal?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    deposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    closingBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    drCrFlag?: StringFieldUpdateOperationsInput | string
+    ccValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    posBalance?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    noOfDays?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
