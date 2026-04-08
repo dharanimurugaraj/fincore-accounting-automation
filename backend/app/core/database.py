@@ -28,7 +28,8 @@ def _get_pool():
             
         try:
             logger.info(f"Initializing Local Connection Pool -> {url.split('@')[-1]}")
-            _pool = ThreadedConnectionPool(1, 10, url, cursor_factory=RealDictCursor)
+            # Increased max connections to 20 to handle concurrent parsing threads + UI polling
+            _pool = ThreadedConnectionPool(2, 20, url, cursor_factory=RealDictCursor)
         except Exception as e:
             logger.error(f"FAILED to initialize local pool: {e}")
             logger.error("TIP: If you are using Prisma Accelerate, ensure you have provided the DIRECT CONNECTION URL (pointing to the actual DB host) instead of the proxy URL.")

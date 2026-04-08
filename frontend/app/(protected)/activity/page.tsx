@@ -183,15 +183,15 @@ export default function ActivityPage() {
           <div className="p-8 text-center text-t-muted">No activity logs found for this timeframe.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
+            <table className="w-full text-left text-sm">
               <thead className="bg-neutral-app/50 text-t-muted">
                 <tr>
-                  <th className="px-6 py-4 font-semibold text-[10px] tracking-wider uppercase">Timestamp</th>
-                  <th className="px-6 py-4 font-semibold text-[10px] tracking-wider uppercase">User</th>
-                  <th className="px-6 py-4 font-semibold text-[10px] tracking-wider uppercase">Role</th>
+                  <th className="px-6 py-4 font-semibold text-[10px] tracking-wider uppercase whitespace-nowrap">Timestamp</th>
+                  <th className="px-6 py-4 font-semibold text-[10px] tracking-wider uppercase whitespace-nowrap">User</th>
+                  <th className="px-6 py-4 font-semibold text-[10px] tracking-wider uppercase whitespace-nowrap">Role</th>
                   <th className="px-6 py-4 font-semibold text-[10px] tracking-wider uppercase">Action / Model</th>
-                  <th className="px-6 py-4 font-semibold text-[10px] tracking-wider uppercase">Tokens (In/Out)</th>
-                  <th className="px-6 py-4 font-semibold text-[10px] tracking-wider uppercase text-right">Cost (USD)</th>
+                  <th className="px-6 py-4 font-semibold text-[10px] tracking-wider uppercase whitespace-nowrap">Tokens (In/Out)</th>
+                  <th className="px-6 py-4 font-semibold text-[10px] tracking-wider uppercase text-right whitespace-nowrap">Cost (USD)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-border">
@@ -220,9 +220,13 @@ export default function ActivityPage() {
                         </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-t-heading text-xs font-bold capitalize">{entry.action || "Unknown"}</span>
-                        <span className="text-[10px] text-t-muted font-mono">{entry.model}</span>
+                      <div className="flex flex-col max-w-[280px] md:max-w-md">
+                        <span className="text-t-heading text-xs font-bold leading-tight break-all">
+                          {entry.action || "Unknown"}
+                        </span>
+                        <span className="text-[10px] text-t-muted font-mono truncate" title={entry.model}>
+                          {entry.model}
+                        </span>
                       </div>
                     </td>
 

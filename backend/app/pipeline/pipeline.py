@@ -73,17 +73,28 @@ class FinCorePipeline:
             file_progress = {os.path.basename(p["path"]): "Waiting..." for p in validated_pdfs}
             
             def make_on_progress(filename):
+                last_reported_page = 0
                 def callback(current: int, total: int):
+                    nonlocal last_reported_page
+                    
+                    # Update status map
                     if current >= total:
                         file_progress[filename] = "Finalized"
                     else:
                         file_progress[filename] = f"Analyzing Page {current}/{total}"
                     
-                    sub_steps = [f"{'✓' if 'Finalized' in prog else '⏳'} {f}: {prog}" for f, prog in file_progress.items()]
-                    self.update_progress(job_id, "extraction", "running", f"Parsing {len(validated_pdfs)} PDFs in parallel...", 40, sub_steps=sub_steps)
+                    # THROTTLE: Only write to DB every 5 pages or on finalization
+                    # This prevents "connection pool exhausted" errors on large PDFs (50+ pages)
+                    should_update = (current == 1 or current == total or (current - last_reported_page) >= 5)
+                    
+                    if should_update:
+                        last_reported_page = current
+                        sub_steps = [f"{'✓' if 'Finalized' in prog else '⏳'} {f}: {prog}" for f, prog in file_progress.items()]
+                        self.update_progress(job_id, "extraction", "running", f"Parsing {len(validated_pdfs)} PDFs in parallel...", 40, sub_steps=sub_steps)
                 return callback
 
             async def process_single_pdf(pdf_info):
+                print(f"\n[PIPELINE] Starting Extraction for: {os.path.basename(pdf_info['path'])}")
                 filename = os.path.basename(pdf_info["path"])
                 # FIX: Extraction can be CPU bound or blocking, ensure it reports back to UI loop
                 extraction_result = await self.extractor.extract(
@@ -96,9 +107,12 @@ class FinCorePipeline:
                 extracted = extraction_result.get("data", {})
                 usage = extraction_result.get("usage", {})
                 
-                # Tag with metadata
-                extracted["bank_name"] = pdf_info["bank"]
-                extracted["account_number"] = pdf_info["account_number"]
+                # Tag with metadata (Prioritize Scouted Name/Number over Validator guess)
+                if not extracted.get("bank_name") or extracted.get("bank_name") == "UNKNOWN":
+                    extracted["bank_name"] = pdf_info.get("bank")
+                
+                if not extracted.get("account_number") or extracted.get("account_number") == "UNKNOWN" or "XXX" in str(extracted.get("account_number")):
+                     extracted["account_number"] = pdf_info.get("account_number")
                 
                 return {"extracted": extracted, "usage": usage}
 
@@ -143,7 +157,22 @@ class FinCorePipeline:
 
             # Preparation: Expand transactions for full month BEFORE parallel generation
             from .working_sheet import _expand_to_full_month
+            import calendar
             for acc in accounts_data:
+                start_date = acc.get("period_from")
+                
+                # Auto-Snap to Full Calendar Month
+                if start_date and "-" in start_date:
+                    try:
+                        dt = datetime.strptime(start_date[:10], "%Y-%m-%d")
+                        first_day = dt.replace(day=1)
+                        last_day_num = calendar.monthrange(dt.year, dt.month)[1]
+                        last_day = dt.replace(day=last_day_num)
+                        acc["period_from"] = first_day.strftime("%Y-%m-%d")
+                        acc["period_to"] = last_day.strftime("%Y-%m-%d")
+                    except Exception:
+                        pass
+
                 start_date = acc.get("period_from")
                 end_date = acc.get("period_to")
                 open_bal = acc.get("opening_balance", 0)

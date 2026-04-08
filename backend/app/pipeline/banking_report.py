@@ -23,8 +23,9 @@ def generate_banking_report(
     acct_str = ", ".join(acct_nos)
     
     detail_ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(accounts_data) + 7)
+    limit_val = accounts_data[0].get("cc_limit") or 0.0
     header_cell = detail_ws.cell(row=1, column=1)
-    header_cell.value = f"CONSOLIDATED BANKING REPORT | {bank_name} - {acct_str} | {period}"
+    header_cell.value = f"CONSOLIDATED BANKING REPORT | {bank_name} - {acct_str} | Limit: ₹{limit_val:,.2f} | {period}"
     header_cell.font = Font(bold=True, size=12)
     header_cell.alignment = Alignment(horizontal="center")
 
@@ -46,7 +47,7 @@ def generate_banking_report(
             all_dates[dt][label] = abs(bal) if bal < 0 else 0
 
     # Column headers
-    headers = ["Date"] + acct_labels + ["CC Utilisation", "WCDL", "Total Avg Utilisation", "ROI", "CC Int. Rate (/day)"]
+    headers = ["Date"] + acct_labels + ["CC Drawing", "WCDL", "Total Utilisation", "ROI", "CC Int. Rate (/day)"]
     header_fill = PatternFill(fill_type="solid", fgColor="0A0A0F")
     header_font = Font(bold=True, color="FFFFFF")
     thin_border = Border(
@@ -102,12 +103,13 @@ def generate_banking_report(
         util_cell.border = thin_border
         
         # [WCDL]
-        wcdl_cell = detail_ws.cell(row=row_idx, column=wcdl_col)
-        wcdl_cell.value = 550000000 
-        wcdl_cell.number_format = '#,##0.00'
-        wcdl_cell.border = thin_border
+        # For consolidated report, WCDL defaults to 0 unless specifically provided per day
+        wcdl_ref_cell = detail_ws.cell(row=row_idx, column=wcdl_col)
+        wcdl_ref_cell.value = 0.0
+        wcdl_ref_cell.number_format = '#,##0.00'
+        wcdl_ref_cell.border = thin_border
         
-        # [Total Avg Utilisation]
+        # [Total Utilisation]
         cc_util_letter = get_column_letter(cc_util_col)
         wcdl_letter = get_column_letter(wcdl_col)
         total_cell = detail_ws.cell(row=row_idx, column=total_util_col)
@@ -116,8 +118,9 @@ def generate_banking_report(
         total_cell.border = thin_border
         
         # [ROI]
+        roi_val = (accounts_data[0].get("cc_roi_percent") or 7.60) / 100
         roi_cell = detail_ws.cell(row=row_idx, column=roi_col)
-        roi_cell.value = "=5.25%+2.35%"
+        roi_cell.value = roi_val
         roi_cell.number_format = '0.00%'
         roi_cell.border = thin_border
         
@@ -130,8 +133,8 @@ def generate_banking_report(
         int_cell.border = thin_border
         
         # Snapshot accumulation
-        day_util = sum([all_dates[dt].get(l, 0) for l in acct_labels]) + 550000000
-        cumulative_interest += (day_util * (0.076) / 365)
+        day_util = sum([all_dates[dt].get(l, 0) for l in acct_labels])
+        cumulative_interest += (day_util * (roi_val) / 365)
 
     # Set Column Widths for readability
     detail_ws.column_dimensions['A'].width = 15
@@ -162,19 +165,15 @@ def _populate_snapshot(ws, accounts_data, cumulative_cc_interest, computed, peri
     ws.cell(3, 1).value = "Section A: Working Capital Funds — Utilisation Table"
     ws.cell(3, 1).font = Font(bold=True, underline="single")
     
-    headers = ["Bank", "Sanctioned Amt (Cr)", "Avg CC (Cr)", "Avg WCDL (Cr)", "Total Avg Utilisation (Cr)", "% Utilisation"]
+    headers = ["Bank", "Sanctioned Amt (Cr)", "Avg CC Drawing (Cr)", "Avg WCDL (Cr)", "Total Avg Utilisation (Cr)", "% Utilisation"]
     for col, h in enumerate(headers, 1):
         cell = ws.cell(5, col)
         cell.value = h
         cell.font = Font(bold=True)
         cell.fill = PatternFill(fill_type="solid", fgColor="E0E0E0")
 
-    # Metrics (Dynamic from accounts_data)
-    # Total Sanctioned Limit = Sum of limits from all accounts processed
-    # Note: For HDFC, the primary account usually carries the full limit (e.g. 77.5 Cr)
-    # while sub-accounts have smaller allocations. 
-    # Use max limit or sum appropriately.
-    total_sanct_limit = max([(a.get("cc_sub_limit") or 0) for a in accounts_data], default=0) / 10000000 # To Cr
+    # Total Sanctioned Limit = Use the cc_limit extracted from header
+    total_sanct_limit = max([(a.get("cc_limit") or 0) for a in accounts_data], default=0) / 10000000 # To Cr
     
     # If still 0, we'll use a placeholder label to let the user know
     limit_display = round(total_sanct_limit, 2) if total_sanct_limit > 0 else "N/A"

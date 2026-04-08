@@ -133,7 +133,8 @@ class FinCoreComputationEngine:
         # CC Interests
         for acct in accounts_data:
             roi = acct.get("cc_roi_percent") or 7.60
-            balances = [txn.get("closing_balance") if txn.get("closing_balance") is not None else 0 for txn in acct.get("transactions", [])]
+            txns = acct.get("full_month_transactions") or acct.get("transactions", [])
+            balances = [txn.get("closing_balance") if txn.get("closing_balance") is not None else 0 for txn in txns]
             total_cc_interest += self.compute_monthly_cc_interest(balances, roi)
             avg_util = self.compute_average_utilisation(balances)
             total_avg_utilisation += avg_util
@@ -160,6 +161,31 @@ class FinCoreComputationEngine:
         total_interest = total_cc_interest + total_wcdl_interest
         finance_cost_pct = self.compute_finance_cost_percent(total_interest, total_avg_utilisation)
         
+        # Cross-validation (Phase 6)
+        # Verify: Opening + Deposits - Withdrawals = Closing
+        for acct in accounts_data:
+            txns = acct.get("transactions", [])
+            if not txns: continue
+            
+            calc_deposits = sum(t.get("deposit") or 0 for t in txns)
+            calc_withdrawals = sum(t.get("withdrawal") or 0 for t in txns)
+            opening = acct.get("opening_balance") or 0
+            closing = acct.get("closing_balance")
+            
+            if closing is not None:
+                expected_closing = opening + calc_deposits - calc_withdrawals
+                diff = abs(float(expected_closing) - float(closing))
+                
+                acct["_reconciliation"] = {
+                    "status": "PASS" if diff <= 1.0 else ("WARN" if diff <= 10.0 else "FAIL"),
+                    "diff": round(diff, 2),
+                    "expected_closing": round(expected_closing, 2),
+                    "actual_closing": round(closing, 2)
+                }
+                
+                if acct["_reconciliation"]["status"] == "FAIL":
+                    print(f"[RECONCILE] FAIL for {acct.get('bank_name')}: Diff of {diff}")
+
         return {
             "total_cc_interest": total_cc_interest,
             "total_notional_loss": total_notional_loss,
