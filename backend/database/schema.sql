@@ -253,3 +253,45 @@ CREATE TABLE IF NOT EXISTS "Transaction" (
     "category"       TEXT,
     "createdAt"      TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Conversations for AI Chat
+CREATE TABLE IF NOT EXISTS "Conversation" (
+    id           TEXT        PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    "orgId"      TEXT        NOT NULL REFERENCES "Organisation"(id),
+    "userId"     TEXT        NOT NULL REFERENCES "User"(id),
+    title        TEXT,           -- auto-generated from first message
+    "createdAt"  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    "updatedAt"  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Individual messages inside a conversation
+CREATE TABLE IF NOT EXISTS "Message" (
+    id               TEXT        PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    "conversationId" TEXT        NOT NULL REFERENCES "Conversation"(id) ON DELETE CASCADE,
+    role             TEXT        NOT NULL,   -- 'user' | 'assistant' | 'tool'
+    content          TEXT        NOT NULL,
+    "toolCalls"      JSONB,      -- Claude tool_use blocks (if any)
+    "toolResults"    JSONB,      -- tool_result blocks returned to Claude
+    tokens           INT,        -- total tokens for this message (for cost tracking)
+    "createdAt"      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Files attached to a conversation
+CREATE TABLE IF NOT EXISTS "ConversationFile" (
+    id               TEXT        PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    "conversationId" TEXT        NOT NULL REFERENCES "Conversation"(id) ON DELETE CASCADE,
+    "userId"         TEXT        NOT NULL REFERENCES "User"(id),
+    "orgId"          TEXT        NOT NULL REFERENCES "Organisation"(id) ON DELETE CASCADE,
+    "filename"       TEXT        NOT NULL,
+    "s3Key"          TEXT        NOT NULL,  -- local path or S3 key
+    "fileType"       TEXT        NOT NULL,  -- 'pdf' | 'excel'
+    "createdAt"      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_conversation_org_user ON "Conversation"("orgId", "userId", "createdAt" DESC);
+CREATE INDEX IF NOT EXISTS idx_message_conversation  ON "Message"("conversationId", "createdAt" ASC);
+CREATE INDEX IF NOT EXISTS idx_pipeline_org_status   ON "PipelineRun"("orgId", "status", "createdAt" DESC);
+CREATE INDEX IF NOT EXISTS idx_aiusage_org_user      ON "AIUsageLog"("orgId", "userId", "createdAt" DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_org_created      ON "AuditLog"("orgId", "createdAt" DESC);
+

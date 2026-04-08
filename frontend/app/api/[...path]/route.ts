@@ -97,12 +97,7 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
     const isLocal = process.env.NODE_ENV === "development";
 
     if (!rawHost) {
-        if (isLocal) {
-            rawHost = "http://localhost:8000";
-        } else {
-            const hostHeader = request.headers.get("host") || process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL || "localhost:8000";
-            rawHost = hostHeader.includes("://") ? hostHeader : `https://${hostHeader}`;
-        }
+        rawHost = isLocal ? "http://127.0.0.1:8000" : (process.env.VERCEL_URL || "finance.vyrenzo.in");
     }
 
     // 2. Parse Host accurately
@@ -151,15 +146,19 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
 
     // 🔥 OPTIMIZATION: If we are in production, we use a slightly tighter timeout
     // to ensure we return a helpful error BEFORE the platform kills the request.
-    const timeoutLimit = !isLocal ? 8500 : 25000; 
+    const timeoutLimit = !isLocal ? 8500 : 60000; 
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutLimit);
 
     try {
         const headers = new Headers(request.headers);
+        // Remove headers that might interfere with the backend or are forbidden
+        headers.delete("host");
+        headers.delete("connection");
+        headers.delete("keep-alive");
+        
         const targetUrl = new URL(backendUrl);
-        headers.set("host", targetUrl.host);
         
         if (method === "GET" || method === "DELETE" || method === "HEAD") {
             headers.delete("content-type");

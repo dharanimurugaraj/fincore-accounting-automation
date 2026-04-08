@@ -85,7 +85,7 @@ async def progress_generator(job_id: str):
     last_percent = -1
     while True:
         query = 'SELECT "progressPercent", "progressMessage", "progressSubsteps", status FROM "PipelineRun" WHERE id = %s'
-        rows = execute_query(query, (job_id,))
+        rows = await asyncio.to_thread(execute_query, query, (job_id,))
         if rows:
             run = rows[0]
             current_percent = run["progressPercent"]
@@ -128,7 +128,7 @@ async def get_progress(job_id: str):
 async def get_job_status(job_id: str):
     """ Pollable endpoint for job status (Layer 2/6 - DB Driven) """
     query = 'SELECT status, stage, "workingSheetKey", "bankingReportKey", "errorMessage", "completedAt", "progressPercent", "progressMessage", "progressSubsteps" FROM "PipelineRun" WHERE id = %s'
-    rows = execute_query(query, (job_id,))
+    rows = await asyncio.to_thread(execute_query, query, (job_id,))
     if not rows:
         return Response(content="Job not found", status_code=404)
     

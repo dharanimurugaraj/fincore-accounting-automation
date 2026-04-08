@@ -1,263 +1,176 @@
-"""
-POST /chat         — send a message, get AI response with document context
-GET  /chat/history — fetch message history for a session
-"""
-
-import uuid
 import json
-from datetime import datetime, date
-from typing import Optional
+import uuid
+import asyncio
+import os
+import re
+import httpx
+import pdfplumber
+import pandas as pd
+from datetime import datetime
+from pathlib import Path
+from typing import Optional, List, Dict, Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Path as FastAPIPath, Query, File, UploadFile
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 
 from app.core.database import execute_query, execute_insert
 from app.core.config import settings
-from app.api.deps import CurrentUser
-from app.schemas.chat import ChatRequest
+from app.api.deps import SuperAdminUser
 
 router = APIRouter()
 
-# Cost per 1M tokens (approximate)
-COST_PER_1M = {
-    "gemini-2.5-flash-lite": {"in": 0.075, "out": 0.30},
-    "gemini-2.0-flash": {"in": 0.10, "out": 0.40},
-    "claude-sonnet-4-6": {"in": 3.00, "out": 15.00},
-}
+# OpenRouter Config
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-
-@router.post("")
-async def send_message(req: ChatRequest, user: CurrentUser):
-    """Send a message to the AI chat and return the response."""
-    org_id = user["org_id"]
-    month = req.statement_month or date.today().strftime("%Y-%m")
-
-    # Build document context from latest approved run
-    context = _build_context(org_id, month)
-
-    # Build prompt
-    system_prompt = (
-        "You are FinCore AI, a banking intelligence assistant for an Indian company "
-        "managing Working Capital facilities. You have access to the company's banking data "
-        "for the selected month. Answer questions about CC utilisation, WCDL loans, forex "
-        "transactions, interest charges, and finance costs. Be precise and cite figures. "
-        "Format currency as Indian Rupees (₹). If data is not available, say so clearly."
-    )
-
-    user_message = req.message
-    if context:
-        user_message = f"[Banking Data Context for {month}]\n{context}\n\n[User Question]\n{req.message}"
-
-    # Save user message
-    user_msg_id = f"msg_{uuid.uuid4().hex[:16]}"
-    execute_insert(
-        """
-        INSERT INTO "ChatMessage" (id, "orgId", "userId", "sessionId", role, content, "createdAt")
-        VALUES (%s, %s, %s, %s, 'user', %s, %s)
-        """,
-        (user_msg_id, org_id, user["id"], req.session_id, req.message, datetime.utcnow()),
-    )
-
-    # Call AI
-    model_used = "gemini-2.5-flash-lite"
-    response_text = ""
-    tokens_in = 0
-    tokens_out = 0
-
+def extract_text_from_file(file_path: str, file_type: str) -> Dict[str, Any]:
+    """Resilient text extraction."""
     try:
-        if settings.gemini_available:
-            import google.generativeai as genai
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-            gemini_model = genai.GenerativeModel(
-                model_name="gemini-2.5-flash-lite",
-                system_instruction=system_prompt,
-            )
-            response = gemini_model.generate_content(user_message)
-            response_text = response.text
-            if hasattr(response, "usage_metadata"):
-                tokens_in = getattr(response.usage_metadata, "prompt_token_count", 0) or 0
-                tokens_out = getattr(response.usage_metadata, "candidates_token_count", 0) or 0
-            model_used = "gemini-2.5-flash-lite"
-        else:
-            response_text = (
-                "AI service is not configured. Please set GEMINI_API_KEY in the backend .env file."
-            )
+        if not os.path.exists(file_path):
+            return {"text": "File not found.", "metadata": {}}
+            
+        if file_type == 'pdf':
+            text = ""
+            with pdfplumber.open(file_path) as pdf:
+                # Limit to 30 pages
+                for page in pdf.pages[:30]:
+                    content = page.extract_text()
+                    if content: text += content + "\n"
+            
+            # Collapse whitespace
+            text = re.sub(r'[ \t]+', ' ', text)
+            text = re.sub(r'\n+', '\n', text)
+            
+            return {
+                "text": text.strip(),
+                "metadata": {
+                    "pages": len(pdf.pages),
+                    "balance": re.findall(r"(?:Balance|Closing).{1,15}?([\d,]+\.\d{2})", text, re.I)[:1]
+                }
+            }
+        elif file_type == 'excel':
+            excel_file = pd.ExcelFile(file_path)
+            df = pd.read_excel(file_path, sheet_name=excel_file.sheet_names[0])
+            df_trunc = df.iloc[:500, :40]
+            return {"text": df_trunc.to_csv(index=False), "metadata": {"sheets": excel_file.sheet_names, "rows": len(df)}}
     except Exception as e:
-        response_text = f"I encountered an error processing your request: {str(e)}"
+        return {"text": f"Error: {str(e)}", "metadata": {}}
+    return {"text": "", "metadata": {}}
 
-    # Calculate cost
-    cost_rates = COST_PER_1M.get(model_used, {"in": 0.10, "out": 0.40})
-    cost_usd = (tokens_in * cost_rates["in"] + tokens_out * cost_rates["out"]) / 1_000_000
+def get_system_prompt(org_name: str, context: str) -> str:
+    return f"""You are FinCore Intelligence AI.
+Organisation: {org_name}
 
-    # Save assistant message
-    asst_msg_id = f"msg_{uuid.uuid4().hex[:16]}"
-    execute_insert(
-        """
-        INSERT INTO "ChatMessage"
-            (id, "orgId", "userId", "sessionId", role, content, model,
-             "tokensIn", "tokensOut", "costUsd", "createdAt")
-        VALUES (%s, %s, %s, %s, 'assistant', %s, %s, %s, %s, %s, %s)
-        """,
-        (
-            asst_msg_id, org_id, user["id"], req.session_id,
-            response_text, model_used, tokens_in, tokens_out, cost_usd,
-            datetime.utcnow(),
-        ),
-    )
+{context}
 
-    # Log AI usage
-    log_id = f"ai_{uuid.uuid4().hex[:12]}"
-    execute_insert(
-        """
-        INSERT INTO "AIUsageLog"
-            (id, "orgId", "userId", "userEmail", model,
-             "tokensIn", "tokensOut", "costUsd", action, "sessionId", "createdAt")
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'CHAT', %s, %s)
-        """,
-        (
-            log_id, org_id, user["id"], user.get("email", ""),
-            model_used, tokens_in, tokens_out, cost_usd,
-            req.session_id, datetime.utcnow(),
-        ),
-    )
+Guidelines:
+1. Derrive answers ONLY from the provided document context.
+2. Use bold text for key figures and ₹ for currency.
+3. Be professional and concise.
+"""
 
-    # Session cost
-    session_cost_rows = execute_query(
-        'SELECT COALESCE(SUM("costUsd"), 0) as total FROM "ChatMessage" WHERE "sessionId" = %s',
-        (req.session_id,),
-    )
-    session_cost = float(session_cost_rows[0]["total"]) if session_cost_rows else 0.0
+class ChatStart(BaseModel):
+    firstMessage: str
 
-    return {
-        "message": {
-            "id": asst_msg_id,
-            "session_id": req.session_id,
-            "role": "assistant",
-            "content": response_text,
-            "model": model_used,
-            "tokens_in": tokens_in,
-            "tokens_out": tokens_out,
-            "cost_usd": round(cost_usd, 6),
-            "created_at": datetime.utcnow().isoformat(),
-        },
-        "session_id": req.session_id,
-        "total_session_cost_usd": round(session_cost, 6),
-    }
+class ChatMessagePayload(BaseModel):
+    content: str
 
+@router.post("/conversations")
+async def create_conversation(req: ChatStart, user: SuperAdminUser):
+    conv_id = str(uuid.uuid4())
+    execute_insert('INSERT INTO "Conversation" (id, "orgId", "userId", title, "createdAt", "updatedAt") VALUES (%s, %s, %s, %s, %s, %s)', (conv_id, user["org_id"], user["id"], None, datetime.utcnow(), datetime.utcnow()))
+    execute_insert('INSERT INTO "Message" (id, "conversationId", role, content, "createdAt") VALUES (%s, %s, %s, %s, %s)', (str(uuid.uuid4()), conv_id, "user", req.firstMessage, datetime.utcnow()))
+    execute_insert('INSERT INTO "AIUsageLog" (id, "userId", "userEmail", "orgId", model, "tokensIn", "tokensOut", "costUsd", action, "sessionId", "createdAt") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (str(uuid.uuid4()), user["id"], user.get("email", ""), user["org_id"], "INIT", 0, 0, 0, "CHAT_START", conv_id, datetime.utcnow()))
+    return {"conversationId": conv_id}
 
-@router.get("/history")
-async def get_chat_history(
-    user: CurrentUser,
-    session_id: str = Query(...),
-    limit: int = Query(50, le=200),
-):
-    """Fetch conversation history for a session."""
-    rows = execute_query(
-        """
-        SELECT id, "sessionId", role, content, model,
-               "tokensIn", "tokensOut", "costUsd", "createdAt"
-        FROM "ChatMessage"
-        WHERE "orgId" = %s AND "sessionId" = %s
-        ORDER BY "createdAt" ASC
-        LIMIT %s
-        """,
-        (user["org_id"], session_id, limit),
-    )
+@router.get("/conversations")
+async def list_conversations(user: SuperAdminUser, offset: int = 0, limit: int = 20):
+    rows = execute_query('SELECT c.id, c.title, c."createdAt", (SELECT content FROM "Message" m WHERE m."conversationId" = c.id ORDER BY m."createdAt" DESC LIMIT 1) as "lastMessage" FROM "Conversation" c WHERE c."orgId" = %s AND c."userId" = %s ORDER BY c."createdAt" DESC LIMIT %s OFFSET %s', (user["org_id"], user["id"], limit, offset))
+    return [{"id": r["id"], "title": r["title"] or "New Conversation", "createdAt": r["createdAt"].isoformat(), "lastMessage": r["lastMessage"]} for r in rows]
 
-    messages = [
-        {
-            "id": r["id"],
-            "session_id": r["sessionId"],
-            "role": r["role"],
-            "content": r["content"],
-            "model": r["model"],
-            "tokens_in": r["tokensIn"] or 0,
-            "tokens_out": r["tokensOut"] or 0,
-            "cost_usd": float(r["costUsd"]) if r["costUsd"] else 0.0,
-            "created_at": r["createdAt"].isoformat() if r["createdAt"] else None,
-        }
-        for r in rows
-    ]
+@router.get("/conversations/{id}")
+async def get_conversation(user: SuperAdminUser, id: str = FastAPIPath(...)):
+    conv = execute_query('SELECT id, title, "createdAt" FROM "Conversation" WHERE id = %s AND "orgId" = %s', (id, user["org_id"]))
+    if not conv: raise HTTPException(404, "Not found")
+    messages = execute_query('SELECT id, role, content, "createdAt" FROM "Message" WHERE "conversationId" = %s ORDER BY "createdAt" ASC', (id,))
+    files = execute_query('SELECT id, filename, "fileType", "createdAt" FROM "ConversationFile" WHERE "conversationId" = %s', (id,))
+    return {"id": conv[0]["id"], "title": conv[0].get("title"), "messages": [{"id": m["id"], "role": m["role"], "content": m["content"], "createdAt": m["createdAt"].isoformat()} for m in messages], "files": files}
 
-    total_cost = sum(m["cost_usd"] for m in messages if m["role"] == "assistant")
-    return {
-        "session_id": session_id,
-        "messages": messages,
-        "total_cost_usd": round(total_cost, 6),
-    }
+@router.post("/conversations/{id}/upload")
+async def upload_chat_file(user: SuperAdminUser, id: str = FastAPIPath(...), file: UploadFile = File(...)):
+    ext = file.filename.split('.')[-1].lower()
+    if ext not in ['pdf', 'xlsx', 'xls']: raise HTTPException(400, "Unsupported")
+    file_id = str(uuid.uuid4())
+    local_path = Path(settings.LOCAL_STORAGE_PATH) / "chats" / id / f"{file_id}_{file.filename}"
+    local_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(local_path, "wb") as f: f.write(await file.read())
+    execute_insert('INSERT INTO "ConversationFile" (id, "conversationId", "userId", "orgId", filename, "s3Key", "fileType") VALUES (%s, %s, %s, %s, %s, %s, %s)', (file_id, id, user["id"], user["org_id"], file.filename, str(local_path), 'pdf' if ext == 'pdf' else 'excel'))
+    execute_insert('INSERT INTO "AIUsageLog" (id, "userId", "userEmail", "orgId", model, "tokensIn", "tokensOut", "costUsd", action, "sessionId", "createdAt") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (str(uuid.uuid4()), user["id"], user.get("email", ""), user["org_id"], 'FILE', 0, 0, 0, "FILE_UPLOAD", id, datetime.utcnow()))
+    return {"id": file_id}
 
+@router.post("/conversations/{id}/messages")
+async def chat_message(req: ChatMessagePayload, user: SuperAdminUser, background_tasks: BackgroundTasks, id: str = FastAPIPath(...)):
+    last_msg = execute_query('SELECT content FROM "Message" WHERE "conversationId" = %s ORDER BY "createdAt" DESC LIMIT 1', (id,))
+    if not last_msg or last_msg[0]["content"] != req.content:
+        execute_insert('INSERT INTO "Message" (id, "conversationId", role, content, "createdAt") VALUES (%s, %s, %s, %s, %s)', (str(uuid.uuid4()), id, "user", req.content, datetime.utcnow()))
+        execute_insert('UPDATE "Conversation" SET "updatedAt" = %s WHERE id = %s', (datetime.utcnow(), id))
+    
+    async def chat_stream_generator():
+        yield "data: " + json.dumps({"type": "status", "content": "Scanning documents..."}) + "\n\n"
+        files = execute_query('SELECT "s3Key", "fileType", "filename" FROM "ConversationFile" WHERE "conversationId" = %s', (id,))
+        context = ""
+        for f in files:
+            yield "data: " + json.dumps({"type": "status", "content": f"AI Scout reading {f['filename']}..."}) + "\n\n"
+            try:
+                res = await asyncio.wait_for(asyncio.to_thread(extract_text_from_file, f["s3Key"], f["fileType"]), timeout=15)
+                context += f"\n[FILE: {f['filename']}]\nCONTENT:\n{res['text']}\n\n"
+            except: 
+                yield "data: " + json.dumps({"type": "status", "content": f"Skipped {f['filename']} (too large/complex)"}) + "\n\n"
 
-# ── Context Builder ───────────────────────────────────────────────────────────
+        api_key = settings.OPENROUTER_API_KEY
+        if not api_key:
+            yield "data: " + json.dumps({"type": "content_block_delta", "delta": {"text": "API Key Missing."}}) + "\n\n"
+            return
 
-def _build_context(org_id: str, month: str) -> str:
-    """Build a text context block from the latest approved run's data."""
-    rows = execute_query(
-        """
-        SELECT "validationResult", "reportSummary"
-        FROM "PipelineRun"
-        WHERE "orgId" = %s AND "statementMonth" = %s AND status = 'APPROVED'
-        ORDER BY "completedAt" DESC LIMIT 1
-        """,
-        (org_id, month),
-    )
-    if not rows:
-        return ""
-
-    run = rows[0]
-    parts = [f"Statement Month: {month}"]
-
-    if run["validationResult"]:
+        hist = execute_query('SELECT role, content FROM "Message" WHERE "conversationId" = %s ORDER BY "createdAt" ASC', (id,))
+        messages = [{"role": m["role"], "content": m["content"]} for m in hist]
+        sys_prompt = get_system_prompt("Vyrenzo", context)
+        
+        yield "data: " + json.dumps({"type": "status", "content": "Formulating answer..."}) + "\n\n"
+        
+        full_content, tokens_in, tokens_out = "", 0, 0
         try:
-            val = json.loads(run["validationResult"])
-            checks = val.get("checks", [])
-            if checks:
-                parts.append("\nValidation Results:")
-                for c in checks[:10]:
-                    parts.append(
-                        f"  - {c['name']}: Computed ₹{c['computed']:,.2f} | "
-                        f"Bank Stated ₹{c['bank_stated']:,.2f} | Status: {c['status']}"
-                    )
-        except Exception:
-            pass
+            async with httpx.AsyncClient() as client:
+                async with client.stream("POST", OPENROUTER_URL, headers={"Authorization": f"Bearer {api_key}"}, json={"model": settings.OPENROUTER_MODEL, "messages": [{"role": "system", "content": sys_prompt}] + messages, "stream": True}, timeout=60.0) as resp:
+                    if resp.status_code != 200:
+                        error_body = await resp.aread()
+                        yield "data: " + json.dumps({"type": "content_block_delta", "delta": {"text": f"AI Error ({resp.status_code}): {error_body.decode()}"}}) + "\n\n"
+                        return
+                        
+                    async for line in resp.aiter_lines():
+                        if not line.startswith("data: "): continue
+                        data_str = line[6:].strip()
+                        if data_str == "[DONE]": break
+                        try:
+                            data = json.loads(data_str)
+                            if 'choices' in data and data['choices']:
+                                delta = data['choices'][0].get('delta', {})
+                                if 'content' in delta:
+                                    txt = delta['content']
+                                    full_content += txt
+                                    yield "data: " + json.dumps({"type": "content_block_delta", "delta": {"text": txt}}) + "\n\n"
+                            if 'usage' in data:
+                                tokens_in, tokens_out = data['usage'].get('prompt_tokens', 0), data['usage'].get('completion_tokens', 0)
+                        except: continue
 
-    if run["reportSummary"]:
-        try:
-            rs = json.loads(run["reportSummary"])
-            parts.append(f"\nKPIs:")
-            parts.append(f"  - CC Utilisation: {rs.get('cc_utilisation_pct', 'N/A')}%")
-            parts.append(f"  - Finance Cost: {rs.get('finance_cost_pct', 'N/A')}% p.a.")
-            parts.append(f"  - Total CC Interest: ₹{rs.get('total_cc_interest', 0):,.2f}")
-            parts.append(f"  - Total WCDL Interest: ₹{rs.get('total_wcdl_interest', 0):,.2f}")
-        except Exception:
-            pass
-
-    # WCDL summary
-    wcdl_rows = execute_query(
-        'SELECT "loanNumber", principal, roi, status FROM "WCDLLoan" WHERE "orgId" = %s AND "statementMonth" = %s',
-        (org_id, month),
-    )
-    if wcdl_rows:
-        parts.append("\nWCDL Loans:")
-        for w in wcdl_rows:
-            parts.append(
-                f"  - Loan {w['loanNumber']}: ₹{float(w['principal']):,.0f} Cr at {float(w['roi'])*100:.2f}% ({w['status']})"
-            )
-
-    # Forex summary
-    forex_rows = execute_query(
-        """
-        SELECT currency, COUNT(*) as cnt, SUM("excessVsAvg") as excess
-        FROM "ForexTransaction"
-        WHERE "orgId" = %s AND "statementMonth" = %s
-        GROUP BY currency
-        """,
-        (org_id, month),
-    )
-    if forex_rows:
-        parts.append("\nForex Transactions:")
-        for f in forex_rows:
-            parts.append(
-                f"  - {f['currency']}: {f['cnt']} transactions, "
-                f"Excess Charges ₹{float(f['excess'] or 0):,.2f}"
-            )
-
-    return "\n".join(parts)
+            if full_content.strip():
+                execute_insert('INSERT INTO "Message" (id, "conversationId", role, content, "createdAt") VALUES (%s, %s, %s, %s, %s)', (str(uuid.uuid4()), id, "assistant", full_content, datetime.utcnow()))
+                if tokens_in == 0: tokens_in = len(sys_prompt + "".join([m["content"] for m in messages])) // 4
+                if tokens_out == 0: tokens_out = len(full_content) // 4
+                cost_usd = (tokens_in * 1.0 + tokens_out * 2.0) / 1_000_000.0
+                execute_insert('INSERT INTO "AIUsageLog" (id, "userId", "userEmail", "orgId", model, "tokensIn", "tokensOut", "costUsd", action, "sessionId", "createdAt") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (str(uuid.uuid4()), user["id"], user.get("email", ""), user["org_id"], settings.OPENROUTER_MODEL, tokens_in, tokens_out, cost_usd, "DOC_CHAT", id, datetime.utcnow()))
+            yield "data: [DONE]\n\n"
+        except Exception as e:
+            yield "data: " + json.dumps({"type": "content_block_delta", "delta": {"text": f"System Error: {str(e)}"}}) + "\n\n"
+            
+    return StreamingResponse(chat_stream_generator(), media_type="text/event-stream")

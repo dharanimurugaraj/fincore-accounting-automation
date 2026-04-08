@@ -27,6 +27,7 @@
     "@prisma/adapter-pg": "^7.6.0",
     "@prisma/client": "^7.6.0",
     "@prisma/config": "^7.6.0",
+    "anthropic": "^0.0.0",
     "dotenv": "^17.4.0",
     "pg": "^8.20.0",
     "prisma": "^7.6.0"
