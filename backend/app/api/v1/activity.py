@@ -78,15 +78,41 @@ async def list_ai_usage(
         query += " AND al.\"createdAt\" >= NOW() - INTERVAL '30 days'"
 
     # Aggregated Summary (Run this BEFORE pagination)
-    from_idx = query.upper().find("FROM")
-    summary_q = f"""
+    summary_q = """
         SELECT COUNT(*) as total_queries,
-               SUM("tokensIn") as total_tokens_in,
-               SUM("tokensOut") as total_tokens_out,
-               SUM("costUsd") as total_cost_usd
-        {query[from_idx:]}
+               COALESCE(SUM("tokensIn"), 0) as total_tokens_in,
+               COALESCE(SUM("tokensOut"), 0) as total_tokens_out,
+               COALESCE(SUM("costUsd"), 0) as total_cost_usd
+        FROM "AIUsageLog" al
+        WHERE 1=1
     """
-    summary_rows = execute_query(summary_q, tuple(params))
+    s_params = []
+    
+    # Replicate main filter logic for summary
+    if current_role == 1:
+        summary_q += ' AND al."orgId" = %s'
+        s_params.append(org_id)
+    elif current_role > 1:
+        summary_q += ' AND al."userId" = %s'
+        s_params.append(current_uid)
+        
+    if model:
+        summary_q += " AND al.model = %s"
+        s_params.append(model)
+        
+    if user_email:
+        summary_q += ' AND al."userEmail" ILIKE %s'
+        s_params.append(f"%{user_email}%")
+
+    if time_filter == "1d":
+        summary_q += " AND al.\"createdAt\" >= NOW() - INTERVAL '1 day'"
+    elif time_filter == "7d":
+        summary_q += " AND al.\"createdAt\" >= NOW() - INTERVAL '7 days'"
+    elif time_filter == "30d":
+        summary_q += " AND al.\"createdAt\" >= NOW() - INTERVAL '30 days'"
+
+    import asyncio
+    summary_rows = await asyncio.to_thread(execute_query, summary_q, tuple(s_params))
     s = summary_rows[0] if summary_rows else {}
     summary = {
         "total_queries": s.get("total_queries") or 0,
@@ -97,7 +123,7 @@ async def list_ai_usage(
 
     # Pagination & Execution
     query += ' ORDER BY al."createdAt" DESC LIMIT %s OFFSET %s'
-    rows = execute_query(query, tuple(params + [limit, offset]))
+    rows = await asyncio.to_thread(execute_query, query, tuple(params + [limit, offset]))
 
     entries = []
     from datetime import timedelta

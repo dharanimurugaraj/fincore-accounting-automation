@@ -118,6 +118,9 @@ async def get_current_user(res: HTTPAuthorizationCredentials = Security(security
             }
 
         user = rows[0]
+        full_name = decoded_token.get('name', '')
+        first_name = full_name.split(' ')[0] if full_name else email.split('@')[0]
+        
         print(f"[auth] User Identity Verified: {email} (Role: {user['roleId']})")
         return {
             "id": user["id"],
@@ -126,6 +129,8 @@ async def get_current_user(res: HTTPAuthorizationCredentials = Security(security
             "role": user["role_name"],
             "allowed_pages": user["allowedPages"] or ["*"],
             "email": email,
+            "name": full_name,
+            "first_name": first_name,
             "photo_url": photo_url,
         }
 

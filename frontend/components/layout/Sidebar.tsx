@@ -16,7 +16,9 @@ import {
   Activity,
   ShieldCheck,
   Users,
-  UserCog
+  UserCog,
+  MessageSquare,
+  Sparkles
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthContext";
 import { useLayout } from "@/components/layout/LayoutContext";
@@ -26,6 +28,10 @@ const CORE_ITEMS = [
   { href: "/customers", label: "Customers", icon: Users },
   { href: "/upload", label: "Upload", icon: Upload },
   { href: "/documents", label: "Documents", icon: FileText }
+];
+
+const AI_ITEMS = [
+  { href: "/chat", label: "FinCore AI", icon: MessageSquare, badge: "NEW" }
 ];
 
 const ANALYTICS_ITEMS = [
@@ -80,12 +86,29 @@ export default function Sidebar() {
                 href={item.href}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-primary/10 text-primary font-bold"
+                    ? (item.badge ? "bg-ai-violet/10 text-ai-violet font-bold" : "bg-primary/10 text-primary font-bold")
                     : "text-t-muted hover:bg-neutral-row/50 hover:text-t-heading"
                 }`}
               >
-                <item.icon className="h-5 w-5 shrink-0" />
-                {!collapsed && <span>{item.label}</span>}
+                <div className="relative">
+                  <item.icon className="h-5 w-5 shrink-0" />
+                  {item.badge && !collapsed && (
+                    <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ai-violet opacity-75"></span>
+                       <span className="relative inline-flex rounded-full h-2 w-2 bg-ai-violet"></span>
+                    </span>
+                  )}
+                </div>
+                {!collapsed && (
+                  <div className="flex items-center gap-2">
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span className="text-[8px] bg-ai-violet text-white px-1 rounded font-bold uppercase tracking-tighter">
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
+                )}
               </Link>
             );
           })}
@@ -123,6 +146,7 @@ export default function Sidebar() {
       <nav className="mt-6 px-2 overflow-y-auto h-[calc(100vh-5rem)] scrollbar-hide pb-10">
         <NavGroup title="Core Platform" items={CORE_ITEMS} />
         <NavGroup title="Financial Pipelines" items={ANALYTICS_ITEMS} />
+        {profile?.role_id === 0 && <NavGroup title="Intelligence" items={AI_ITEMS} />}
         <NavGroup title="System & Policy" items={SYSTEM_ITEMS} />
 
         {/* Admin Section */}
