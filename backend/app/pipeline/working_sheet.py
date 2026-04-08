@@ -28,15 +28,22 @@ def generate_working_sheet(
         period_from = account.get("period_from", "N/A")
         period_to = account.get("period_to", "N/A")
         ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=13)
+        limit_val = account.get("cc_limit") or 0.0
         header_cell = ws.cell(row=1, column=1)
-        header_cell.value = f"{bank} - {acct_no[-3:]} {acct_type} Account | From {period_from} to {period_to}"
+        header_cell.value = f"{bank} - {acct_no[-3:]} {acct_type} Account | Limit: ₹{limit_val:,.2f} | From {period_from} to {period_to}"
         header_cell.font = Font(bold=True, size=12)
         header_cell.alignment = Alignment(horizontal="center")
 
         # Row 3: Columns
+        # Use dynamic names from scout where available, otherwise defaults
+        h_narration = account.get("narration_col_name") or "Narration"
+        h_ref = account.get("ref_col_name") or "Ref No"
+        h_wd = account.get("withdrawal_col_name") or "Withdrawal (Dr)"
+        h_dep = account.get("deposit_col_name") or "Deposit (Cr)"
+        
         headers = [
-            "Date", "Narration", "Ref No", "Withdrawal", "Deposit", 
-            "Positive Bal", "No. of Days", "CC", "WCDL", 
+            "Date", h_narration, h_ref, h_wd, h_dep, 
+            "True Balance", "Positive Bal", "No. of Days", "CC", "WCDL", 
             "Buyers Credit", "Pre-Qualified Loan", "Total Utilisation",
             "Daily Interest"
         ]
@@ -51,6 +58,9 @@ def generate_working_sheet(
             cell.fill = header_fill
             cell.alignment = Alignment(horizontal="center")
         
+        # Styling for gaps
+        gap_fill = PatternFill(fill_type="solid", fgColor="E8F5E9") # Lite Green
+        
         # Transactions expansion
         txns = account.get("transactions", [])
         start_date = account.get("period_from")
@@ -64,62 +74,74 @@ def generate_working_sheet(
         
         for i, txn in enumerate(full_month_txns):
             row_idx = i + 4
-            bal = float(txn.get("closing_balance", 0))
             
-            # Date, Narration, Ref, W/D
+            # Fill Lite Green if it's a synthetic "NO TRANSACTION" row
+            if not txn.get("real", True):
+                for col_idx in range(1, 15):
+                    ws.cell(row=row_idx, column=col_idx).fill = gap_fill
+
+            # Date, Narration, Ref
             ws.cell(row=row_idx, column=1).value = txn.get("date")
             ws.cell(row=row_idx, column=2).value = txn.get("narration")
             ws.cell(row=row_idx, column=3).value = txn.get("ref_number")
             
-            # Numeric columns
+            # W/D
+            wd_val = txn.get("withdrawal") or 0.0
             wd_cell = ws.cell(row=row_idx, column=4)
-            wd_cell.value = txn.get("withdrawal")
+            wd_cell.value = wd_val
             wd_cell.number_format = '#,##0.00'
             
+            dep_val = txn.get("deposit") or 0.0
             dep_cell = ws.cell(row=row_idx, column=5)
-            dep_cell.value = txn.get("deposit")
+            dep_cell.value = dep_val
             dep_cell.number_format = '#,##0.00'
             
-            # Logic: If balance is CR (positive) -> Positive Bal = value, No. of Days = 1, CC = 0
-            pos_bal_cell = ws.cell(row=row_idx, column=6)
-            cc_cell = ws.cell(row=row_idx, column=8)
-            num_days_cell = ws.cell(row=row_idx, column=7)
-            
-            if bal >= 0:
-                pos_bal_cell.value = bal
-                num_days_cell.value = 1
-                cc_cell.value = 0
+            # 1. Hidden True Balance (Engine)
+            true_bal_cell = ws.cell(row=row_idx, column=6)
+            if i == 0:
+                true_bal_cell.value = f"={open_bal}-D{row_idx}+E{row_idx}"
             else:
-                pos_bal_cell.value = ""
-                num_days_cell.value = ""
-                cc_cell.value = abs(bal)
+                true_bal_cell.value = f"=F{row_idx-1}-D{row_idx}+E{row_idx}"
+            true_bal_cell.number_format = '#,##0.00'
             
+            # 2. Positive Balance
+            pos_bal_cell = ws.cell(row=row_idx, column=7)
+            pos_bal_cell.value = f'=IF(F{row_idx}>0, F{row_idx}, "")'
             pos_bal_cell.number_format = '#,##0.00'
+            
+            # No. of Days is always 1 in this expanded view
+            num_days_cell = ws.cell(row=row_idx, column=8)
+            num_days_cell.value = 1
+            
+            # 3. CC Drawing (Negative Balance to Positive display)
+            cc_cell = ws.cell(row=row_idx, column=9)
+            cc_cell.value = f'=IF(F{row_idx}<0, ABS(F{row_idx}), 0)'
             cc_cell.number_format = '#,##0.00'
                 
-            # WCDL: Hardcoded formula from plan
-            wcdl_cell = ws.cell(row=row_idx, column=9)
-            wcdl_cell.value = 550000000 
+            # WCDL (Drawn Loan Placeholder)
+            wcdl_cell = ws.cell(row=row_idx, column=10)
+            wcdl_cell.value = 0.0
             wcdl_cell.number_format = '#,##0.00'
             
             # Buyers Credit / Pre-Qualified (Placeholders)
-            bc_cell = ws.cell(row=row_idx, column=10)
+            bc_cell = ws.cell(row=row_idx, column=11)
             bc_cell.value = 0
             bc_cell.number_format = '#,##0.00'
             
-            pq_cell = ws.cell(row=row_idx, column=11)
+            pq_cell = ws.cell(row=row_idx, column=12)
             pq_cell.value = 0
             pq_cell.number_format = '#,##0.00'
             
-            # Total Utilisation: =CC+WCDL+Buyers Credit+Pre-Qualified Loan
-            total_util_cell = ws.cell(row=row_idx, column=12)
-            total_util_cell.value = f"=H{row_idx}+I{row_idx}+J{row_idx}+K{row_idx}"
+            # Total Utilisation: Sum DRAWN funds only (CC + WCDL + BC + PQ)
+            total_util_cell = ws.cell(row=row_idx, column=13)
+            total_util_cell.value = f"=I{row_idx}+J{row_idx}+K{row_idx}+L{row_idx}"
             total_util_cell.number_format = '#,##0.00'
             
             # Daily Interest: =(Total Utilisation * ROI / 100) / 365
-            daily_int_cell = ws.cell(row=row_idx, column=13)
-            daily_int_cell.value = f"=(L{row_idx}*{roi}/100)/365"
+            daily_int_cell = ws.cell(row=row_idx, column=14)
+            daily_int_cell.value = f"=(M{row_idx}*{roi}/100)/365"
             daily_int_cell.number_format = '#,##0.00'
+
             
         # Summary row
         last_row = len(full_month_txns) + 4
@@ -127,7 +149,7 @@ def generate_working_sheet(
         ws.cell(row=last_row, column=1).font = Font(bold=True)
         
         # Sum of CC, WCDL, Total Util, Daily Int
-        for col_letter in ['H', 'I', 'L', 'M']:
+        for col_letter in ['I', 'J', 'K', 'L', 'M', 'N']:
             col_idx = ord(col_letter) - ord('A') + 1
             sum_cell = ws.cell(row=last_row, column=col_idx)
             sum_cell.value = f"=SUM({col_letter}4:{col_letter}{last_row-1})"
@@ -138,17 +160,19 @@ def generate_working_sheet(
         avg_row = last_row + 1
         ws.cell(row=avg_row, column=1).value = "AVG. UTILISATION"
         ws.cell(row=avg_row, column=1).font = Font(bold=True)
-        avg_cell = ws.cell(row=avg_row, column=12)
-        avg_cell.value = f"=AVERAGE(L4:L{last_row-1})"
+        avg_cell = ws.cell(row=avg_row, column=13)
+        avg_cell.value = f"=AVERAGE(M4:M{last_row-1})"
         avg_cell.font = Font(bold=True)
         avg_cell.number_format = '#,##0.00'
 
-    # Set Column Widths (Aesthetics)
-    ws.column_dimensions['A'].width = 15
-    ws.column_dimensions['B'].width = 40
-    for col in range(4, 14):
-        col_letter = openpyxl.utils.get_column_letter(col)
-        ws.column_dimensions[col_letter].width = 18
+        # Set Column Widths and Hide True Balance
+        ws.column_dimensions['A'].width = 15
+        ws.column_dimensions['B'].width = 40
+        ws.column_dimensions['F'].hidden = True
+        for col in range(4, 15):
+            col_letter = openpyxl.utils.get_column_letter(col)
+            if col_letter not in ['A', 'B']:
+                ws.column_dimensions[col_letter].width = 18
 
     # Save file
     storage_dir = "./storage/working_sheets"
@@ -193,13 +217,16 @@ def _expand_to_full_month(transactions, start_str, end_str, open_bal):
         if day_txns:
             for t in day_txns:
                 t["real"] = True
+                wd = float(t.get("withdrawal") or 0)
+                dp = float(t.get("deposit") or 0)
+                current_bal = current_bal - wd + dp
+                t["closing_balance"] = current_bal
                 expanded.append(t)
-                current_bal = t.get("closing_balance", current_bal)
         else:
-            # Carry forward
+            # Carry forward mathematically
             expanded.append({
                 "date": curr.strftime("%Y-%m-%d"),
-                "narration": "CARRY FORWARD BALANCE",
+                "narration": "NO TRANSACTION FOR THE DAY",
                 "ref_number": "-",
                 "withdrawal": 0,
                 "deposit": 0,

@@ -44,11 +44,6 @@ class PDFValidator:
             }
             
             is_bank = checks["has_statement"] and (checks["has_balance"] or checks["has_account"])
-            is_known_bank = any([
-                checks["has_hdfc"],
-                checks["has_sbi"],
-                checks["has_icici"]
-            ])
             
             if not is_bank:
                 return {
@@ -58,7 +53,7 @@ class PDFValidator:
             
             bank = "HDFC" if checks["has_hdfc"] else \
                    "SBI" if checks["has_sbi"] else \
-                   "ICICI" if checks["has_icici"] else "UNKNOWN"
+                   "ICICI" if checks["has_icici"] else "UNIVERSAL" # Changed from UNKNOWN to UNIVERSAL
             
             # Extract account number
             acct_match = re.search(
