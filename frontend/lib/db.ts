@@ -26,7 +26,8 @@ export const prisma = (() => {
     if (!connectionString) throw new Error("DATABASE_URL is missing");
     if (globalForPrisma.prisma) return globalForPrisma.prisma;
     
-    const client = new PrismaClient(prismaClientOptions);
+    // Using a double-cast to ensure IDE compatibility with Driver Adapters
+    const client = new PrismaClient(prismaClientOptions as any) as unknown as PrismaClient;
     return client;
   } catch (error) {
     console.error("🔥 DATABASE_INIT_ERROR:", error);
