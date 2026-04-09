@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import "dotenv/config";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient() as any;
 
 async function main() {
   console.log('🌱 Seeding database...');
