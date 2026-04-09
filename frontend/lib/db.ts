@@ -16,12 +16,22 @@ if (!connectionString) {
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    // @ts-ignore
-    adapter,
-    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  });
+const prismaClientOptions = {
+  adapter,
+  log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+};
+
+export const prisma = (() => {
+  try {
+    if (!connectionString) throw new Error("DATABASE_URL is missing");
+    return globalForPrisma.prisma || new PrismaClient(prismaClientOptions);
+  } catch (error) {
+    console.error("🔥 DATABASE_INIT_ERROR:", error);
+    // Return a proxy that throws on any access to alert the developer
+    return new Proxy({} as PrismaClient, {
+      get: () => { throw new Error("Database not initialized. Check server logs."); }
+    });
+  }
+})();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
