@@ -13,7 +13,7 @@ UNIVERSAL APPROACH:
 """
 
 import pdfplumber
-import fitz          # PyMuPDF
+import pypdf
 import json
 import os
 import httpx
@@ -403,24 +403,25 @@ class PDFExtractor:
     async def _get_pages_text(self, pdf_path: str) -> List[str]:
         def _read():
             pages = []
-            with pdfplumber.open(pdf_path) as pdf:
-                for page in pdf.pages:
+            try:
+                reader = pypdf.PdfReader(pdf_path)
+                for page in reader.pages:
                     pages.append(page.extract_text() or "")
+            except Exception as e:
+                print(f"ERROR: pypdf extraction failed: {e}")
+                # Fallback to pdfplumber if pypdf fails
+                with pdfplumber.open(pdf_path) as pdf:
+                    for page in pdf.pages:
+                        pages.append(page.extract_text() or "")
             return pages
         return await asyncio.to_thread(_read)
 
     async def _render_pdf_to_base64(self, pdf_path: str) -> List[str]:
-        def _render():
-            images = []
-            doc = fitz.open(pdf_path)
-            for page in doc:
-                pix = page.get_pixmap(matrix=fitz.Matrix(1.5, 1.5))
-                img_data = pix.tobytes("png")
-                b64 = base64.b64encode(img_data).decode("utf-8")
-                images.append(f"data:image/png;base64,{b64}")
-            doc.close()
-            return images
-        return await asyncio.to_thread(_render)
+        """
+        Image rendering is disabled on Vercel because PyMuPDF (fitz) requires 
+        compiled binaries. This disables legacy vision fallback.
+        """
+        return []
 
     async def _structure_image(
         self, image_url: str, user_context: Optional[dict] = None,
