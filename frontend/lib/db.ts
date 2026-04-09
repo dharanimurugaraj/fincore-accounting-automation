@@ -18,13 +18,16 @@ const adapter = new PrismaPg(pool);
 
 const prismaClientOptions = {
   adapter,
-  log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+  log: (process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"]) as any,
 };
 
 export const prisma = (() => {
   try {
     if (!connectionString) throw new Error("DATABASE_URL is missing");
-    return globalForPrisma.prisma || new PrismaClient(prismaClientOptions);
+    if (globalForPrisma.prisma) return globalForPrisma.prisma;
+    
+    const client = new PrismaClient(prismaClientOptions);
+    return client;
   } catch (error) {
     console.error("🔥 DATABASE_INIT_ERROR:", error);
     // Return a proxy that throws on any access to alert the developer
