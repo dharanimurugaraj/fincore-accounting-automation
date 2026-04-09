@@ -69,13 +69,20 @@ export default function UploadPage() {
   const [isDragging, setIsDragging] = useState(false)
   const eventSourceRef = useRef<EventSource | null>(null)
 
-  // Recover job from localStorage on mount (Layer 2)
+  // Recover job dynamically from Backend (Layer 2 - No Hardcoding)
   useEffect(() => {
-    const savedJobId = localStorage.getItem("fincore_active_job");
-    if (savedJobId && !jobId) {
-      console.log("Recovered active job:", savedJobId);
-      setJobId(savedJobId);
-    }
+    const checkActiveJob = async () => {
+      try {
+        const data = await api.get<{ job_id: string | null }>("process/active");
+        if (data.job_id) {
+          console.log("Dynamically recovered active job:", data.job_id);
+          setJobId(data.job_id);
+        }
+      } catch (err) {
+        console.error("Failed to recover active job:", err);
+      }
+    };
+    checkActiveJob();
   }, []);
 
   const handleUpload = async () => {
@@ -99,7 +106,6 @@ export default function UploadPage() {
         }
         console.log("Job started:", job_id)
         setJobId(job_id)
-        localStorage.setItem("fincore_active_job", job_id);
     } catch (err) {
         console.error("Upload error:", err)
         alert("Failed to start processing")
@@ -139,15 +145,13 @@ export default function UploadPage() {
         }
         
         if (mappedProgress.status === "error") {
-            localStorage.removeItem("fincore_active_job");
             return
         }
 
         timer = setTimeout(pollStatus, 3000)
       } catch (err: any) {
         if (err.status === 404) {
-            console.warn("Job not found, clearing stale ID");
-            localStorage.removeItem("fincore_active_job");
+            console.warn("Job not found, clearing state");
             setJobId(null);
             return;
         }
@@ -282,7 +286,6 @@ export default function UploadPage() {
                     <span>Overall Pipeline Progress</span>
                     <button 
                         onClick={() => {
-                            localStorage.removeItem("fincore_active_job");
                             setJobId(null);
                             setProgress(null);
                             setFiles([]);
@@ -407,16 +410,24 @@ export default function UploadPage() {
                   <h3 className="text-slate-900 text-2xl font-black mb-2 italic">Analysis Succeeded</h3>
                   <p className="text-slate-400 text-xs font-medium mb-10">Reports are ready. AI verified all transactions and formulas.</p>
                   <div className="flex flex-col sm:flex-row gap-5">
-                    <a
-                      href={`/api/process/download?path=${encodeURIComponent(progress.downloads.working_sheet)}`}
-                      className="flex-1 py-5 bg-[#0ABFBC] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-110 transition-all shadow-xl shadow-[#0ABFBC]/30 active:scale-95 text-decoration-none"
-                      download
-                    >📊 Working Sheet</a>
-                    <a
-                      href={`/api/process/download?path=${encodeURIComponent(progress.downloads.banking_report)}`}
-                      className="flex-1 py-5 bg-slate-900 text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-125 transition-all shadow-xl shadow-slate-900/30 active:scale-95 text-decoration-none"
-                      download
-                    >📋 Banking Report</a>
+                    <button
+                      onClick={() => {
+                        const token = localStorage.getItem("fincore_token");
+                        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+                        const url = `${baseUrl}/process/download?path=${encodeURIComponent(progress.downloads!.working_sheet)}&token=${token}`;
+                        window.open(url, "_blank");
+                      }}
+                      className="flex-1 py-5 bg-[#0D1B3E] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-110 transition-all shadow-xl shadow-[#0D1B3E]/30 active:scale-95"
+                    >📊 Working Sheet</button>
+                    <button
+                      onClick={() => {
+                        const token = localStorage.getItem("fincore_token");
+                        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+                        const url = `${baseUrl}/process/download?path=${encodeURIComponent(progress.downloads!.banking_report)}&token=${token}`;
+                        window.open(url, "_blank");
+                      }}
+                      className="flex-1 py-5 bg-[#0ABFBC] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-110 transition-all shadow-xl shadow-[#0ABFBC]/30 active:scale-95"
+                    >📋 Banking Report</button>
                   </div>
                 </motion.div>
               )}
@@ -433,7 +444,7 @@ export default function UploadPage() {
                         <p className="text-red-900 text-xs font-black tracking-tight">{progress.detail}</p>
                     </div>
                     <button 
-                        onClick={() => {localStorage.removeItem("fincore_active_job"); setJobId(null); setProgress(null); setFiles([]);}}
+                        onClick={() => {setJobId(null); setProgress(null); setFiles([]);}}
                         className="px-10 py-4 bg-red-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:bg-red-700 shadow-xl shadow-red-600/20"
                     >Restart Pipeline</button>
                 </motion.div>
@@ -442,7 +453,7 @@ export default function UploadPage() {
               {progress?.status === "complete" && (
                 <div className="mt-8 text-center pb-20">
                     <button 
-                        onClick={() => {localStorage.removeItem("fincore_active_job"); setJobId(null); setProgress(null); setFiles([]);}}
+                        onClick={() => {setJobId(null); setProgress(null); setFiles([]);}}
                         className="px-10 py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all hover:bg-slate-200"
                     >Analyze Another Statement</button>
                 </div>

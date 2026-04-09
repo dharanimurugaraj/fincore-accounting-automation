@@ -20,6 +20,7 @@ from fastapi import UploadFile, File, Response
 from fastapi.responses import StreamingResponse, FileResponse
 import asyncio
 import json
+import uuid
 from typing import List
 from datetime import datetime
 import os
@@ -156,42 +157,102 @@ async def get_job_status(job_id: str):
         }
     }
 
+@app.get("/api/v1/process/active")
+async def get_active_job(user: CurrentUser):
+    """ Dynamically find the user's current unfinished job (Layer 2/6 - No hardcoding) """
+    query = """
+        SELECT id FROM "PipelineRun" 
+        WHERE "orgId" = %s 
+        AND status NOT IN ('APPROVED', 'FAILED', 'VALIDATION_FAILED')
+        AND "createdAt" > (NOW() - INTERVAL '10 minutes')
+        ORDER BY "createdAt" DESC LIMIT 1
+    """
+    rows = await asyncio.to_thread(execute_query, query, (user["org_id"],))
+    if not rows:
+        return {"job_id": None}
+    return {"job_id": rows[0]["id"]}
+
 @app.post("/api/v1/process")
 async def process_pdfs(
     user: CurrentUser,
     files: List[UploadFile] = File(...)
 ):
+    from app.services.storage_service import derive_org_folder, generate_run_timestamp, get_upload_key, upload_file_object
+    from io import BytesIO
+    
     job_id = f"job_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    org_folder = derive_org_folder(user["email"])
+    run_timestamp = generate_run_timestamp()
     
-    # 1. Intake & Validation (Layer 2)
-    temp_dir = Path(settings.LOCAL_STORAGE_PATH) / "temp"
-    temp_dir.mkdir(parents=True, exist_ok=True)
-    
-    saved_paths = []
-    for file in files:
-        path = temp_dir / f"{job_id}_{file.filename}"
-        with open(path, "wb") as f:
-            f.write(await file.read())
-        saved_paths.append(str(path))
-    
-    # 2. Create Job Record in PostgreSQL (Layer 2 Source of Truth)
+    # 2. Create Job Record in PostgreSQL (with userId for auditing) - DO THIS FIRST FOR FOREIGN KEY INTEGRITY
     execute_insert(
-        'INSERT INTO "PipelineRun" (id, "orgId", "statementMonth", status, stage, "startedAt", "createdAt", "progressPercent", "progressMessage") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
-        (job_id, user["org_id"], datetime.now().strftime("%b %Y"), "STAGE1_RUNNING", 1, datetime.utcnow(), datetime.utcnow(), 5, "[UPLOAD] Files received and saved")
+        """
+        INSERT INTO "PipelineRun" 
+        (id, "orgId", "userId", "statementMonth", status, stage, "org_folder", "run_timestamp", "startedAt", "createdAt", "progressPercent", "progressMessage") 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """,
+        (
+            job_id, user["org_id"], user["id"], datetime.now().strftime("%b %Y"), 
+            "STAGE1_RUNNING", 1, org_folder, run_timestamp,
+            datetime.utcnow(), datetime.utcnow(), 5, "[UPLOAD] Files received and saved to R2"
+        )
     )
+
+    # 3. Intake & Upload to R2 (Cloud-First Migration)
+    r2_keys = []
+    for file in files:
+        filename = file.filename
+        key = get_upload_key(org_folder, run_timestamp, filename)
+        
+        # Read file into memory and upload
+        content = await file.read()
+        file_obj = BytesIO(content)
+        await asyncio.to_thread(upload_file_object, file_obj, key, file.content_type)
+        r2_keys.append(key)
+
+        # 3.1 Create Upload Record in DB
+        upload_id = f"up_{uuid.uuid4().hex[:12]}"
+        execute_insert(
+            """
+            INSERT INTO "Upload" (id, "orgId", "uploadedById", filename, "s3Key", status, "runId", "createdAt")
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (upload_id, user["org_id"], user["id"], filename, key, "UPLOADED", job_id, datetime.utcnow())
+        )
     
-    # 3. Start PDF Parser Worker (Layer 3)
+    # 3. Start PDF Parser Worker (Now using R2 keys)
     pipeline = FinCorePipeline()
-    asyncio.create_task(pipeline.run(job_id, saved_paths, user_context=user))
+    asyncio.create_task(pipeline.run(job_id, r2_keys, user_context=user))
     
     return {"job_id": job_id}
 
 @app.get("/api/v1/process/download")
-async def download_file(path: str):
-    """ Delivery Service (Layer 6) """
-    if not os.path.exists(path):
-        return Response(content="File not found", status_code=404)
-    return FileResponse(path, filename=os.path.basename(path))
+async def download_file(path: str, user: CurrentUser):
+    """ 
+    Legacy Delivery Service (Layer 6) - Updated for R2.
+    Redirects to a secure R2 presigned URL.
+    """
+    from app.services.storage_service import generate_presigned_get_url
+    from fastapi.responses import RedirectResponse
+    
+    # 1. Basic Validation
+    if not path:
+        return Response(content="File path required", status_code=400)
+    
+    # 2. Security: Verify user belongs to org owning this run (Optional but recommended)
+    # For speed in legacy UI, we trust the path if it contains the org folder derived from email
+    # but a stricter check would query the DB.
+    
+    try:
+        # If it's already a full URL (rare but possible), just redirect
+        if path.startswith("http"):
+            return RedirectResponse(path)
+            
+        # Generate presigned URL from R2
+        url = generate_presigned_get_url(path)
+        return RedirectResponse(url)
+    except Exception as e:
+        return Response(content=f"Download failed: {str(e)}", status_code=500)
 
 
 

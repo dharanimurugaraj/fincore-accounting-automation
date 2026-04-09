@@ -193,9 +193,12 @@ exports.Prisma.PipelineRunScalarFieldEnum = {
   progressPercent: 'progressPercent',
   progressMessage: 'progressMessage',
   progressSubsteps: 'progressSubsteps',
+  runTimestamp: 'runTimestamp',
+  orgFolder: 'orgFolder',
   updatedAt: 'updatedAt',
   createdAt: 'createdAt',
-  customerId: 'customerId'
+  customerId: 'customerId',
+  userId: 'userId'
 };
 
 exports.Prisma.ParsedAccountScalarFieldEnum = {
@@ -346,6 +349,37 @@ exports.Prisma.FormulaConfigurationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.ConversationScalarFieldEnum = {
+  id: 'id',
+  orgId: 'orgId',
+  userId: 'userId',
+  title: 'title',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ConversationFileScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  userId: 'userId',
+  orgId: 'orgId',
+  filename: 'filename',
+  s3Key: 's3Key',
+  fileType: 'fileType',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  role: 'role',
+  content: 'content',
+  toolCalls: 'toolCalls',
+  toolResults: 'toolResults',
+  tokens: 'tokens',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -406,7 +440,10 @@ exports.Prisma.ModelName = {
   AIUsageLog: 'AIUsageLog',
   AuditLog: 'AuditLog',
   Approval: 'Approval',
-  FormulaConfiguration: 'FormulaConfiguration'
+  FormulaConfiguration: 'FormulaConfiguration',
+  Conversation: 'Conversation',
+  ConversationFile: 'ConversationFile',
+  Message: 'Message'
 };
 
 /**

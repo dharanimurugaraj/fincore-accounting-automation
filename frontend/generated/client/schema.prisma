@@ -44,23 +44,25 @@ model Role {
 }
 
 model Organisation {
-  id             String                 @id @default(cuid())
-  name           String
-  legalName      String?                @map("legalName")
-  address        String?
-  logoUrl        String?                @map("logoUrl")
-  departments    String[]               @default([])
-  createdAt      DateTime               @default(now()) @map("createdAt")
-  users          User[]
-  pipelineRuns   PipelineRun[]
-  uploads        Upload[]
-  wcdlLoans      WCDLLoan[]
-  forexTrans     ForexTransaction[]
-  agentConfigs   AgentConfig[]
-  formulaConfigs FormulaConfiguration[]
-  aiUsageLogs    AIUsageLog[]
-  auditLogs      AuditLog[]
-  customers      Customer[]
+  id                String                 @id @default(cuid())
+  name              String
+  legalName         String?                @map("legalName")
+  address           String?
+  logoUrl           String?                @map("logoUrl")
+  departments       String[]               @default([])
+  createdAt         DateTime               @default(now()) @map("createdAt")
+  users             User[]
+  pipelineRuns      PipelineRun[]
+  uploads           Upload[]
+  wcdlLoans         WCDLLoan[]
+  forexTrans        ForexTransaction[]
+  agentConfigs      AgentConfig[]
+  formulaConfigs    FormulaConfiguration[]
+  aiUsageLogs       AIUsageLog[]
+  auditLogs         AuditLog[]
+  customers         Customer[]
+  conversations     Conversation[]
+  conversationFiles ConversationFile[]
 
   @@map("Organisation")
 }
@@ -91,26 +93,29 @@ model Customer {
 }
 
 model User {
-  id           String       @id @default(cuid())
-  email        String       @unique
-  name         String?
-  title        String?
-  phone        String?
-  photoUrl     String?      @map("photoUrl")
-  roleId       Int          @default(2) @map("roleId")
-  role         Role         @relation(fields: [roleId], references: [id])
-  orgId        String       @map("orgId")
-  organisation Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  firebaseUid  String?      @unique @map("firebaseUid")
-  theme        String?      @default("dark")
-  timezone     String?      @default("UTC")
-  dateFormat   String?      @default("MM/DD/YYYY") @map("dateFormat")
-  emailAlerts  Boolean?     @default(true) @map("emailAlerts")
-  lastLogin    DateTime?    @map("lastLogin")
-  createdAt    DateTime     @default(now()) @map("createdAt")
-  uploads      Upload[]
-  aiUsageLogs  AIUsageLog[]
-  auditLogs    AuditLog[]
+  id                String             @id @default(cuid())
+  email             String             @unique
+  name              String?
+  title             String?
+  phone             String?
+  photoUrl          String?            @map("photoUrl")
+  roleId            Int                @default(2) @map("roleId")
+  role              Role               @relation(fields: [roleId], references: [id])
+  orgId             String             @map("orgId")
+  organisation      Organisation       @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  firebaseUid       String?            @unique @map("firebaseUid")
+  theme             String?            @default("dark")
+  timezone          String?            @default("UTC")
+  dateFormat        String?            @default("MM/DD/YYYY") @map("dateFormat")
+  emailAlerts       Boolean?           @default(true) @map("emailAlerts")
+  lastLogin         DateTime?          @map("lastLogin")
+  createdAt         DateTime           @default(now()) @map("createdAt")
+  uploads           Upload[]
+  aiUsageLogs       AIUsageLog[]
+  auditLogs         AuditLog[]
+  conversations     Conversation[]
+  conversationFiles ConversationFile[]
+  createdRuns       PipelineRun[]      @relation("RunCreator")
 
   @@map("User")
 }
@@ -135,6 +140,8 @@ model PipelineRun {
   progressPercent   Int?               @default(0) @map("progressPercent")
   progressMessage   String?            @map("progressMessage")
   progressSubsteps  Json?              @map("progressSubsteps")
+  runTimestamp      String?            @map("runTimestamp")
+  orgFolder         String?            @map("orgFolder")
   updatedAt         DateTime           @default(now()) @updatedAt @map("updatedAt")
   createdAt         DateTime           @default(now()) @map("createdAt")
   uploads           Upload[]
@@ -143,8 +150,11 @@ model PipelineRun {
   approvals         Approval[]
   customerId        String?            @map("customerId")
   customer          Customer?          @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  userId            String?            @map("userId")
+  creator           User?              @relation("RunCreator", fields: [userId], references: [id], onDelete: SetNull)
   parsedAccounts    ParsedAccount[]
 
+  @@index([orgId, status, createdAt(sort: Desc)], name: "idx_pipeline_org_status")
   @@map("PipelineRun")
 }
 
@@ -292,6 +302,7 @@ model AIUsageLog {
   organisation Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
   user         User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([orgId, userId, createdAt(sort: Desc)], name: "idx_aiusage_org_user")
   @@map("AIUsageLog")
 }
 
@@ -307,6 +318,7 @@ model AuditLog {
   metadata     Json?
   createdAt    DateTime     @default(now()) @map("createdAt")
 
+  @@index([orgId, createdAt(sort: Desc)], name: "idx_audit_org_created")
   @@map("AuditLog")
 }
 
@@ -334,4 +346,51 @@ model FormulaConfiguration {
   createdAt    DateTime     @default(now()) @map("createdAt")
 
   @@map("FormulaConfiguration")
+}
+
+model Conversation {
+  id                String             @id @default(uuid())
+  orgId             String             @map("orgId")
+  organisation      Organisation       @relation(fields: [orgId], references: [id])
+  userId            String             @map("userId")
+  user              User               @relation(fields: [userId], references: [id])
+  title             String?
+  messages          Message[]
+  conversationFiles ConversationFile[]
+  createdAt         DateTime           @default(now()) @map("createdAt")
+  updatedAt         DateTime           @default(now()) @updatedAt @map("updatedAt")
+
+  @@index([orgId, userId, createdAt(sort: Desc)], name: "idx_conversation_org_user")
+  @@map("Conversation")
+}
+
+model ConversationFile {
+  id             String       @id @default(uuid())
+  conversationId String       @map("conversationId")
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId         String       @map("userId")
+  user           User         @relation(fields: [userId], references: [id])
+  orgId          String       @map("orgId")
+  organisation   Organisation @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  filename       String
+  s3Key          String       @map("s3Key")
+  fileType       String       @map("fileType") // 'pdf' | 'excel'
+  createdAt      DateTime     @default(now()) @map("createdAt")
+
+  @@map("ConversationFile")
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String       @map("conversationId")
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String
+  content        String
+  toolCalls      Json?        @map("toolCalls")
+  toolResults    Json?        @map("toolResults")
+  tokens         Int?
+  createdAt      DateTime     @default(now()) @map("createdAt")
+
+  @@index([conversationId, createdAt(sort: Asc)], name: "idx_message_conversation")
+  @@map("Message")
 }
