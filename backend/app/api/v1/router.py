@@ -18,6 +18,7 @@ from app.api.v1.activity import router as activity_router
 from app.api.v1.audit import router as audit_router
 from app.api.v1.customers import router as customers_router
 from app.api.v1.chat import router as chat_router
+from app.api.v1.runs import router as runs_router
 
 api_v1_router = APIRouter()
 
@@ -51,3 +52,4 @@ api_v1_router.include_router(activity_router, prefix="/activity",       tags=["A
 api_v1_router.include_router(audit_router,    prefix="/audit-logs",     tags=["Audit"])
 api_v1_router.include_router(customers_router, prefix="/customers",     tags=["Customers"])
 api_v1_router.include_router(chat_router,      prefix="/chat",          tags=["Chat Super Admin"])
+api_v1_router.include_router(runs_router,      prefix="/runs",          tags=["Pipeline Runs"])

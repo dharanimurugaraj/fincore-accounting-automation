@@ -63,6 +63,12 @@ class Settings:
     # ── Notification ────────────────────────────────────────────────────────
     RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
 
+    # ── Cloudflare R2 ───────────────────────────────────────────────────────
+    R2_ENDPOINT_URL: str = os.getenv("R2_ENDPOINT_URL", "")
+    R2_BUCKET_NAME: str = os.getenv("R2_BUCKET_NAME", "fincore-storage")
+    R2_ACCESS_KEY_ID: str = os.getenv("R2_ACCESS_KEY_ID", "")
+    R2_SECRET_ACCESS_KEY: str = os.getenv("R2_SECRET_ACCESS_KEY", "")
+
     @property
     def gemini_available(self) -> bool:
         return bool(self.GEMINI_API_KEY and not self.GEMINI_API_KEY.startswith("REPLACE"))

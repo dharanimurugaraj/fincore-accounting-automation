@@ -63,18 +63,29 @@ def _init_firebase():
     else:
         print(f"WARN: No Firebase credentials found. Checked path: {_cred_path}")
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 
-async def get_current_user(res: HTTPAuthorizationCredentials = Security(security)):
+async def get_current_user(
+    request: Request,
+    res: Optional[HTTPAuthorizationCredentials] = Security(security)
+):
     """Dependency to get the currently authenticated user based on Firebase Token."""
     # ENSURE FIREBASE IS INITIALIZED (Critical for Vercel Serverless)
     if not firebase_admin._apps:
         _init_firebase()
     
-    token = res.credentials
+    # Support both Header (Bearer) and Query Param (?token=) for downloads
+    token = None
+    if res:
+        token = res.credentials
+    if not token:
+        token = request.query_params.get("token")
+        
+    if not token:
+        raise HTTPException(status_code=403, detail="Not authenticated")
     try:
-        # 1. Verify Firebase Token with large clock skew tolerance (60s) for Windows sync jitter
+        # 1. Verify Firebase Token with large clock skew tolerance (60s max allowed)
         decoded_token = auth.verify_id_token(token, clock_skew_seconds=60)
 
 

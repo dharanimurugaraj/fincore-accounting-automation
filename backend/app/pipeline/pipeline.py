@@ -1,7 +1,8 @@
 import os
 import asyncio
 import uuid
-from app.core.database import execute_insert
+from io import BytesIO
+from app.core.database import execute_insert, execute_query
 from datetime import datetime
 from typing import List, Dict, Any
 from .validator import PDFValidator
@@ -41,16 +42,35 @@ class FinCorePipeline:
         Output: { ... }
         """
         try:
-            # 1. Validation
-            self.update_progress(job_id, "validation", "running", "Validating bank statements...", 10)
+            # 1. Validation & Download from R2
+            from app.services.storage_service import download_file_to_memory, derive_org_folder, get_excel_key, upload_file_object
+            
+            self.update_progress(job_id, "validation", "running", "Downloading and validating bank statements...", 10)
             validated_pdfs = []
             errors = []
             
-            # Parallelize validation using to_thread for CPU-bound PDF reading
-            async def validate_async(path):
-                return await asyncio.to_thread(self.validator.validate, path)
+            # Temporary storage for downloaded files
+            temp_dir = f"./storage/temp/{job_id}"
+            os.makedirs(temp_dir, exist_ok=True)
 
-            validation_results = await asyncio.gather(*[validate_async(p) for p in pdf_paths])
+            async def download_and_validate(s3_key):
+                try:
+                    filename = s3_key.split("/")[-1]
+                    local_path = os.path.join(temp_dir, filename)
+                    
+                    # Download from R2
+                    file_mem = await asyncio.to_thread(download_file_to_memory, s3_key)
+                    with open(local_path, "wb") as f:
+                        f.write(file_mem.getbuffer())
+                    
+                    # Validate local file
+                    result = await asyncio.to_thread(self.validator.validate, local_path)
+                    return result
+                except Exception as e:
+                    return {"valid": False, "reason": str(e), "path": s3_key}
+
+            # Gather results
+            validation_results = await asyncio.gather(*[download_and_validate(k) for k in pdf_paths])
             
             for result in validation_results:
                 if result["valid"]:
@@ -64,7 +84,7 @@ class FinCorePipeline:
             self.update_progress(job_id, "validation", "done", f"Validated {len(validated_pdfs)} PDF(s)", 20, 
                                  sub_steps=[f"✓ {p['bank']} (..{p['account_number'][-4:]})" for p in validated_pdfs])
 
-            # 2. Extraction
+            # 2. Extraction (Existing logic applies to local temp files)
             accounts_data = []
             wcdl_data = []
             ai_usage = []
@@ -76,17 +96,12 @@ class FinCorePipeline:
                 last_reported_page = 0
                 def callback(current: int, total: int):
                     nonlocal last_reported_page
-                    
-                    # Update status map
                     if current >= total:
                         file_progress[filename] = "Finalized"
                     else:
                         file_progress[filename] = f"Analyzing Page {current}/{total}"
                     
-                    # THROTTLE: Only write to DB every 5 pages or on finalization
-                    # This prevents "connection pool exhausted" errors on large PDFs (50+ pages)
                     should_update = (current == 1 or current == total or (current - last_reported_page) >= 5)
-                    
                     if should_update:
                         last_reported_page = current
                         sub_steps = [f"{'✓' if 'Finalized' in prog else '⏳'} {f}: {prog}" for f, prog in file_progress.items()]
@@ -94,9 +109,7 @@ class FinCorePipeline:
                 return callback
 
             async def process_single_pdf(pdf_info):
-                print(f"\n[PIPELINE] Starting Extraction for: {os.path.basename(pdf_info['path'])}")
                 filename = os.path.basename(pdf_info["path"])
-                # FIX: Extraction can be CPU bound or blocking, ensure it reports back to UI loop
                 extraction_result = await self.extractor.extract(
                     pdf_info["path"], 
                     bank_name=pdf_info.get("bank", "UNKNOWN"),
@@ -107,7 +120,6 @@ class FinCorePipeline:
                 extracted = extraction_result.get("data", {})
                 usage = extraction_result.get("usage", {})
                 
-                # Tag with metadata (Prioritize Scouted Name/Number over Validator guess)
                 if not extracted.get("bank_name") or extracted.get("bank_name") == "UNKNOWN":
                     extracted["bank_name"] = pdf_info.get("bank")
                 
@@ -116,16 +128,13 @@ class FinCorePipeline:
                 
                 return {"extracted": extracted, "usage": usage}
 
-            # Parallelize extraction
             results = await asyncio.gather(*[process_single_pdf(p) for p in validated_pdfs])
             
-            # Persist to DB (Layer 3 Source of Truth)
             self.update_progress(job_id, "extraction", "running", "Persisting extracted data to DB...", 50)
             for res in results:
                 extracted = res["extracted"]
                 if res["usage"]: ai_usage.append(res["usage"])
                 
-                # Insert Parsed Account
                 acct_id = f"acct_{uuid.uuid4().hex[:8]}"
                 execute_insert(
                     'INSERT INTO "ParsedAccount" (id, "runId", "bankName", "accountNo", "accountType", "periodFrom", "periodTo", "openingBal", "closingBal") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
@@ -136,7 +145,6 @@ class FinCorePipeline:
                     )
                 )
                 
-                # Insert Transactions
                 for txn in extracted.get("transactions", []):
                     bal = float(txn.get("closing_balance", 0))
                     dr_cr = "CR" if bal >= 0 else "DR"
@@ -152,16 +160,13 @@ class FinCorePipeline:
                             bal, dr_cr, cc_val, pos_bal, no_days, txn.get("category")
                         )
                     )
-                
                 accounts_data.append(extracted)
 
-            # Preparation: Expand transactions for full month BEFORE parallel generation
+            # Preparation
             from .working_sheet import _expand_to_full_month
             import calendar
             for acc in accounts_data:
                 start_date = acc.get("period_from")
-                
-                # Auto-Snap to Full Calendar Month
                 if start_date and "-" in start_date:
                     try:
                         dt = datetime.strptime(start_date[:10], "%Y-%m-%d")
@@ -170,55 +175,76 @@ class FinCorePipeline:
                         last_day = dt.replace(day=last_day_num)
                         acc["period_from"] = first_day.strftime("%Y-%m-%d")
                         acc["period_to"] = last_day.strftime("%Y-%m-%d")
-                    except Exception:
-                        pass
+                    except Exception: pass
 
-                start_date = acc.get("period_from")
-                end_date = acc.get("period_to")
-                open_bal = acc.get("opening_balance", 0)
-                txns = acc.get("transactions", [])
-                acc["full_month_transactions"] = _expand_to_full_month(txns, start_date, end_date, open_bal)
+                acc["full_month_transactions"] = _expand_to_full_month(acc.get("transactions", []), acc.get("period_from"), acc.get("period_to"), acc.get("opening_balance", 0))
 
             # Step 3: Computation
             self.update_progress(job_id, "computation", "running", "Computing financial formulas...", 60)
             computed = self.engine.compute_all(accounts_data, wcdl_data, ai_usage=ai_usage)
             
-            # Step 4: Excel Generation
+            # Step 4: Excel Generation & Upload to R2
             period_data = self._get_period_context(accounts_data)
             period_slug = period_data["slug"] 
             
-            self.update_progress(job_id, "working_sheet", "running", "Generating Excel Reports in parallel...", 70)
+            self.update_progress(job_id, "working_sheet", "running", "Generating and uploading Excel Reports...", 70)
             
-            # Start BOTH in parallel (Layer 4 & 5)
-            # data is already expanded, so both will see the full month rows
-            ws_task = asyncio.to_thread(generate_working_sheet, accounts_data, wcdl_data, computed, job_id, period_slug)
-            br_task = asyncio.to_thread(generate_banking_report, accounts_data, computed, job_id, period_slug)
+            # Fetch run metadata (org_folder, timestamp)
+            run_rows = execute_query('SELECT "org_folder", "run_timestamp" FROM "PipelineRun" WHERE id = %s', (job_id,))
+            if not run_rows or not run_rows[0].get("org_folder"):
+                # Fallback if not set (backwards compat during migration)
+                email = user_context.get("email") if user_context else "unknown@fincore.app"
+                org_folder = derive_org_folder(email)
+                run_timestamp = generate_run_timestamp()
+            else:
+                org_folder = run_rows[0]["org_folder"]
+                run_timestamp = run_rows[0]["run_timestamp"]
 
-            ws_path, report_path = await asyncio.gather(ws_task, br_task)
+            # Generate local temp files
+            ws_path = await asyncio.to_thread(generate_working_sheet, accounts_data, wcdl_data, computed, job_id, period_slug)
+            br_path = await asyncio.to_thread(generate_banking_report, accounts_data, computed, job_id, period_slug)
+
+            # Upload to R2
+            ws_key = get_excel_key(org_folder, run_timestamp, "workingsheet")
+            br_key = get_excel_key(org_folder, run_timestamp, "bankingreport")
+
+            async def upload_async(local_path, key):
+                with open(local_path, "rb") as f:
+                    file_obj = BytesIO(f.read())
+                    return await asyncio.to_thread(upload_file_object, file_obj, key, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+            await asyncio.gather(
+                upload_async(ws_path, ws_key),
+                upload_async(br_path, br_key)
+            )
+
+            # Update PipelineRun with R2 keys
+            from app.core.database import update_pipeline_s3_key
+            update_pipeline_s3_key(job_id, "workingSheetKey", ws_key)
+            update_pipeline_s3_key(job_id, "bankingReportKey", br_key)
             
-            # Update PipelineRun with file paths and final status (Layer 6)
-            from app.core.database import update_pipeline_s3_key, update_pipeline_status
-            update_pipeline_s3_key(job_id, "workingSheetKey", ws_path)
-            update_pipeline_s3_key(job_id, "bankingReportKey", report_path)
-            
-            # Use execute_query to update status and completedAt concisely
-            from app.core.database import execute_query
             execute_query(
                 'UPDATE "PipelineRun" SET status = %s, "completedAt" = %s WHERE id = %s',
                 ("APPROVED", datetime.utcnow(), job_id)
             )
             
             self.update_progress(
-                job_id, "complete", "complete", "Analysis complete. Download links ready.", 100, 
-                sub_steps=[f"✓ {os.path.basename(ws_path)}", f"✓ {os.path.basename(report_path)}"],
-                downloads={"working_sheet": ws_path, "banking_report": report_path}
+                job_id, "complete", "complete", "Analysis complete. Reports uploaded to R2.", 100, 
+                sub_steps=[f"✓ {os.path.basename(ws_key)}", f"✓ {os.path.basename(br_key)}"],
+                downloads={"working_sheet": ws_key, "banking_report": br_key}
             )
             
+            # Cleanup temp files
+            import shutil
+            shutil.rmtree(temp_dir, ignore_errors=True)
+            if os.path.exists(ws_path): os.remove(ws_path)
+            if os.path.exists(br_path): os.remove(br_path)
+
             return {
                 "success": True,
                 "jobId": job_id,
-                "workingSheet": ws_path,
-                "bankingReport": report_path,
+                "workingSheetKey": ws_key,
+                "bankingReportKey": br_key,
                 "count": len(accounts_data)
             }
 

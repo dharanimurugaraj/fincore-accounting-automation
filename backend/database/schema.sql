@@ -96,6 +96,13 @@ CREATE TABLE IF NOT EXISTS "PipelineRun" (
     "startedAt" TIMESTAMP WITH TIME ZONE,
     "completedAt" TIMESTAMP WITH TIME ZONE,
     "customerId" TEXT REFERENCES "Customer"(id) ON DELETE SET NULL,
+    metadata JSONB,
+    "progressPercent" INTEGER DEFAULT 0,
+    "progressMessage" TEXT,
+    "progressSubsteps" JSONB,
+    "org_folder" TEXT NOT NULL DEFAULT '',
+    "run_timestamp" VARCHAR(15) NOT NULL DEFAULT '',
+    "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

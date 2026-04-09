@@ -115,6 +115,7 @@ model User {
   auditLogs     AuditLog[]
   conversations Conversation[]
   conversationFiles ConversationFile[]
+  createdRuns   PipelineRun[] @relation("RunCreator")
 
   @@map("User")
 }
@@ -139,6 +140,8 @@ model PipelineRun {
   progressPercent  Int?           @default(0) @map("progressPercent")
   progressMessage  String?        @map("progressMessage")
   progressSubsteps Json?          @map("progressSubsteps")
+  runTimestamp    String?        @map("runTimestamp")
+  orgFolder       String?        @map("orgFolder")
   updatedAt         DateTime       @default(now()) @updatedAt @map("updatedAt")
   createdAt         DateTime       @default(now()) @map("createdAt")
   uploads           Upload[]
@@ -147,6 +150,8 @@ model PipelineRun {
   approvals         Approval[]
   customerId        String?        @map("customerId")
   customer          Customer?      @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  userId            String?        @map("userId")
+  creator           User?          @relation("RunCreator", fields: [userId], references: [id], onDelete: SetNull)
   parsedAccounts    ParsedAccount[]
 
   @@index([orgId, status, createdAt(sort: Desc)], name: "idx_pipeline_org_status")

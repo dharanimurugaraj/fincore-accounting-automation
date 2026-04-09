@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setIdToken(token);
             localStorage.setItem("fincore_token", token);
         }
-    }, 1000 * 60 * 45); // Every 45 mins
+    }, 1000 * 60 * 10); // Every 10 mins (Ensures 'Unlimited' feeling)
 
     return () => {
         unsubscribe();
