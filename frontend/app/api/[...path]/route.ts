@@ -146,7 +146,7 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
 
     // 🔥 OPTIMIZATION: If we are in production, we use a slightly tighter timeout
     // to ensure we return a helpful error BEFORE the platform kills the request.
-    const timeoutLimit = !isLocal ? 8500 : 60000; 
+    const timeoutLimit = !isLocal ? 25000 : 60000; 
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutLimit);
