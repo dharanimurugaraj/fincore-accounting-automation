@@ -49,8 +49,10 @@ class FinCorePipeline:
             validated_pdfs = []
             errors = []
             
-            # Temporary storage for downloaded files
-            temp_dir = f"./storage/temp/{job_id}"
+            # Temporary storage for downloaded files (Vercel-friendly /tmp path)
+            is_vercel = os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME")
+            temp_root = "/tmp/fincore/temp" if is_vercel else "./storage/temp"
+            temp_dir = os.path.join(temp_root, job_id)
             os.makedirs(temp_dir, exist_ok=True)
 
             async def download_and_validate(s3_key):
@@ -189,16 +191,16 @@ class FinCorePipeline:
             
             self.update_progress(job_id, "working_sheet", "running", "Generating and uploading Excel Reports...", 70)
             
-            # Fetch run metadata (org_folder, timestamp)
-            run_rows = execute_query('SELECT "org_folder", "run_timestamp" FROM "PipelineRun" WHERE id = %s', (job_id,))
-            if not run_rows or not run_rows[0].get("org_folder"):
+            # Fetch run metadata (orgFolder, runTimestamp) from DB
+            run_rows = execute_query('SELECT "orgFolder", "runTimestamp" FROM "PipelineRun" WHERE id = %s', (job_id,))
+            if not run_rows or not run_rows[0].get("orgFolder"):
                 # Fallback if not set (backwards compat during migration)
                 email = user_context.get("email") if user_context else "unknown@fincore.app"
                 org_folder = derive_org_folder(email)
                 run_timestamp = generate_run_timestamp()
             else:
-                org_folder = run_rows[0]["org_folder"]
-                run_timestamp = run_rows[0]["run_timestamp"]
+                org_folder = run_rows[0]["orgFolder"]
+                run_timestamp = run_rows[0]["runTimestamp"]
 
             # Generate local temp files
             ws_path = await asyncio.to_thread(generate_working_sheet, accounts_data, wcdl_data, computed, job_id, period_slug)

@@ -184,23 +184,26 @@ async def process_pdfs(
     org_folder = derive_org_folder(user["email"])
     run_timestamp = generate_run_timestamp()
     
-    # 2. Create Job Record in PostgreSQL (with userId for auditing) - DO THIS FIRST FOR FOREIGN KEY INTEGRITY
-    execute_insert(
-        """
-        INSERT INTO "PipelineRun" 
-        (id, "orgId", "userId", "statementMonth", status, stage, "org_folder", "run_timestamp", "startedAt", "createdAt", "progressPercent", "progressMessage") 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """,
-        (
-            job_id, user["org_id"], user["id"], datetime.now().strftime("%b %Y"), 
-            "STAGE1_RUNNING", 1, org_folder, run_timestamp,
-            datetime.utcnow(), datetime.utcnow(), 5, "[UPLOAD] Files received and saved to R2"
+    # 2. Create Job Record in PostgreSQL (with userId for auditing)
+    try:
+        execute_insert(
+            """
+            INSERT INTO "PipelineRun" 
+            (id, "orgId", "userId", "statementMonth", status, stage, "orgFolder", "runTimestamp", "startedAt", "createdAt", "progressPercent", "progressMessage") 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                job_id, user["org_id"], user["id"], datetime.now().strftime("%b %Y"), 
+                "STAGE1_RUNNING", 1, org_folder, run_timestamp,
+                datetime.utcnow(), datetime.utcnow(), 5, "[UPLOAD] Files received and saved to R2"
+            )
         )
-    )
+    except Exception as e:
+        print(f"ERROR: Failed to create PipelineRun record: {e}")
+        return Response(content=f"Database error: {str(e)}", status_code=500)
 
-    # 3. Intake & Upload to R2 (Cloud-First Migration)
-    r2_keys = []
-    for file in files:
+    # 3. Intake & Upload to R2 (Parallelized for Vercel performance)
+    async def upload_task(file: UploadFile):
         filename = file.filename
         key = get_upload_key(org_folder, run_timestamp, filename)
         
@@ -208,9 +211,8 @@ async def process_pdfs(
         content = await file.read()
         file_obj = BytesIO(content)
         await asyncio.to_thread(upload_file_object, file_obj, key, file.content_type)
-        r2_keys.append(key)
-
-        # 3.1 Create Upload Record in DB
+        
+        # Create Upload Record
         upload_id = f"up_{uuid.uuid4().hex[:12]}"
         execute_insert(
             """
@@ -219,6 +221,14 @@ async def process_pdfs(
             """,
             (upload_id, user["org_id"], user["id"], filename, key, "UPLOADED", job_id, datetime.utcnow())
         )
+        return key
+
+    try:
+        # Resolve all uploads in parallel to stay within Vercel's 10s limit
+        r2_keys = await asyncio.gather(*[upload_task(f) for f in files])
+    except Exception as e:
+        print(f"ERROR: R2 Upload failed: {e}")
+        return Response(content=f"Storage upload failed: {str(e)}", status_code=500)
     
     # 3. Start PDF Parser Worker (Now using R2 keys)
     pipeline = FinCorePipeline()
