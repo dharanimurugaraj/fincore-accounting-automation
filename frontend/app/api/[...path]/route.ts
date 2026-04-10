@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
  */
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 300; // Allow up to 300s (Vercel Pro max) for long-running pipeline jobs
 
 // Next.js 15/16: params is now a Promise
 type RouteProps = {
@@ -144,9 +145,9 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
 
     console.log(`[Proxy] ${method} -> ${backendUrl}`);
 
-    // 🔥 OPTIMIZATION: If we are in production, we use a slightly tighter timeout
-    // to ensure we return a helpful error BEFORE the platform kills the request.
-    const timeoutLimit = !isLocal ? 25000 : 60000; 
+    // Allow up to 295s in production (just under the 300s Vercel Pro maxDuration),
+    // and 60s locally. This prevents cold-start and long-running pipeline timeouts.
+    const timeoutLimit = !isLocal ? 295000 : 60000;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutLimit);
