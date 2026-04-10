@@ -174,8 +174,9 @@ def generate_working_sheet(
             if col_letter not in ['A', 'B']:
                 ws.column_dimensions[col_letter].width = 18
 
-    # Save file
-    storage_dir = "./storage/working_sheets"
+    # Save file — use /tmp on Vercel (read-only filesystem), local path otherwise
+    _is_vercel = os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME")
+    storage_dir = "/tmp/fincore/working_sheets" if _is_vercel else "./storage/working_sheets"
     os.makedirs(storage_dir, exist_ok=True)
     date_prefix = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"{date_prefix}_workingsheet.xlsx"

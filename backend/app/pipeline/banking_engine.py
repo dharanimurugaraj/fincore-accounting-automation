@@ -470,7 +470,8 @@ def generate_banking_report_package(statements: List[Dict[str, str]], loan_track
     build_consolidated_detail(wb, all_parsed_rows, loan_tracker)
     build_summary_report(wb, all_parsed_rows, loan_tracker, month_year)
 
-    output_dir = "storage/reports"
+    _is_vercel = os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME")
+    output_dir = "/tmp/fincore/reports" if _is_vercel else "storage/reports"
     os.makedirs(output_dir, exist_ok=True)
     filename = f"Banking_Performance_Report_{month_year.replace('/', '_')}.xlsx"
     file_path = os.path.join(output_dir, filename)
