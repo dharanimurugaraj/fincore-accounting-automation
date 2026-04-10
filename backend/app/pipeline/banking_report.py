@@ -146,8 +146,9 @@ def generate_banking_report(
     snapshot_ws = wb.create_sheet("Report Snapshot", 0)
     _populate_snapshot(snapshot_ws, accounts_data, cumulative_interest, computed, period_label)
 
-    # Save file
-    storage_dir = "./storage/banking_reports"
+    # Save file — use /tmp on Vercel (read-only filesystem), local path otherwise
+    _is_vercel = os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME")
+    storage_dir = "/tmp/fincore/banking_reports" if _is_vercel else "./storage/banking_reports"
     os.makedirs(storage_dir, exist_ok=True)
     date_prefix = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"{date_prefix}_bankingreport.xlsx"

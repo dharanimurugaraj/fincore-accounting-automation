@@ -121,13 +121,30 @@ export default function UploadPage() {
 
       try {
         const data = await api.get<any>(`process/status/${jobId}`)
-        
+
+        // Backend progress.message is formatted as "[STEP_NAME] human text..."
+        // Extract the step name from the prefix to drive the UI stepper.
+        const rawMessage: string = data.progress?.message || "";
+        const stepMatch = rawMessage.match(/^\[(\w+)\]/);
+        const extractedStep = stepMatch ? stepMatch[1].toLowerCase() : null;
+        const detail = rawMessage.replace(/^\[\w+\]\s*/i, "") || "Processing...";
+
+        const isApproved = data.status === "APPROVED" || data.status === "complete";
+        const isFailed = data.status === "FAILED" || data.status === "VALIDATION_FAILED" || data.status === "ERROR";
+
+        // Map backend step names to frontend PIPELINE_STEPS ids
+        const STEP_MAP: Record<string, string> = {
+          upload: "upload", validation: "validation", extraction: "extraction",
+          computation: "computation", working_sheet: "working_sheet",
+          banking_report: "banking_report", complete: "complete", error: "error",
+        };
+        const mappedStep = isApproved ? "complete" : (STEP_MAP[extractedStep || ""] || "upload");
+
         // Map backend response to ProgressState
         const mappedProgress: ProgressState = {
-          step: data.progress?.step || "upload",
-          status: data.status === "APPROVED" || data.status === "complete" ? "complete" : 
-                  data.status === "FAILED" ? "error" : "running",
-          detail: data.progress?.detail || "Processing...",
+          step: mappedStep,
+          status: isApproved ? "complete" : isFailed ? "error" : "running",
+          detail,
           percent: data.progress?.percent || 0,
           sub_steps: data.progress?.sub_steps || [],
           downloads: data.working_sheet && data.banking_report ? {
