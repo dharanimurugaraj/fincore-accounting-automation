@@ -63,7 +63,7 @@ def get_db_connection():
     # Robust Connection Parameters for Proxy environments
     connect_args = {
         "cursor_factory": RealDictCursor,
-        "connect_timeout": 10, # Give it time to resolve through the proxy
+        "connect_timeout": 7, # Give it time to resolve, but fail fast enough to retry within proxy limits
         "keepalives": 1,
         "keepalives_idle": 30,
         "keepalives_interval": 10,
@@ -73,20 +73,28 @@ def get_db_connection():
     # Determine SSL
     ssl = 'require' if ('prisma' in url or '.io' in url or 'neon' in url or 'sslmode=require' in url) else 'prefer'
     
-    # Retry logic (3 attempts)
+    # Retry logic (3 attempts - total max 21s)
     last_err = None
     for attempt in range(3):
         try:
+            # Detect Neon direct vs pooled
+            if "neon.tech" in url and "-pooler" not in url and attempt == 0:
+                logger.debug("Neon detected: Connecting to direct endpoint. This may be slower during cold starts.")
+            
             return psycopg2.connect(url, sslmode=ssl, **connect_args)
         except Exception as e:
             last_err = e
-            logger.warning(f"Database connection attempt {attempt+1} failed: {e}")
+            logger.warning(f"Database connection attempt {attempt+1}/3 failed: {e}")
+            if "connection limit" in str(e).lower() or "too many connections" in str(e).lower():
+                logger.error("TIP: You are hitting Neon/Postgres connection limits. Add a POOLED connection string to DATABASE_URL.")
+            
             if attempt < 2:
                 import time
-                time.sleep(1)
+                time.sleep(1) # Wait between retries
     
     logger.error(f"DATABASE CONNECT FAILED after all attempts: {last_err}")
-    raise ConnectionError(f"Database connection blocked. Error: {str(last_err)}")
+    # Provide a more helpful error for the Proxy to catch
+    raise ConnectionError(f"Backend failed to connect to database. Check DATABASE_URL in Vercel. Error: {str(last_err)}")
 
 
 
