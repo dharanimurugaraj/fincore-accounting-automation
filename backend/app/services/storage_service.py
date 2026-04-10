@@ -4,6 +4,7 @@ from botocore.exceptions import ClientError
 from datetime import datetime
 from io import BytesIO
 from typing import Optional
+from botocore.config import Config
 from app.core.config import settings
 
 class StorageError(Exception):
@@ -17,7 +18,8 @@ def get_r2_client():
         endpoint_url=settings.R2_ENDPOINT_URL.rstrip("/"), # Ensure no trailing slash
         aws_access_key_id=settings.R2_ACCESS_KEY_ID,
         aws_secret_access_key=settings.R2_SECRET_ACCESS_KEY,
-        region_name="auto"
+        region_name="auto",
+        config=Config(signature_version="s3v4")
     )
 
 def derive_org_folder(email: str) -> str:

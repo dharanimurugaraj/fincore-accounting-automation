@@ -40,7 +40,7 @@ async def create_run(user: CurrentUser, data: RunCreate):
         execute_insert(
             """
             INSERT INTO "PipelineRun" 
-            (id, "orgId", "statementMonth", status, stage, "org_folder", "run_timestamp", "startedAt", "createdAt", "progressPercent", "progressMessage") 
+            (id, "orgId", "statementMonth", status, stage, "orgFolder", "runTimestamp", "startedAt", "createdAt", "progressPercent", "progressMessage") 
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
@@ -88,7 +88,7 @@ async def start_run(run_id: str, user: CurrentUser):
     """
     # Verify run exists and belongs to org
     rows = execute_query(
-        'SELECT id, "org_folder", "run_timestamp" FROM "PipelineRun" WHERE id = %s AND "orgId" = %s',
+        'SELECT id, "orgFolder", "runTimestamp" FROM "PipelineRun" WHERE id = %s AND "orgId" = %s',
         (run_id, user["org_id"])
     )
     if not rows:
@@ -131,7 +131,7 @@ async def list_runs(user: CurrentUser, limit: int = 50, offset: int = 0):
     
     if is_super_admin:
         query = """
-            SELECT pr.id, pr."statementMonth", pr.status, pr.stage, pr."orgId", pr."org_folder", pr."run_timestamp", 
+            SELECT pr.id, pr."statementMonth", pr.status, pr.stage, pr."orgId", pr."orgFolder", pr."runTimestamp", 
                    pr."validationResult", pr."errorMessage", pr."startedAt", pr."completedAt", pr."createdAt",
                    pr."workingSheetKey", pr."bankingReportKey", u.email as "user_email"
             FROM "PipelineRun" pr
@@ -142,7 +142,7 @@ async def list_runs(user: CurrentUser, limit: int = 50, offset: int = 0):
         params = (limit, offset)
     else:
         query = """
-            SELECT pr.id, pr."statementMonth", pr.status, pr.stage, pr."orgId", pr."org_folder", pr."run_timestamp", 
+            SELECT pr.id, pr."statementMonth", pr.status, pr.stage, pr."orgId", pr."orgFolder", pr."runTimestamp", 
                    pr."validationResult", pr."errorMessage", pr."startedAt", pr."completedAt", pr."createdAt",
                    pr."workingSheetKey", pr."bankingReportKey", u.email as "user_email"
             FROM "PipelineRun" pr
