@@ -9,5 +9,10 @@
             "entrypoint": "backend",
             "routePrefix": "/_/backend"
         }
+    },
+    "functions": {
+        "frontend/app/api/**/*.ts": {
+            "maxDuration": 300
+        }
     }
 }
