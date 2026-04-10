@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { api } from "@/lib/api"
+import { api, API_BASE } from "@/lib/api"
 
 interface ProgressState {
   step: string
@@ -68,6 +68,12 @@ export default function UploadPage() {
   const [progress, setProgress] = useState<ProgressState | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const eventSourceRef = useRef<EventSource | null>(null)
+  
+  // 1. Phase 3: Keep-Warm Strategy
+  useEffect(() => {
+    // Ping the backend on mount to ensure serverless functions are warm
+    api.get("health").catch(() => {});
+  }, []);
 
   // Recover job dynamically from Backend (Layer 2 - No Hardcoding)
   useEffect(() => {
@@ -112,76 +118,97 @@ export default function UploadPage() {
     }
   }
 
-  // Polling logic (Layer 2 - every 3 seconds)
+  // 3. Phase 4: SSE Migration (Server-Sent Events)
   useEffect(() => {
-    let timer: NodeJS.Timeout
+    if (!jobId || progress?.status === "complete" || progress?.status === "error") return;
+
+    // We MUST pass the token as a query param because EventSource doesn't support custom headers
+    const token = localStorage.getItem("fincore_token");
+    const sseUrl = `${API_BASE}/process/progress/${jobId}?token=${token}`;
     
-    const pollStatus = async () => {
-      if (!jobId) return
+    console.log("[SSE] Connecting to:", sseUrl);
+    const eventSource = new EventSource(sseUrl);
+    eventSourceRef.current = eventSource;
 
+    eventSource.onmessage = (event) => {
       try {
-        const data = await api.get<any>(`process/status/${jobId}`)
+        const data = JSON.parse(event.data);
+        console.log("[SSE] Update received:", data);
 
-        // Backend progress.message is formatted as "[STEP_NAME] human text..."
-        // Extract the step name from the prefix to drive the UI stepper.
-        const rawMessage: string = data.progress?.message || "";
-        const stepMatch = rawMessage.match(/^\[(\w+)\]/);
-        const extractedStep = stepMatch ? stepMatch[1].toLowerCase() : null;
-        const detail = rawMessage.replace(/^\[\w+\]\s*/i, "") || "Processing...";
+        if (data.status === "idle" && !progress) return;
 
         const isApproved = data.status === "APPROVED" || data.status === "complete";
         const isFailed = data.status === "FAILED" || data.status === "VALIDATION_FAILED" || data.status === "ERROR";
 
-        // Map backend step names to frontend PIPELINE_STEPS ids
-        const STEP_MAP: Record<string, string> = {
-          upload: "upload", validation: "validation", extraction: "extraction",
-          computation: "computation", working_sheet: "working_sheet",
-          banking_report: "banking_report", complete: "complete", error: "error",
-        };
-        const mappedStep = isApproved ? "complete" : (STEP_MAP[extractedStep || ""] || "upload");
-
         // Map backend response to ProgressState
         const mappedProgress: ProgressState = {
-          step: mappedStep,
+          step: isApproved ? "complete" : (data.step || progress?.step || "upload"),
           status: isApproved ? "complete" : isFailed ? "error" : "running",
-          detail,
-          percent: data.progress?.percent || 0,
-          sub_steps: data.progress?.sub_steps || [],
-          downloads: data.working_sheet && data.banking_report ? {
-            working_sheet: data.working_sheet,
-            banking_report: data.banking_report
-          } : undefined
+          detail: data.message || "Processing...",
+          percent: data.percent || 0,
+          sub_steps: data.sub_steps || [],
+          downloads: data.downloads
+        };
+
+        // If backend didn't send step, try to extract from message prefix [STEP]
+        if (!data.step && data.message) {
+            const stepMatch = data.message.match(/^\[(\w+)\]/);
+            if (stepMatch) mappedProgress.step = stepMatch[1].toLowerCase();
         }
 
-        setProgress(mappedProgress)
+        setProgress(mappedProgress);
 
-        if (mappedProgress.status === "complete") {
-            // Keep jobId so user can download, but maybe clear after some time?
-            // For now, let's just stop polling logic.
-            return 
+        if (isApproved || isFailed) {
+          console.log("[SSE] Closing connection (Job Terminal State)");
+          eventSource.close();
         }
-        
-        if (mappedProgress.status === "error") {
-            return
-        }
-
-        timer = setTimeout(pollStatus, 3000)
-      } catch (err: any) {
-        if (err.status === 404) {
-            console.warn("Job not found, clearing state");
-            setJobId(null);
-            return;
-        }
-        timer = setTimeout(pollStatus, 3000)
+      } catch (err) {
+        console.error("[SSE] Parse error:", err);
       }
-    }
+    };
 
-    if (jobId && (!progress || (progress.status !== "complete" && progress.status !== "error"))) {
-      pollStatus()
-    }
+    eventSource.onerror = (err) => {
+      console.error("[SSE] Connection error:", err);
+      // EventSource automatically retries, but we might want to fall back to polling if it fails repeatedly
+      // For now, let's just log it.
+    };
 
-    return () => clearTimeout(timer)
-  }, [jobId])
+    return () => {
+      console.log("[SSE] Cleaning up connection");
+      eventSource.close();
+    };
+  }, [jobId]);
+
+  // Initial Sync Fallback (If SSE hasn't pushed yet)
+  useEffect(() => {
+    if (jobId && !progress) {
+        const sync = async () => {
+            try {
+                const data = await api.get<any>(`process/status/${jobId}`);
+                if (data.status) {
+                    // Pre-map the initial status so UI doesn't look empty while SSE connects
+                    const rawMessage = data.progress?.message || "";
+                    const stepMatch = rawMessage.match(/^\[(\w+)\]/);
+                    const detail = rawMessage.replace(/^\[\w+\]\s*/i, "") || "Connected to processing stream...";
+                    
+                    const isComplete = data.status === "APPROVED" || data.status === "complete";
+                    setProgress({
+                        step: isComplete ? "complete" : (stepMatch ? stepMatch[1].toLowerCase() : "upload"),
+                        status: isComplete ? "complete" : "running",
+                        detail,
+                        percent: data.progress?.percent || 5,
+                        sub_steps: data.progress?.sub_steps || [],
+                        downloads: data.working_sheet && data.banking_report ? {
+                            working_sheet: data.working_sheet,
+                            banking_report: data.banking_report
+                        } : undefined
+                    });
+                }
+            } catch(e) {}
+        };
+        sync();
+    }
+  }, [jobId]);
 
   const getStepStatus = (stepId: string) => {
     if (!progress) return "idle"
