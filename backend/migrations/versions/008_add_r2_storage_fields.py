@@ -17,11 +17,11 @@ depends_on = None
 
 
 def upgrade():
-    # Adding org_folder and run_timestamp to PipelineRun table
-    op.add_column('PipelineRun', sa.Column('org_folder', sa.String(), nullable=False, server_default=''))
-    op.add_column('PipelineRun', sa.Column('run_timestamp', sa.String(length=15), nullable=False, server_default=''))
+    # Adding orgFolder and runTimestamp to PipelineRun table
+    op.add_column('PipelineRun', sa.Column('orgFolder', sa.String(), nullable=False, server_default=''))
+    op.add_column('PipelineRun', sa.Column('runTimestamp', sa.String(length=15), nullable=False, server_default=''))
 
 
 def downgrade():
-    op.drop_column('PipelineRun', 'run_timestamp')
-    op.drop_column('PipelineRun', 'org_folder')
+    op.drop_column('PipelineRun', 'runTimestamp')
+    op.drop_column('PipelineRun', 'orgFolder')

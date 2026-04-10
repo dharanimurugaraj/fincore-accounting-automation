@@ -1,0 +1,100 @@
+{
+  "banks": {
+    "HDFC-521": {
+      "bank_name": "HDFC BANK",
+      "account_number": "XXXXXXXX521",
+      "account_type": "CC",
+      "currency": "INR",
+      "col_date": "Date",
+      "date_format": "DD-Mon-YYYY",
+      "col_closing_balance": "Balance",
+      "balance_sign_convention": "flagged",
+      "col_dr_cr_flag": "Dr/Cr Flag",
+      "dr_value": "OD",
+      "cc_roi": 0.0725,
+      "cc_sanctioned_limit": 225000000.0,
+      "wcdl_sanctioned_limit": 550000000.0,
+      "total_wc_limit": 775000000.0
+    },
+    "HDFC-512": {
+      "bank_name": "HDFC BANK",
+      "account_number": "XXXXXXXX512",
+      "account_type": "CA",
+      "currency": "INR",
+      "col_date": "Date",
+      "date_format": "DD-Mon-YYYY",
+      "col_closing_balance": "Balance",
+      "balance_sign_convention": "flagged",
+      "col_dr_cr_flag": "Dr/Cr Flag",
+      "dr_value": "Dr",
+      "cc_roi": 0.0,
+      "cc_sanctioned_limit": 0.0,
+      "wcdl_sanctioned_limit": 0.0,
+      "total_wc_limit": 0.0
+    },
+    "HDFC-552": {
+      "bank_name": "HDFC BANK",
+      "account_number": "XXXXXXXX552",
+      "account_type": "CA",
+      "currency": "INR",
+      "col_date": "Date",
+      "date_format": "DD-Mon-YYYY",
+      "col_closing_balance": "Balance",
+      "balance_sign_convention": "flagged",
+      "col_dr_cr_flag": "Dr/Cr Flag",
+      "dr_value": "Dr",
+      "cc_roi": 0.0,
+      "cc_sanctioned_limit": 0.0,
+      "wcdl_sanctioned_limit": 0.0,
+      "total_wc_limit": 0.0
+    },
+    "UBI-001": {
+      "bank_name": "UNION BANK OF INDIA",
+      "account_number": "XXXXXXXXX001",
+      "account_type": "CC",
+      "currency": "INR",
+      "col_date": "Value Date",
+      "date_format": "DD/MM/YYYY",
+      "col_closing_balance": "Balance",
+      "balance_sign_convention": "flagged",
+      "col_dr_cr_flag": "Dr/Cr",
+      "dr_value": "Dr",
+      "cc_roi": 0.085,
+      "cc_sanctioned_limit": 0.0,
+      "wcdl_sanctioned_limit": 0.0,
+      "total_wc_limit": 0.0
+    },
+    "HDFC-FX": {
+      "bank_name": "HDFC BANK",
+      "account_number": "XXXXXXXXFX01",
+      "account_type": "FX",
+      "currency": "USD",
+      "col_date": "Date",
+      "date_format": "DD/MM/YYYY",
+      "col_closing_balance": "Closing Balance",
+      "balance_sign_convention": "signed",
+      "col_dr_cr_flag": null,
+      "dr_value": null,
+      "col_fx_balance": "Balance (FC)",
+      "col_fx_rate": "Exchange Rate",
+      "cc_roi": 0.0,
+      "cc_sanctioned_limit": 0.0,
+      "wcdl_sanctioned_limit": 0.0,
+      "total_wc_limit": 0.0
+    }
+  },
+  "facilities": {
+    "HDFC-521": {
+      "cc_sanctioned_limit": 225000000.0,
+      "wcdl_sanctioned_limit": 550000000.0,
+      "total_wc_limit": 775000000.0,
+      "cc_roi": 0.0725
+    },
+    "UBI-001": {
+      "cc_sanctioned_limit": 0.0,
+      "wcdl_sanctioned_limit": 0.0,
+      "total_wc_limit": 0.0,
+      "cc_roi": 0.085
+    }
+  }
+}

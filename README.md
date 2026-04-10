@@ -37,8 +37,9 @@ cd backend
 cp .env.example .env
 # Install dependencies
 pip install -r requirements.txt
-# Start the server
-python -m uvicorn app.main:app --reload --port 8000
+# Start the server (--reload-exclude tests avoids restarts when editing tests;
+# CancelledError traces on reload are normal uvicorn/shutdown noise on Windows.)
+python -m uvicorn app.main:app --reload --reload-delay 1 --reload-exclude tests --port 8000
 ```
 
 ### 3. Frontend Setup

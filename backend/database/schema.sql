@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS "PipelineRun" (
     "statementExcelKey" TEXT,
     "workingSheetKey" TEXT,
     "bankingReportKey" TEXT,
+    "fxSheetKey" TEXT,
     "validationResult" TEXT,
     "errorMessage" TEXT,
     "reportSummary" TEXT,
@@ -100,8 +101,8 @@ CREATE TABLE IF NOT EXISTS "PipelineRun" (
     "progressPercent" INTEGER DEFAULT 0,
     "progressMessage" TEXT,
     "progressSubsteps" JSONB,
-    "org_folder" TEXT NOT NULL DEFAULT '',
-    "run_timestamp" VARCHAR(15) NOT NULL DEFAULT '',
+    "orgFolder" TEXT NOT NULL DEFAULT '',
+    "runTimestamp" VARCHAR(15) NOT NULL DEFAULT '',
     "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -129,16 +130,50 @@ CREATE TABLE IF NOT EXISTS "WCDLLoan" (
     "runId"           TEXT REFERENCES "PipelineRun"(id) ON DELETE SET NULL,
     "statementMonth"  TEXT NOT NULL,
     "loanNumber"      TEXT NOT NULL,
+    "loanType"        TEXT NOT NULL DEFAULT 'WCDL',   -- WCDL | BC | PQL
     "bankName"        TEXT NOT NULL,
+    "accountNumber"   TEXT,
     "principalAmount" NUMERIC(15, 2) NOT NULL,
     "roi"             NUMERIC(8, 6) NOT NULL,
     "startDate"       DATE NOT NULL,
     "maturityDate"    DATE NOT NULL,
     "prepaymentDate"  DATE,
+    "interestAsPerBank" NUMERIC(15, 2),               -- from bank statement (for ROI verification)
+    "fcAmount"        NUMERIC(18, 4),                 -- BC: foreign currency amount
+    "fcCurrency"      TEXT,                           -- BC: USD | EUR | GBP
+    "exchangeRateAtDrawdown" NUMERIC(10, 4),          -- BC: exchange rate locked at drawdown
     "status"          TEXT DEFAULT 'ACTIVE',
     "customerId"      TEXT REFERENCES "Customer"(id) ON DELETE SET NULL,
     "createdAt"       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     "updatedAt"       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Dynamic Bank Config Registry
+-- One row per bank account. Adding a new bank = INSERT one row, zero code changes.
+CREATE TABLE IF NOT EXISTS "BankConfig" (
+    id              TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    "orgId"         TEXT REFERENCES "Organisation"(id) ON DELETE CASCADE,
+    "bankKey"       TEXT NOT NULL,        -- e.g. "HDFC-521" (unique identifier)
+    "bankName"      TEXT NOT NULL,
+    "accountNumber" TEXT NOT NULL,
+    "accountType"   TEXT NOT NULL DEFAULT 'CC',   -- CC | CA | FX | WCDL
+    "currency"      TEXT NOT NULL DEFAULT 'INR',  -- INR | USD | EUR | GBP
+    "colDate"       TEXT,                  -- exact column name for date
+    "dateFormat"    TEXT,                  -- e.g. "DD-Mon-YYYY"
+    "colBalance"    TEXT,                  -- exact column name for closing balance
+    "balanceSign"   TEXT DEFAULT 'flagged',-- signed | flagged
+    "colDrCrFlag"   TEXT,                  -- Dr/Cr flag column name (if flagged)
+    "drValue"       TEXT,                  -- e.g. "OD", "Dr", "DR"
+    "colFxBalance"  TEXT,                  -- FC balance col (FX accounts only)
+    "colFxRate"     TEXT,                  -- exchange rate col (FX accounts only)
+    "ccRoi"         NUMERIC(8,6) DEFAULT 0,
+    "ccLimit"       NUMERIC(18,2) DEFAULT 0,
+    "wcdlLimit"     NUMERIC(18,2) DEFAULT 0,
+    "totalWcLimit"  NUMERIC(18,2) DEFAULT 0,
+    "isActive"      BOOLEAN DEFAULT TRUE,
+    "createdAt"     TIMESTAMPTZ DEFAULT now(),
+    "updatedAt"     TIMESTAMPTZ DEFAULT now(),
+    UNIQUE("orgId", "bankKey")
 );
 
 CREATE TABLE IF NOT EXISTS "ForexTransaction" (

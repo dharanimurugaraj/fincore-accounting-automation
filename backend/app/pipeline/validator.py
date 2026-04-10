@@ -55,13 +55,19 @@ class PDFValidator:
                    "SBI" if checks["has_sbi"] else \
                    "ICICI" if checks["has_icici"] else "UNIVERSAL" # Changed from UNKNOWN to UNIVERSAL
             
-            # Extract account number
+            # Extract account number - more robust regex for masked or spaced numbers
             acct_match = re.search(
-                r'(?:Account\s*No|A/c\s*No|Account\s*Number)\s*[:\s-]+(\d{9,16})',
+                r'(?:Account\s*No|A/c\s*No|Account\s*Number|Customer\s*ID)\s*[:\s-]+([X\d\*\-\s]{6,20})',
                 first_page,
                 re.IGNORECASE
             )
-            account_number = acct_match.group(1) if acct_match else "UNKNOWN"
+            account_number = "UNKNOWN"
+            if acct_match:
+                # Clean up extracted number
+                raw_acct = acct_match.group(1).strip()
+                # Remove spaces/hyphens for consistency
+                account_number = re.sub(r'[\s\-]', '', raw_acct)
+                if not account_number: account_number = "UNKNOWN"
             
             return {
                 "valid": True,
