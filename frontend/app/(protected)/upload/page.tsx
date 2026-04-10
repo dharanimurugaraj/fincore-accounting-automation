@@ -430,8 +430,7 @@ export default function UploadPage() {
                     <button
                       onClick={() => {
                         const token = localStorage.getItem("fincore_token");
-                        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-                        const url = `${baseUrl}/process/download?path=${encodeURIComponent(progress.downloads!.working_sheet)}&token=${token}`;
+                        const url = `/api/process/download?path=${encodeURIComponent(progress.downloads!.working_sheet)}&token=${token}`;
                         window.open(url, "_blank");
                       }}
                       className="flex-1 py-5 bg-[#0D1B3E] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-110 transition-all shadow-xl shadow-[#0D1B3E]/30 active:scale-95"
@@ -439,8 +438,7 @@ export default function UploadPage() {
                     <button
                       onClick={() => {
                         const token = localStorage.getItem("fincore_token");
-                        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-                        const url = `${baseUrl}/process/download?path=${encodeURIComponent(progress.downloads!.banking_report)}&token=${token}`;
+                        const url = `/api/process/download?path=${encodeURIComponent(progress.downloads!.banking_report)}&token=${token}`;
                         window.open(url, "_blank");
                       }}
                       className="flex-1 py-5 bg-[#0ABFBC] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-110 transition-all shadow-xl shadow-[#0ABFBC]/30 active:scale-95"
