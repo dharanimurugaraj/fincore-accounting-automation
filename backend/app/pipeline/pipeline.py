@@ -1,15 +1,19 @@
 import os
 import asyncio
 import uuid
+import calendar as cal_mod
 from io import BytesIO
 from app.core.database import execute_insert, execute_query
-from datetime import datetime
+from datetime import datetime, date
 from typing import List, Dict, Any
 from .validator import PDFValidator
 from .extractor import PDFExtractor
+from .statement_transform import apply_transforms_to_account, apply_transforms_to_transactions
 from .engine import FinCoreComputationEngine
 from .working_sheet import generate_working_sheet
 from .banking_report import generate_banking_report
+from .fx_sheet import generate_fx_sheet, build_daily_loan_util_dict
+from .loan_tracker import loans_from_wcdl_rows, calculate_loan_interest, LoanTracker
 
 class FinCorePipeline:
     
@@ -87,9 +91,11 @@ class FinCorePipeline:
                                  sub_steps=[f"✓ {p['bank']} (..{p['account_number'][-4:]})" for p in validated_pdfs])
 
             # 2. Extraction (Existing logic applies to local temp files)
-            accounts_data = []
-            wcdl_data = []
-            ai_usage = []
+            accounts_data  = []
+            fx_accounts    = []   # FX-type accounts routed separately
+            wcdl_data      = []   # raw dicts from DB (WCDLLoan rows)
+            loan_trackers: List[LoanTracker] = []  # typed for utilisation engine
+            ai_usage       = []
             
             # Local callback to track progress across parallel jobs
             file_progress = {os.path.basename(p["path"]): "Waiting..." for p in validated_pdfs}
@@ -125,19 +131,33 @@ class FinCorePipeline:
                 if not extracted.get("bank_name") or extracted.get("bank_name") == "UNKNOWN":
                     extracted["bank_name"] = pdf_info.get("bank")
                 
-                if not extracted.get("account_number") or extracted.get("account_number") == "UNKNOWN" or "XXX" in str(extracted.get("account_number")):
-                     extracted["account_number"] = pdf_info.get("account_number")
+                # Prioritize a non-UNKNOWN account number
+                ext_acct = str(extracted.get("account_number", "")).strip()
+                val_acct = str(pdf_info.get("account_number", "")).strip()
+                
+                # If extracted is bad (empty, UNKNOWN, or heavily masked) and validator is better, swap
+                is_bad_ext = not ext_acct or ext_acct == "UNKNOWN" or (ext_acct.count('X') > 5 and val_acct != "UNKNOWN")
+                if is_bad_ext and val_acct and val_acct != "UNKNOWN":
+                    extracted["account_number"] = val_acct
+                elif not ext_acct or ext_acct == "UNKNOWN":
+                     extracted["account_number"] = val_acct if val_acct else "UNKNOWN"
                 
                 return {"extracted": extracted, "usage": usage}
 
             results = await asyncio.gather(*[process_single_pdf(p) for p in validated_pdfs])
             
             self.update_progress(job_id, "extraction", "running", "Persisting extracted data to DB...", 50)
+            
+            # Dynamic Cleanup: Remove previous records for this job to avoid unique constraint violations on re-runs
+            execute_query('DELETE FROM "ParsedAccount" WHERE "runId" = %s', (job_id,))
+
             for res in results:
                 extracted = res["extracted"]
                 if res["usage"]: ai_usage.append(res["usage"])
-                
-                acct_id = f"acct_{uuid.uuid4().hex[:8]}"
+                apply_transforms_to_account(extracted)
+
+                # Use full UUID for ID to ensure zero collisions
+                acct_id = f"acct_{uuid.uuid4().hex}"
                 execute_insert(
                     'INSERT INTO "ParsedAccount" (id, "runId", "bankName", "accountNo", "accountType", "periodFrom", "periodTo", "openingBal", "closingBal") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
                     (
@@ -149,105 +169,233 @@ class FinCorePipeline:
                 
                 for txn in extracted.get("transactions", []):
                     bal = float(txn.get("closing_balance", 0))
-                    dr_cr = "CR" if bal >= 0 else "DR"
+                    wd = float(txn.get("withdrawal_dr", txn.get("withdrawal") or 0))
+                    dep = float(txn.get("deposit_cr", txn.get("deposit") or 0))
+                    pos_bal = float(txn.get("positive_balance", 0))
+                    no_days = txn.get("no_of_days")
+                    if no_days is None:
+                        no_days = 1 if pos_bal > 0 else 0
+                    dr_cr = "CR" if pos_bal > 0 else "DR"
                     cc_val = abs(bal) if bal < 0 else 0
-                    pos_bal = bal if bal >= 0 else 0
-                    no_days = 1 if bal >= 0 else None
-                    
+
                     execute_insert(
                         'INSERT INTO "Transaction" (id, "accountId", date, narration, "refNumber", withdrawal, deposit, "closingBalance", "drCrFlag", "ccValue", "posBalance", "noOfDays", category) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
                         (
-                            f"txn_{uuid.uuid4().hex[:8]}", acct_id, txn.get("date"), txn.get("narration"),
-                            txn.get("ref_number"), txn.get("withdrawal"), txn.get("deposit"),
+                            f"txn_{uuid.uuid4().hex}", acct_id, txn.get("date"), txn.get("narration"),
+                            txn.get("ref_number"), wd, dep,
                             bal, dr_cr, cc_val, pos_bal, no_days, txn.get("category")
                         )
                     )
-                accounts_data.append(extracted)
+                # Route FX accounts separately — they go to fx_sheet, not working_sheet
+                if extracted.get("account_type", "CC") == "FX":
+                    fx_accounts.append(extracted)
+                else:
+                    accounts_data.append(extracted)
 
-            # Preparation
+            # ── Preparation: expand to full calendar period ─────────────────
             from .working_sheet import _expand_to_full_month
-            import calendar
-            for acc in accounts_data:
+
+            for acc in accounts_data + fx_accounts:
                 start_date = acc.get("period_from")
                 if start_date and "-" in start_date:
                     try:
-                        dt = datetime.strptime(start_date[:10], "%Y-%m-%d")
-                        first_day = dt.replace(day=1)
-                        last_day_num = calendar.monthrange(dt.year, dt.month)[1]
-                        last_day = dt.replace(day=last_day_num)
+                        dt           = datetime.strptime(start_date[:10], "%Y-%m-%d")
+                        first_day    = dt.replace(day=1)
+                        last_day_num = cal_mod.monthrange(dt.year, dt.month)[1]
+                        last_day     = dt.replace(day=last_day_num)
                         acc["period_from"] = first_day.strftime("%Y-%m-%d")
-                        acc["period_to"] = last_day.strftime("%Y-%m-%d")
-                    except Exception: pass
+                        acc["period_to"]   = last_day.strftime("%Y-%m-%d")
+                    except Exception:
+                        pass
+                acc["full_month_transactions"] = _expand_to_full_month(
+                    acc.get("transactions", []),
+                    acc.get("period_from"),
+                    acc.get("period_to"),
+                    acc.get("opening_balance", 0),
+                    balance_style=acc.get("balance_style") or "signed",
+                )
+                fmx = acc.get("full_month_transactions") or []
+                if fmx:
+                    apply_transforms_to_transactions(
+                        fmx,
+                        acc.get("balance_style") or "signed",
+                        acc.get("positive_markers"),
+                        acc.get("negative_markers"),
+                    )
 
-                acc["full_month_transactions"] = _expand_to_full_month(acc.get("transactions", []), acc.get("period_from"), acc.get("period_to"), acc.get("opening_balance", 0))
+            # ── Infer actual days in period + period slug ──────────────────
+            # Must happen BEFORE the loan_rows query (which uses period_slug)
+            period_data    = self._get_period_context(accounts_data)
+            period_slug    = period_data["slug"]   # e.g. "Feb2026"
+            days_in_period = 30
+            if accounts_data:
+                pf = accounts_data[0].get("period_from")
+                pt = accounts_data[0].get("period_to")
+                if pf and pt:
+                    try:
+                        d_start = datetime.strptime(pf[:10], "%Y-%m-%d")
+                        d_end   = datetime.strptime(pt[:10], "%Y-%m-%d")
+                        days_in_period = (d_end - d_start).days + 1
+                    except Exception:
+                        pass
 
-            # Step 3: Computation
+            # ── Load WCDL / BC / PQL loans from DB for this org + month ────
+            loan_rows = execute_query(
+                'SELECT * FROM "WCDLLoan" WHERE "orgId" = %s AND "statementMonth" = %s',
+                (user_context.get("org_id") if user_context else None, period_slug),
+            ) or []
+            # Also merge any wcdl_data passed in (backwards compat)
+            loan_rows = loan_rows + list(wcdl_data)
+            loan_trackers = loans_from_wcdl_rows(loan_rows)
+
+            # ── Build daily loan utilisation dict (for working sheet I/J/K) ─
+            daily_loan_util = None
+            if loan_trackers and accounts_data:
+                # Build date_range from period of primary account
+                pf_str = accounts_data[0].get("period_from", "")
+                pt_str = accounts_data[0].get("period_to", "")
+                try:
+                    d_start = datetime.strptime(pf_str[:10], "%Y-%m-%d").date()
+                    d_end   = datetime.strptime(pt_str[:10], "%Y-%m-%d").date()
+                    from datetime import timedelta
+                    date_range = [
+                        d_start + timedelta(days=i)
+                        for i in range((d_end - d_start).days + 1)
+                    ]
+                    daily_loan_util = build_daily_loan_util_dict(loan_trackers, date_range)
+                except Exception as e:
+                    print(f"WARN: daily_loan_util build failed: {e}")
+
+            # ── Calculate per-loan interest results for Section C ───────────
+            loan_results = [calculate_loan_interest(l) for l in loan_trackers]
+
+            # ── Step 3: Computation ─────────────────────────────────────────
             self.update_progress(job_id, "computation", "running", "Computing financial formulas...", 60)
-            computed = self.engine.compute_all(accounts_data, wcdl_data, ai_usage=ai_usage)
+            computed = self.engine.compute_all(
+                accounts_data, loan_rows, ai_usage=ai_usage,
+                days_in_period=days_in_period,
+            )
+
+            # Attach avg WCDL util for Section A of banking report
+            if loan_trackers and days_in_period > 0:
+                total_wcdl_days = sum(
+                    l.principal_inr * l.actual_active_days_in_range(
+                        datetime.strptime(
+                            (accounts_data[0].get("period_from") or "")[:10], "%Y-%m-%d"
+                        ).date() if accounts_data and accounts_data[0].get("period_from") else date.today(),
+                        datetime.strptime(
+                            (accounts_data[0].get("period_to") or "")[:10], "%Y-%m-%d"
+                        ).date() if accounts_data and accounts_data[0].get("period_to") else date.today(),
+                    )
+                    for l in loan_trackers if l.loan_type == "WCDL"
+                )
+                computed["avg_wcdl_util"] = total_wcdl_days / days_in_period if days_in_period else 0.0
+            else:
+                computed["avg_wcdl_util"] = 0.0
             
             # Step 4: Excel Generation & Upload to R2
-            period_data = self._get_period_context(accounts_data)
-            period_slug = period_data["slug"] 
-            
             self.update_progress(job_id, "working_sheet", "running", "Generating and uploading Excel Reports...", 70)
-            
+
             # Fetch run metadata (orgFolder, runTimestamp) from DB
             run_rows = execute_query('SELECT "orgFolder", "runTimestamp" FROM "PipelineRun" WHERE id = %s', (job_id,))
             if not run_rows or not run_rows[0].get("orgFolder"):
-                # Fallback if not set (backwards compat during migration)
-                email = user_context.get("email") if user_context else "unknown@fincore.app"
-                org_folder = derive_org_folder(email)
+                email         = user_context.get("email") if user_context else "unknown@fincore.app"
+                org_folder    = derive_org_folder(email)
                 run_timestamp = generate_run_timestamp()
             else:
-                org_folder = run_rows[0]["orgFolder"]
+                org_folder    = run_rows[0]["orgFolder"]
                 run_timestamp = run_rows[0]["runTimestamp"]
 
-            # Generate local temp files
-            ws_path = await asyncio.to_thread(generate_working_sheet, accounts_data, wcdl_data, computed, job_id, period_slug)
-            br_path = await asyncio.to_thread(generate_banking_report, accounts_data, computed, job_id, period_slug)
+            # ── Generate local temp files in parallel ───────────────────────
+            ws_path = await asyncio.to_thread(
+                generate_working_sheet,
+                accounts_data, loan_rows, computed, job_id, period_slug,
+                daily_loan_util,          # Gap 4: WCDL/BC/PQL per-day values
+            )
+            br_path = await asyncio.to_thread(
+                generate_banking_report,
+                accounts_data, computed, job_id, period_slug,
+                loan_results,             # Gap 6: Section C per-loan ROI table
+            )
 
-            # Upload to R2
+            # FX sheet (Gap 7): only generated when FX accounts exist
+            fx_path = None
+            if fx_accounts:
+                fx_path = await asyncio.to_thread(
+                    generate_fx_sheet, fx_accounts, job_id, period_slug
+                )
+
+            # ── Upload to R2 ────────────────────────────────────────────────
             ws_key = get_excel_key(org_folder, run_timestamp, "workingsheet")
             br_key = get_excel_key(org_folder, run_timestamp, "bankingreport")
 
             async def upload_async(local_path, key):
                 with open(local_path, "rb") as f:
                     file_obj = BytesIO(f.read())
-                    return await asyncio.to_thread(upload_file_object, file_obj, key, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    return await asyncio.to_thread(
+                        upload_file_object, file_obj, key,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
 
-            await asyncio.gather(
+            upload_tasks = [
                 upload_async(ws_path, ws_key),
-                upload_async(br_path, br_key)
-            )
+                upload_async(br_path, br_key),
+            ]
+            if fx_path:
+                fx_key = get_excel_key(org_folder, run_timestamp, "fxsheet")
+                upload_tasks.append(upload_async(fx_path, fx_key))
 
-            # Update PipelineRun with R2 keys
+            await asyncio.gather(*upload_tasks)
+
+            # ── Update PipelineRun with R2 keys ────────────────────────────
             from app.core.database import update_pipeline_s3_key
             update_pipeline_s3_key(job_id, "workingSheetKey", ws_key)
             update_pipeline_s3_key(job_id, "bankingReportKey", br_key)
-            
+            if fx_path:
+                update_pipeline_s3_key(job_id, "fxSheetKey", fx_key)
+
             execute_query(
                 'UPDATE "PipelineRun" SET status = %s, "completedAt" = %s WHERE id = %s',
-                ("APPROVED", datetime.utcnow(), job_id)
+                ("APPROVED", datetime.utcnow(), job_id),
             )
-            
+
+            sub_steps = [
+                f"✓ Working Sheet ({len(accounts_data)} accounts)",
+                f"✓ Banking Report (Section A/B/C)",
+            ]
+            if fx_path:
+                sub_steps.append(f"✓ FX Sheet ({len(fx_accounts)} FX accounts)")
+            if loan_trackers:
+                sub_steps.append(f"✓ WCDL/BC/PQL tracker ({len(loan_trackers)} loans)")
+
             self.update_progress(
-                job_id, "complete", "complete", "Analysis complete. Reports uploaded to R2.", 100, 
-                sub_steps=[f"✓ {os.path.basename(ws_key)}", f"✓ {os.path.basename(br_key)}"],
-                downloads={"working_sheet": ws_key, "banking_report": br_key}
+                job_id, "complete", "complete",
+                "Analysis complete. Reports uploaded to R2.", 100,
+                sub_steps=sub_steps,
+                downloads={
+                    "working_sheet":  ws_key,
+                    "banking_report": br_key,
+                    **(({"fx_sheet": fx_key}) if fx_path else {}),
+                },
             )
-            
-            # Cleanup temp files
+
+            # ── Cleanup temp files ──────────────────────────────────────────
             import shutil
             shutil.rmtree(temp_dir, ignore_errors=True)
-            if os.path.exists(ws_path): os.remove(ws_path)
-            if os.path.exists(br_path): os.remove(br_path)
+            for p in filter(None, [ws_path, br_path, fx_path]):
+                if os.path.exists(p):
+                    os.remove(p)
 
             return {
-                "success": True,
-                "jobId": job_id,
-                "workingSheetKey": ws_key,
+                "success":          True,
+                "jobId":            job_id,
+                "workingSheetKey":  ws_key,
                 "bankingReportKey": br_key,
-                "count": len(accounts_data)
+                "fxSheetKey":       fx_key if fx_path else None,
+                "count":            len(accounts_data),
+                "fxCount":          len(fx_accounts),
+                "loansProcessed":   len(loan_trackers),
+                "daysInPeriod":     days_in_period,
             }
 
         except Exception as e:

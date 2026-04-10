@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * Quick local authentication for production to prevent unwanted indexing or access.
  * Only triggers for the /login page as requested.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Only run in production

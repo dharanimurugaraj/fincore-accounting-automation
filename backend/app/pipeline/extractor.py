@@ -28,8 +28,12 @@ from app.core.config import settings
 from app.core.database import execute_insert
 
 from .bank_schema import BankSchema
+from .scout_validate import validate_scout_headers_against_page
+from .bank_config import registry as bank_config_registry
 from .classifier import classify_transaction
 from .schema_parser import SchemaParser, infer_dr_cr, classify_transactions
+from .statement_transform import apply_transforms_to_account
+from .statement_profile import apply_registry_overlay, build_statement_profile
 
 
 # == Prompts ==================================================================
@@ -57,49 +61,45 @@ Required fields:
   "amount_style": "rs_prefix" | "plain_number",
   "balance_style": "marker_inline" | "dr_cr_suffix" | "signed" | "plain_positive",
   "column_layout": "amount_then_balance" | "debit_credit_balance" | "amount_flag_balance",
+  "dr_cr_order": "withdrawal_then_deposit" | "deposit_then_withdrawal",
 
-  "positive_markers": ["strings that mean positive balance, e.g. Cr, CR"],
-  "negative_markers": ["OD", "DR", "Dr", "Debit"],
+  "positive_markers": ["strings that mean credit/positive balance, e.g. Cr, CR, Balance"],
+  "negative_markers": ["strings that mean debit/overdraft, e.g. OD, DR, Dr, Debit"],
 
   "has_narration_continuation": true | false,
-  "header_keywords": ["up to 6 exact column header words from the table header row"],
+  "header_keywords": ["up to 8 exact column header words from the table header row"],
   "skip_footer_markers": ["optional strings marking start of footer, ignore text below these"],
 
-  "narration_col_name": "exact column header used for narration/remarks (e.g. 'Transaction Remarks')",
-  "ref_col_name":       "exact column header used for reference number",
-  "withdrawal_col_name": "exact column header used for debit/withdrawals",
-  "deposit_col_name":    "exact column header used for credit/deposits",
-  "balance_col_name":    "exact column header used for running balance"
+  "narration_col_name": "exact column header for narration (e.g. 'Transaction Remarks' or 'Particulars')",
+  "ref_col_name":       "exact column header for reference/cheque number",
+  "withdrawal_col_name": "exact column header for debit/withdrawals (e.g. 'Withdrawal', 'Debit Amount')",
+  "deposit_col_name":    "exact column header for credit/deposits (e.g. 'Deposit', 'Credit Amount')",
+  "balance_col_name":    "exact column header for running balance",
+
+  "strict_column_amounts": false,
+  "use_excel_balance_formulas": false
 }
 
 Definitions:
-  account_type:
-    CC = Cash Credit / Overdraft account (balance can be negative)
-    CA = Current Account
-    SA = Savings Account
-  amount_style:
-    rs_prefix    -> amounts shown as "Rs.1,23,456.78" or "Rs 12,345.67"
-    plain_number -> amounts shown as "1,23,456.78" without Rs prefix
-  balance_style:
-    marker_inline  -> balance has OD/Cr/DR marker on SAME token (HDFC CC: "Rs.50,000 OD")
-    dr_cr_suffix   -> balance followed by standalone Dr or Cr word (Axis: "50,000.00 Dr")
-    signed         -> balance is a plain signed number (-50000.00)
-    plain_positive -> balance always positive; debit/credit cols determine direction
+  account_type: CC (Overdraft), CA (Current), SA (Savings)
+  amount_style: rs_prefix ("Rs.1,000") | plain_number ("1,000")
+  balance_style: marker_inline ("1000 OD") | dr_cr_suffix ("1000.00 Cr") | signed ("-1000")
   column_layout:
-    amount_then_balance   -> one transaction-amount column then closing balance (HDFC CC, Union Bank)
-    debit_credit_balance  -> separate Debit and Credit columns then closing balance (SBI, Axis, ICICI Savings)
-    amount_flag_balance   -> one amount column, Dr/Cr flag column, then balance (ICICI CC)
-  has_narration_continuation:
-    true  -> transaction description may span multiple lines before amount row appears
-    false -> every transaction fits on exactly one line
+    amount_then_balance   -> One amount column followed by running balance (HDFC CC, Union Bank)
+    debit_credit_balance  -> Separate Debit (Withdrawal) and Credit (Deposit) columns
+    amount_flag_balance   -> One amount, one Dr/Cr flag, then balance
 
 Rules:
-1. "column_layout":
-   - Use 'debit_credit_balance' if there are separate columns for Dr and Cr.
-   - Use 'amount_then_balance' if all amounts are in one column followed by Dr/Cr/OD.
-2. "negative_markers": Very important for Axis/CC statements. Include ["OD", "DR"] next to balances.
-3. Ignore header dates for 'date_format'; look at transaction rows (e.g. 03-03-2025).
-4. If a value has 'DR' or 'OD' or 'Dr' next to it in opening balance line, return it as NEGATIVE.
+  - Cash Credit / Current with a table showing BOTH "Withdrawal (Dr)" AND "Deposit (Cr)" (or Debit + Credit) as separate columns MUST use column_layout "debit_credit_balance", never "amount_then_balance".
+1. Identification: Look for headers like 'Debit ( )', 'Credit ( )', 'Withdrawl amt (Debit)', 'Deposti Amt', or 'Credit (Cr)'.
+2. Mapping: 
+   - withdrawal_col_name: Map any 'Debit', 'Withdrawl', 'Withdrawal' variations here.
+   - deposit_col_name: Map any 'Credit', 'Deposit', 'Deposti' variations here.
+   - narration_col_name: Map 'Transaction Remarks', 'Particulars', 'Narration', 'Description' here.
+3. Negative Balances: If the statement shows "OD" or "DR" next to a balance, "balance_style" is NOT "plain_positive".
+4. Header Keywords: Capture the EXACT words used as headers to help the regex engine align.
+5. strict_column_amounts: set true only if the user requires withdrawal/deposit strictly from statement columns with no balance-delta inference.
+6. use_excel_balance_formulas: set true if the Excel output should use formulas for Positive Bal / Days / CC from a hidden internal balance column.
 
 Page 1 Text:
 ------------
@@ -178,19 +178,27 @@ class PDFExtractor:
         scout_usage = scout_result.get("usage", {})
 
         if schema and schema.is_valid():
+            # deterministic metadata pass over page 1 to override AI hallucinations (Step 1 PRD)
+            parser = SchemaParser(schema)
+            header_meta = parser.extract_header_metadata(pages_text[0])
+            
+            if "opening_balance" in header_meta:
+                schema.opening_balance = header_meta["opening_balance"]
+            if "cc_limit" in header_meta:
+                schema.cc_limit = header_meta["cc_limit"]
+            if "account_number" in header_meta and (not schema.account_number or "X" in schema.account_number):
+                schema.account_number = header_meta["account_number"]
+
+            schema.coerce_column_layout_if_separate_dr_cr_columns()
+            schema.validate_blueprint_for_extraction()
+
             # SUCCESS: Explicitly log discovery for flow visibility
             print(f"\n[PHASE 2 - SUCCESS] Identified Format Blueprint:")
             print(f" > Bank:    {schema.bank_name}")
-            print(f" > Account: {schema.account_number} ({schema.account_type})")
-            print(f" > Period:  {schema.period_from} to {schema.period_to}")
-            print(f" > Column Mappings:")
-            print(f"   - Narration: '{schema.narration_col_name}'")
-            print(f"   - Ref No:    '{schema.ref_col_name}'")
-            print(f"   - Withdrawal:'{schema.withdrawal_col_name}'")
-            print(f"   - Deposit:   '{schema.deposit_col_name}'")
-            print(f"   - Balance:   '{schema.balance_col_name}'")
-            print(f" > Sign Markers (Neg): {schema.negative_markers}")
-            print(f" > Engine:   Actuating Dynamic Regex over {len(pages_text)} pages...\n")
+            print(f" > Account: {schema.account_number}")
+            print(f" > Opening: {schema.opening_balance}")
+            print(f" > Limit:   {schema.cc_limit}")
+            print(f" > column_layout (after coerce): {schema.column_layout}\n")
 
             # -- Phase 3: Dynamic regex engine (Parallel on ALL pages, including p.1) --
             data, regex_usage = await self._dynamic_regex_engine(
@@ -252,6 +260,27 @@ class PDFExtractor:
             schema.extraction_model = usage.get("model", "openai/gpt-4o-mini")
             missing = [f for f in ("bank_name", "period_from", "period_to") if not data.get(f)]
             schema.confidence = "low" if len(missing) >= 2 else ("medium" if missing else "high")
+
+            ok_headers, header_reasons = validate_scout_headers_against_page(
+                schema, page1_text
+            )
+            if not ok_headers:
+                err = "scout_headers_not_in_page_1: " + "; ".join(header_reasons)
+                print(f"\n[PHASE 2 - REJECT] {err}\n")
+                return {"schema": None, "usage": usage, "error": err}
+
+            # Terminal Logging for Developer/User visibility
+            print(f"\n[PHASE 2 - SUCCESS] Identified Format Blueprint:")
+            print(f" > Bank:           {schema.bank_name}")
+            print(f" > Account:        {schema.account_number}")
+            print(f" > Opening Bal:    {schema.opening_balance}")
+            print(f" > Limit:          {schema.cc_limit}")
+            print(f" > Narration Col:  {schema.narration_col_name}")
+            print(f" > Withdrawal Col: {schema.withdrawal_col_name}")
+            print(f" > Deposit Col:    {schema.deposit_col_name}")
+            print(f" > Balance Col:    {schema.balance_col_name}")
+            print(f" > Balance Style:  {schema.balance_style}\n")
+
             return {"schema": schema, "usage": usage}
         except Exception as e:
             return {"schema": None, "usage": usage, "error": str(e)}
@@ -272,9 +301,18 @@ class PDFExtractor:
         total_pages = len(pages_text)
         semaphore = asyncio.Semaphore(10) # Max 10 concurrent parsing threads
 
+        print(
+            "\n[PHASE 3] Column → internal model: "
+            f"layout={schema.column_layout!r}; "
+            f"Withdrawal (Dr) ← {schema.withdrawal_col_name!r}, "
+            f"Deposit (Cr) ← {schema.deposit_col_name!r}, "
+            f"signed balance ← {schema.balance_col_name!r} "
+            f"(markers {schema.positive_markers!r} / {schema.negative_markers!r} → Cr+ / OD− → Positive Bal & Days)\n"
+        )
+
         async def _parse(page_idx: int, text: str) -> Dict:
             async with semaphore:
-                result = await asyncio.to_thread(parser.parse_page, text)
+                result = await asyncio.to_thread(parser.parse_page, text, page_idx)
                 if on_progress:
                     on_progress(page_idx + 1, total_pages)
                 return result
@@ -293,20 +331,41 @@ class PDFExtractor:
             if pr.get("closing_balance") is not None:
                 final_closing = pr["closing_balance"]
 
-        # Sort by date
+        # Stable order: date → page → line sequence (same-date rows stay in PDF order)
         try:
-            all_transactions.sort(key=lambda t: t.get("date", ""))
+            all_transactions.sort(
+                key=lambda t: (
+                    t.get("date", ""),
+                    t.get("_page_idx", 0),
+                    t.get("_parse_seq", 0),
+                )
+            )
         except Exception:
             pass
 
-        # Reconstruct withdrawal/deposit direction based on balance flow
-        all_transactions = infer_dr_cr(all_transactions, schema.opening_balance or 0.0)
+        rcfg = bank_config_registry.resolve_from_schema(
+            schema.bank_name, schema.account_number
+        )
+        apply_registry_overlay(schema, rcfg)
+
+        # Reconstruct withdrawal/deposit direction based on balance flow (optional strict mode)
+        all_transactions = infer_dr_cr(
+            all_transactions,
+            schema.opening_balance or 0.0,
+            strict_column_amounts=schema.strict_column_amounts,
+        )
+
+        for _t in all_transactions:
+            _t.pop("_page_idx", None)
+            _t.pop("_parse_seq", None)
 
         # Narration classification
         all_transactions = classify_transactions(all_transactions)
 
         # Persist schema JSON to AIUsageLog for audit/replay
         await self._persist_schema(schema, user_context)
+
+        statement_profile = build_statement_profile(schema, rcfg)
 
         data = {
             "bank_name":          schema.bank_name,
@@ -326,10 +385,18 @@ class PDFExtractor:
             "withdrawal_col_name": schema.withdrawal_col_name,
             "deposit_col_name":    schema.deposit_col_name,
             "balance_col_name":    schema.balance_col_name,
+            "balance_style":       schema.balance_style,
+            "positive_markers":    list(schema.positive_markers),
+            "negative_markers":    list(schema.negative_markers),
+
+            "statement_profile": statement_profile,
+            "strict_column_amounts": schema.strict_column_amounts,
+            "use_excel_balance_formulas": schema.use_excel_balance_formulas,
 
             "_extraction_mode":   "hybrid_schema_regex",
             "_schema_confidence": schema.confidence,
         }
+        apply_transforms_to_account(data)
 
         # Log a "PARSE" row for the UI dashboard
         await self._log_usage(
@@ -403,9 +470,11 @@ class PDFExtractor:
         for txn in all_transactions:
             txn["category"] = classify_transaction(txn.get("narration", ""))
 
+        legacy_data = {**final_meta, "transactions": all_transactions, "_extraction_mode": "legacy_vision"}
+        apply_transforms_to_account(legacy_data)
+
         return {
-            "data": {**final_meta, "transactions": all_transactions,
-                     "_extraction_mode": "legacy_vision"},
+            "data": legacy_data,
             "usage": total_usage,
         }
 
@@ -415,16 +484,27 @@ class PDFExtractor:
         def _read():
             pages = []
             try:
+                # Use pdfplumber as primary: much better at preserving horizontal layout
+                with pdfplumber.open(pdf_path) as pdf:
+                    for page in pdf.pages:
+                        # layout=True is key for matching columns in wide statements
+                        text = page.extract_text(layout=True) or ""
+                        pages.append(text)
+                if any(p.strip() for p in pages):
+                    return pages
+            except Exception as e:
+                print(f"WARN: pdfplumber extraction failed: {e}")
+
+            # Fallback to pypdf
+            try:
+                pages = []
                 reader = pypdf.PdfReader(pdf_path)
                 for page in reader.pages:
                     pages.append(page.extract_text() or "")
+                return pages
             except Exception as e:
                 print(f"ERROR: pypdf extraction failed: {e}")
-                # Fallback to pdfplumber if pypdf fails
-                with pdfplumber.open(pdf_path) as pdf:
-                    for page in pdf.pages:
-                        pages.append(page.extract_text() or "")
-            return pages
+                return []
         return await asyncio.to_thread(_read)
 
     async def _render_pdf_to_base64(self, pdf_path: str) -> List[str]:

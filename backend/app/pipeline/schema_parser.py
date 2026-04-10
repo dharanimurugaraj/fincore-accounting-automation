@@ -13,6 +13,7 @@ Design principles:
   • The BankSchema drives all branching — no bank-name conditionals in here.
 """
 
+import math
 import re
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
@@ -41,8 +42,41 @@ _DATE_FMT_MAP: Dict[str, str] = {
     "DD MMM YYYY":  "%d %b %Y",
 }
 
-# Common ref-number-like patterns (alphanumeric 8-20 chars, not pure digits)
-_REF_RE = re.compile(r"\b([A-Z0-9]{8,20})\b")
+def _score_ref_candidate(token: str) -> float:
+    """
+    Bank-agnostic score: prefer compact alphanumeric ids that mix letters and digits
+    (typical UTR / ref / cheque codes). Deprioritise long all-letter tokens.
+    """
+    if len(token) < 6 or token.isdigit():
+        return float("-inf")
+    n = len(token)
+    nd = sum(1 for c in token if c.isdigit())
+    sc = float(n) + 14.0 * nd
+    if nd > 0:
+        nl = sum(1 for c in token if c.isalpha())
+        if nl > 0:
+            sc += 8.0
+    else:
+        if n >= 8:
+            sc -= float(n - 7) * 6.0
+    return sc
+
+
+def _pick_ref_number(narration: str, amount_line: str) -> str:
+    """
+    Choose Chq/Ref from narration + amount line using only structural heuristics
+    (no bank names or fixed word lists). Scans A–Z/0–9 runs; highest score wins.
+    """
+    blob = f"{narration} {amount_line}".upper()
+    best_s = ""
+    best_sc = float("-inf")
+    for m in re.finditer(r"\b([A-Z0-9]{6,24})\b", blob):
+        t = m.group(1)
+        sc = _score_ref_candidate(t)
+        if sc > best_sc:
+            best_sc = sc
+            best_s = t
+    return best_s
 
 
 # ── SchemaParser ─────────────────────────────────────────────────────────────
@@ -52,7 +86,7 @@ class SchemaParser:
     Regex engine parameterised by a BankSchema.
     Usage:
         parser = SchemaParser(schema)
-        page_result = parser.parse_page(page_text)
+        page_result = parser.parse_page(page_text, page_idx=0)
         # page_result = {"transactions": [...], "closing_balance": float|None}
 
     After gathering all pages:
@@ -78,6 +112,8 @@ class SchemaParser:
             )
         else:
             # Matches: 1,23,456.78  12345.67  (word-boundary guarded)
+            # We use a slightly more restrictive version to avoid picking up 
+            # reference numbers that don't look like money (require at least 2 digits after dot)
             self.amount_re = re.compile(
                 r"(?<!\w)([\d,]+\.\d{2})(?!\d)"
             )
@@ -100,7 +136,231 @@ class SchemaParser:
 
     # ── Public API ────────────────────────────────────────────────────────────
 
-    def parse_page(self, page_text: str) -> Dict[str, Any]:
+    def extract_header_metadata(self, page1_text: str) -> Dict[str, Any]:
+        """
+        Deterministically extract key metadata from the first page header text.
+
+        Called by extractor.py (Phase 2 → Phase 3 handoff) to override any
+        AI-hallucinated values with regex-confirmed values.
+
+        Returns a dict with any subset of:
+            opening_balance: float       (signed — negative if OD)
+            cc_limit:        float
+            wcdl_limit:      float
+            total_wc_limit:  float
+            account_number:  str
+            wcdl_loans:      list[dict]  e.g. [{"ref": "WCDL-1", "amount": 3e8, "ac": "...", "maturity": "21-Feb-2026"}]
+        """
+        result: Dict[str, Any] = {}
+        text = page1_text
+
+        # ── Opening Balance ───────────────────────────────────────────────────
+        # Patterns handled:
+        #   "Opening Balance  Rs.1,23,456.78 Cr"           (marker after amount)
+        #   "Opening Balance: OD 13,84,25,196.92"          (marker before amount — HDFC CC)
+        #   "Opening Balance as on 01-Feb-2026: OD 13,84,25,196.92"
+        #   "Balance Brought Forward  Rs.5,000.00 OD"
+        ob_patterns = [
+            # Marker BEFORE amount (HDFC CC style): "OD 13,84,25,196.92"
+            r"(?:Opening\s+Balance|Opening\s+Bal(?:ance)?|Balance\s+B(?:/|rought)?\s*F(?:wd|orward)?)"
+            r"(?:[^:]*?:\s*|\s+)"                     # optional "as on DD-Mon-YYYY:" or plain space
+            r"(OD|DR|Dr|Cr|CR)\s+"                   # marker FIRST
+            r"([\d,]+\.?\d*)",                        # then amount
+
+            # Marker AFTER amount (standard style): "Rs.5,000.00 Cr"
+            r"(?:Opening\s+Balance|Opening\s+Bal(?:ance)?|Balance\s+B(?:/|rought)?\s*F(?:wd|orward)?)"
+            r"[\s:]*(?:Rs\.?\s*)?([\d,]+\.?\d*)\s+([A-Za-z]{0,3})",
+        ]
+        for i, pat in enumerate(ob_patterns):
+            m = re.search(pat, text, re.IGNORECASE)
+            if m:
+                try:
+                    if i == 0:
+                        marker = m.group(1).strip().upper()
+                        val    = float(m.group(2).replace(",", ""))
+                    else:
+                        val    = float(m.group(1).replace(",", ""))
+                        marker = m.group(2).strip().upper() if m.lastindex >= 2 else ""
+
+                    if marker in self._neg_upper or marker in {"OD", "DR"}:
+                        val = -abs(val)
+                    else:
+                        val = abs(val)
+
+                    result["opening_balance"] = val
+                    break
+                except (ValueError, IndexError):
+                    pass
+
+        # ── CC / Sanctioned Limit ─────────────────────────────────────────────
+        # "CC Limit: Rs.25,00,00,000"  "OD Limit: Rs.5 Cr"  "Sanctioned Limit: 225000000"
+        limit_patterns = [
+            r"(?:CC\s+Limit|OD\s+Limit|Sanctioned\s+Limit|Credit\s+Limit|Drawing\s+Power)"
+            r"[\s:]*(?:Rs\.?\s*)?([\d,]+\.?\d*)\s*([A-Za-z]{0,3})",
+        ]
+        for pat in limit_patterns:
+            m = re.search(pat, text, re.IGNORECASE)
+            if m:
+                try:
+                    val = float(m.group(1).replace(",", ""))
+                    suffix = m.group(2).strip().upper() if m.lastindex >= 2 else ""
+                    if suffix in ("CR", "C"):
+                        val *= 10_000_000
+                    result["cc_limit"] = val
+                    break
+                except (ValueError, IndexError):
+                    pass
+
+        # ── WCDL Limit ────────────────────────────────────────────────────────
+        # "WCDL Limit: Rs.52,50,00,000"
+        wcdl_limit_m = re.search(
+            r"WCDL\s+Limit[\s:]*(?:Rs\.?\s*)?([\d,]+\.?\d*)", text, re.IGNORECASE
+        )
+        if wcdl_limit_m:
+            try:
+                result["wcdl_limit"] = float(wcdl_limit_m.group(1).replace(",", ""))
+            except ValueError:
+                pass
+
+        # ── Total WC Limit ────────────────────────────────────────────────────
+        # "Total WC: Rs.77,50,00,000"
+        total_wc_m = re.search(
+            r"Total\s+WC[\s:]*(?:Rs\.?\s*)?([\d,]+\.?\d*)", text, re.IGNORECASE
+        )
+        if total_wc_m:
+            try:
+                result["total_wc_limit"] = float(total_wc_m.group(1).replace(",", ""))
+            except ValueError:
+                pass
+
+        # ── WCDL Drawdown Lines ───────────────────────────────────────────────
+        # "WCDL-1: Rs.30,00,00,000 (A/c 240LN01253580014, Mat: 21-Feb-2026)"
+        # "WCDL-2: Rs.25,00,00,000 (A/c 240LN01260280020, Mat: 29-Mar-2026)"
+        wcdl_loans = []
+        for m in re.finditer(
+            r"(WCDL-?\d+)\s*:\s*(?:Rs\.?\s*)?([\d,]+\.?\d*)"
+            r"(?:\s*\([^)]*A/?c\s*([\w]+)[^)]*Mat(?:urity)?[\s:]*([0-9A-Za-z\-]+))?",
+            text,
+            re.IGNORECASE,
+        ):
+            try:
+                wcdl_loans.append({
+                    "ref":      m.group(1),
+                    "amount":   float(m.group(2).replace(",", "")),
+                    "ac":       m.group(3) if m.group(3) else "",
+                    "maturity": m.group(4) if m.group(4) else "",
+                })
+            except (ValueError, AttributeError):
+                pass
+        if wcdl_loans:
+            result["wcdl_loans"] = wcdl_loans
+
+        # ── Account Number ────────────────────────────────────────────────────
+        # "Account No: XXXXXXXX521"  "A/c No. 12345678"  "Account: XXXXXXXX521"
+        # Note: HDFC masks most digits → XXXXXXXX521 has only 3 visible digits.
+        # We accept if the candidate ends with at least 3 digits (last 3 = branch suffix).
+        acct_patterns = [
+            r"(?:Account\s*(?:No\.?|Number|#)|A/?c\.?\s*(?:No\.?|Number)?)"
+            r"[\s:]*([X0-9]{4,20}\d{3,})",   # masked or unmasked, ends in digits
+            r"(?:Account\s*(?:No\.?|Number|#)|A/?c\.?\s*(?:No\.?|Number)?)"
+            r"[\s:]*([X\dA-Za-z]{6,20})",
+        ]
+        for pat in acct_patterns:
+            m = re.search(pat, text, re.IGNORECASE)
+            if m:
+                candidate = m.group(1).strip()
+                # Accept if tail has 3+ consecutive digits (handles XXXXXXXX521)
+                if re.search(r"\d{3,}$", candidate):
+                    result["account_number"] = candidate
+                    break
+
+        return result
+
+    def _trailing_balance_marker(self, text: str) -> Optional[str]:
+        """
+        Marker for the *closing* balance on the line.
+
+        Checks (1) immediately after the last amount token (e.g. Rs.500.00 Cr),
+        then (2) immediately before it — HDFC Cash Credit often prints
+        ``OD Rs.13,84,26,376.92`` with the marker before the balance figure.
+        Missing this leaves the balance unsigned positive and breaks Dr/Cr inference.
+        """
+        def _first_marker_in(s: str) -> Optional[str]:
+            m = self.marker_re.search(s)
+            if m:
+                return m.group(1)
+            # Fallback: check for OD/CR/DR anywhere if it's near the end
+            s_upper = s.upper()
+            for mk in ["OD", "CR", "DR", "DR."]:
+                 if mk in s_upper:
+                     return mk
+            return None
+
+        if self.schema.amount_style == "rs_prefix":
+            matches = list(
+                re.finditer(r"Rs\.?\s*[\d,]+\.?\d*", text, re.IGNORECASE)
+            )
+            if not matches:
+                return None
+            last = matches[-1]
+            after = _first_marker_in(text[last.end() : last.end() + 36])
+            if after:
+                return after
+            before = text[max(0, last.start() - 24) : last.start()]
+            return _first_marker_in(before)
+        else:
+            matches = list(self._plain_num_re.finditer(text))
+            if not matches:
+                return None
+            last = matches[-1]
+            after = _first_marker_in(text[last.end() : last.end() + 36])
+            if after:
+                return after
+            before = text[max(0, last.start() - 24) : last.start()]
+            return _first_marker_in(before)
+
+    def _should_skip_opening_balance_echo(
+        self,
+        amounts: Dict[str, Any],
+        narration_parts: List[str],
+        raw_line_tail: str,
+    ) -> bool:
+        """
+        Drop table rows that only repeat the header opening balance (same signed
+        cb as schema.opening_balance, no transaction amount). These create a fake
+        first row with empty Dr/Cr and break the user's expectation of the sheet.
+        """
+        ob = self.schema.opening_balance
+        if ob is None:
+            return False
+        cb = amounts.get("closing_balance")
+        if cb is None:
+            return False
+        try:
+            fcb, fob = float(cb), float(ob)
+        except (TypeError, ValueError):
+            return False
+        if amounts.get("_txn_amount") is not None:
+            return False
+        if amounts.get("withdrawal") is not None or amounts.get("deposit") is not None:
+            return False
+
+        # Balance-only row that matches header opening → never a real movement line
+        if math.isclose(fcb, fob, rel_tol=0, abs_tol=1.0):
+            return True
+
+        blob = " ".join(narration_parts + ([raw_line_tail] if raw_line_tail else [])).strip()
+        if re.search(
+            r"(?i)\bopening\s+bal|balance\s+brought|balance\s+b/?f\b|balance\s+forward",
+            blob,
+        ):
+            return True
+        # e.g. ": OD 13,84,25,196.92" — header balance echoed as a pseudo-txn line
+        if re.match(r"^[:;,\-\s]*(?:OD|DR|Dr|Cr|CR)\b", blob):
+            return True
+        return False
+
+    def parse_page(self, page_text: str, page_idx: int = 0) -> Dict[str, Any]:
         """
         Parse all transactions from one page of text.
         Returns:
@@ -121,6 +381,7 @@ class SchemaParser:
         """
         transactions: List[Dict] = []
         lines = [l.rstrip() for l in page_text.split("\n")]
+        parse_seq = 0
 
         page_closing_balance: Optional[float] = None
         current_date: Optional[str] = None
@@ -163,12 +424,21 @@ class SchemaParser:
 
                 amounts = self._extract_amounts(remainder)
                 if amounts and amounts.get("closing_balance") is not None:
-                    txn = self._build_txn(current_date, [], amounts, remainder)
-                    if txn:
-                        transactions.append(txn)
-                        page_closing_balance = txn["closing_balance"]
-                    current_date = None
-                    narration_buf = []
+                    if self._should_skip_opening_balance_echo(
+                        amounts, [], remainder
+                    ):
+                        current_date = None
+                        narration_buf = []
+                    else:
+                        txn = self._build_txn(current_date, [], amounts, remainder)
+                        if txn:
+                            txn["_page_idx"] = page_idx
+                            txn["_parse_seq"] = parse_seq
+                            parse_seq += 1
+                            transactions.append(txn)
+                            page_closing_balance = txn["closing_balance"]
+                        current_date = None
+                        narration_buf = []
                 elif remainder:
                     narration_buf.append(remainder)
 
@@ -176,14 +446,23 @@ class SchemaParser:
                 # ── Continuation / amount line ────────────────────────────
                 amounts = self._extract_amounts(stripped)
                 if amounts and amounts.get("closing_balance") is not None:
-                    txn = self._build_txn(
-                        current_date, narration_buf, amounts, stripped
-                    )
-                    if txn:
-                        transactions.append(txn)
-                        page_closing_balance = txn["closing_balance"]
-                    current_date = None
-                    narration_buf = []
+                    if self._should_skip_opening_balance_echo(
+                        amounts, narration_buf, stripped
+                    ):
+                        current_date = None
+                        narration_buf = []
+                    else:
+                        txn = self._build_txn(
+                            current_date, narration_buf, amounts, stripped
+                        )
+                        if txn:
+                            txn["_page_idx"] = page_idx
+                            txn["_parse_seq"] = parse_seq
+                            parse_seq += 1
+                            transactions.append(txn)
+                            page_closing_balance = txn["closing_balance"]
+                        current_date = None
+                        narration_buf = []
                 else:
                     narration_buf.append(stripped)
 
@@ -204,9 +483,7 @@ class SchemaParser:
     def _parse_amount_then_balance(self, text: str) -> Optional[Dict]:
         """
         HDFC CC / Union Bank style.
-        Expected: [narration] [ref] Rs.X OD Rs.Y Cr   (or inline markers)
-        Closing balance = last amount + its marker.
-        Transaction amount = second-to-last amount.
+        Expected: [narration] [ref] Rs.X OD Rs.Y Cr
         """
         amounts = self.amount_re.findall(text)
         markers = self.marker_re.findall(text)
@@ -214,61 +491,33 @@ class SchemaParser:
         if not amounts:
             return None
 
-        vals = [float(a.replace(",", "")) for a in amounts]
+        # Clean "Rs." and commas
+        vals = [float(re.sub(r"[^\d.]", "", a)) for a in amounts]
 
-        if self.schema.balance_style in ("marker_inline", "dr_cr_suffix"):
-            if not markers:
-                return None
+        # The last value is ALWAYS the balance in this layout
+        bal_raw = vals[-1]
+        bal_marker = self._trailing_balance_marker(text) or (
+            markers[-1] if markers else None
+        )
+        bal_val = self._sign(bal_raw, bal_marker)
 
-            bal_marker = markers[-1]
-            bal_val = self._sign(vals[-1], bal_marker)
-
-            txn_amt: Optional[float] = None
-            if len(vals) >= 2:
-                txn_amt = vals[-2]
-
-            return {
-                "closing_balance": bal_val,
-                "_txn_amount": txn_amt,
-                "_bal_marker": bal_marker,
-                "_narration_cutoff": self._first_amount_pos(text),
-                "withdrawal": None,  # resolved by _infer_dr_cr
-                "deposit": None,
-            }
-
-        elif self.schema.balance_style == "signed":
-            # Amounts may already be negative — just take the last one
-            signed_amounts = re.findall(r"([+-]?[\d,]+\.\d{2})", text)
-            if not signed_amounts:
-                return None
-            bal_val = float(signed_amounts[-1].replace(",", ""))
-            txn_amt = float(signed_amounts[-2].replace(",", "")) if len(signed_amounts) >= 2 else None
-            return {
-                "closing_balance": bal_val,
-                "_txn_amount": abs(txn_amt) if txn_amt else None,
-                "_narration_cutoff": self._first_amount_pos(text),
-                "withdrawal": None,
-                "deposit": None,
-            }
-
-        else:
-            # plain_positive — take last amount as balance
-            if not vals:
-                return None
-            txn_amt = vals[-2] if len(vals) >= 2 else None
-            return {
-                "closing_balance": vals[-1],
-                "_txn_amount": txn_amt,
-                "_narration_cutoff": self._first_amount_pos(text),
-                "withdrawal": None,
-                "deposit": None,
-            }
+        txn_amt: Optional[float] = None
+        if len(vals) >= 2:
+            # The second-to-last value is the transaction amount
+            txn_amt = vals[-2]
+        
+        return {
+            "closing_balance": bal_val,
+            "_txn_amount": txn_amt,
+            "_bal_marker": bal_marker,
+            "_narration_cutoff": self._first_amount_pos(text),
+            "withdrawal": None,
+            "deposit": None,
+        }
 
     def _parse_debit_credit_balance(self, text: str) -> Optional[Dict]:
         """
         SBI / Axis / ICICI Savings style.
-        Three numeric columns: debit (or blank), credit (or blank), balance.
-        Balance may have a Dr/Cr suffix.
         """
         plain = self._plain_num_re.findall(text)
         markers = self.marker_re.findall(text)
@@ -277,44 +526,49 @@ class SchemaParser:
             return None
 
         vals = [float(v.replace(",", "")) for v in plain]
-        bal_marker = markers[-1] if markers else None
+        bal_marker = self._trailing_balance_marker(text) or (
+            markers[-1] if markers else None
+        )
         cutoff = self._first_amount_pos(text)
 
-        if len(vals) >= 3:
-            # debit, credit, balance — take last three
-            debit  = vals[-3]
-            credit = vals[-2]
-            bal    = self._sign(vals[-1], bal_marker)
-            # Exactly one of debit/credit is the actual transaction;
-            # the other column is blank (0 in plain-number extraction).
-            if debit > 0 and credit > 0:
-                # Both non-zero — the extra number likely came from narration/ref.
-                # Fall back to treating last 2 numbers as (txn_amount, balance).
-                txn_amt = credit  # second-to-last is more likely the transaction col
-                return {
-                    "closing_balance": bal,
-                    "_txn_amount": txn_amt,
-                    "withdrawal": None,  # resolved by infer_dr_cr
-                    "deposit":    None,
-                    "_narration_cutoff": cutoff,
-                }
+        # If exactly 2 numbers, assume [txn_amount, closing_balance]
+        # This is common in HDFC statements even if scouted as 3-column.
+        if len(vals) == 2:
+            txn_amt, bal_raw = vals[0], vals[1]
+            bal = self._sign(bal_raw, bal_marker)
             return {
                 "closing_balance": bal,
-                "withdrawal": debit if debit > 0 else None,
-                "deposit":    credit if credit > 0 else None,
-                "_txn_amount": debit or credit or None,
+                "_txn_amount": txn_amt,
+                "withdrawal": None,
+                "deposit": None,
+                "_bal_marker": bal_marker,
                 "_narration_cutoff": cutoff,
             }
 
-        elif len(vals) == 2:
-            txn, bal = vals[0], vals[1]
-            bal = self._sign(bal, bal_marker)
-            # Can't know debit/credit without prev balance — defer to _infer_dr_cr
+        # If 3 or more numbers, [..., withdrawal, deposit, balance]
+        elif len(vals) >= 3:
+            bal_raw = vals[-1]
+            bal = self._sign(bal_raw, bal_marker)
+            
+            v_dep = vals[-2]
+            v_wd  = vals[-3]
+
+            if self.schema.dr_cr_order == "deposit_then_withdrawal":
+                deposit, withdrawal = v_wd, v_dep
+            else:
+                withdrawal, deposit = v_wd, v_dep
+
+            # Keep 0.0 for empty Dr/Cr columns so infer_dr_cr does not treat them as
+            # "unparsed" and replace PDF amounts with the full balance delta.
             return {
                 "closing_balance": bal,
-                "_txn_amount": txn,
-                "withdrawal": None,
-                "deposit": None,
+                "withdrawal": round(float(withdrawal), 2),
+                "deposit": round(float(deposit), 2),
+                "_explicit_wd_dep": True,
+                "_txn_amount": round(float(withdrawal), 2)
+                if withdrawal > 0
+                else (round(float(deposit), 2) if deposit > 0 else None),
+                "_bal_marker": bal_marker,
                 "_narration_cutoff": cutoff,
             }
 
@@ -322,9 +576,10 @@ class SchemaParser:
             bal = self._sign(vals[0], bal_marker)
             return {
                 "closing_balance": bal,
-                "_txn_amount": None,
                 "withdrawal": None,
                 "deposit": None,
+                "_txn_amount": None,
+                "_bal_marker": bal_marker,
                 "_narration_cutoff": cutoff,
             }
 
@@ -348,8 +603,10 @@ class SchemaParser:
 
         # First marker in text is for the transaction
         txn_marker = markers[0]
-        bal_marker  = markers[-1] if len(markers) > 1 else None
-        signed_bal  = self._sign(bal_val, bal_marker or txn_marker)
+        bal_marker = self._trailing_balance_marker(text) or (
+            markers[-1] if len(markers) > 1 else None
+        )
+        signed_bal = self._sign(bal_val, bal_marker or txn_marker)
 
         is_withdrawal = txn_marker.upper() in self._neg_upper
         return {
@@ -357,6 +614,7 @@ class SchemaParser:
             "_txn_amount": txn_val,
             "withdrawal": txn_val if is_withdrawal else None,
             "deposit":    None     if is_withdrawal else txn_val,
+            "_bal_marker": bal_marker or txn_marker,
             "_narration_cutoff": cutoff,
         }
 
@@ -375,19 +633,13 @@ class SchemaParser:
         parts = narration_parts + ([prefix] if prefix else [])
         narration = " ".join(parts).strip()
 
-        # Extract reference number (alphanumeric 8-20, not purely numeric)
-        ref = ""
-        for m in _REF_RE.finditer(narration):
-            candidate = m.group(1)
-            if not candidate.isdigit():
-                ref = candidate
-                break
+        ref = _pick_ref_number(narration, last_line)
 
         cb = amounts.get("closing_balance")
         if cb is None:
             return None
 
-        return {
+        out: Dict[str, Any] = {
             "date":            date,
             "narration":       narration,
             "ref_number":      ref,
@@ -396,6 +648,13 @@ class SchemaParser:
             "closing_balance": round(float(cb), 2),
             "_txn_amount":     _round_or_none(amounts.get("_txn_amount")),
         }
+        if amounts.get("_explicit_wd_dep"):
+            out["_explicit_wd_dep"] = True
+        bm = amounts.get("_bal_marker")
+        out["balance_credit_side"] = self._balance_credit_side_from_marker(bm)
+        # Raw amount line for downstream statement_transform (balance markers + Rs amounts).
+        out["balance_raw"] = last_line.strip()
+        return out
 
     # ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -411,6 +670,22 @@ class SchemaParser:
         if marker.upper() in self._neg_upper:
             return -abs(amount)
         return abs(amount)
+
+    def _balance_credit_side_from_marker(self, bal_marker: Optional[str]) -> Optional[bool]:
+        """
+        For working-sheet Positive Bal: True = credit-side (Cr) per blueprint positive_markers,
+        False = debit/OD side, None = use numeric closing_balance only (signed/plain_positive).
+        """
+        if self.schema.balance_style not in ("marker_inline", "dr_cr_suffix"):
+            return None
+        if not bal_marker:
+            return None
+        u = bal_marker.strip().upper()
+        if u in self._pos_upper:
+            return True
+        if u in self._neg_upper:
+            return False
+        return None
 
     def _is_header_line(self, line: str) -> bool:
         if not self._header_kws:
@@ -440,6 +715,7 @@ class SchemaParser:
 def infer_dr_cr(
     transactions: List[Dict],
     opening_balance: float = 0.0,
+    strict_column_amounts: bool = False,
 ) -> List[Dict]:
     """
     Walk through sorted transactions and infer withdrawal/deposit from the
@@ -450,29 +726,34 @@ def infer_dr_cr(
               amount directly from abs(delta).  This handles cases where the
               regex found the closing balance but missed the transaction column
               (e.g. HDFC CC debit_credit_balance mis-classification).
+
+    If strict_column_amounts is True, skip all balance-delta inference; amounts
+    stay only as parsed from statement columns. Internal _txn_amount is still stripped.
     """
     prev_bal = opening_balance
 
     for txn in transactions:
+        explicit_cols = txn.pop("_explicit_wd_dep", False)
         cb = txn.get("closing_balance", 0)
         txn_amt = txn.get("_txn_amount")
 
-        # Only infer when withdrawal/deposit are still unresolved
-        if txn.get("withdrawal") is None and txn.get("deposit") is None:
-            delta = round(cb - prev_bal, 2)
+        if not strict_column_amounts and not explicit_cols:
+            # Only infer when withdrawal/deposit are still unresolved
+            if txn.get("withdrawal") is None and txn.get("deposit") is None:
+                delta = round(cb - prev_bal, 2)
 
-            # If regex didn't find an explicit amount, derive it from balance delta
-            if txn_amt is None and abs(delta) > 0.01:
-                txn_amt = abs(delta)
+                # If regex didn't find an explicit amount, derive it from balance delta
+                if txn_amt is None and abs(delta) > 0.01:
+                    txn_amt = abs(delta)
 
-            if txn_amt:
-                if delta < 0:
-                    txn["withdrawal"] = round(txn_amt, 2)
-                    txn["deposit"]    = None
-                elif delta > 0:
-                    txn["withdrawal"] = None
-                    txn["deposit"]    = round(txn_amt, 2)
-                # delta == 0 and txn_amt provided: leave as None (can't determine direction)
+                if txn_amt:
+                    if delta < 0:
+                        txn["withdrawal"] = round(txn_amt, 2)
+                        txn["deposit"] = None
+                    elif delta > 0:
+                        txn["withdrawal"] = None
+                        txn["deposit"] = round(txn_amt, 2)
+                    # delta == 0 and txn_amt provided: leave as None (can't determine direction)
 
         # Clean internal field
         txn.pop("_txn_amount", None)

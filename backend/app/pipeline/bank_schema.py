@@ -55,6 +55,9 @@ class BankSchema:
     column_layout: str = "amount_then_balance"
     # amount_then_balance | debit_credit_balance | amount_flag_balance
 
+    dr_cr_order: str = "withdrawal_then_deposit"
+    # withdrawal_then_deposit | deposit_then_withdrawal
+
     # ── Sign markers ─────────────────────────────────────────────────────────
     positive_markers: List[str] = field(default_factory=lambda: ["Cr", "CR"])
     negative_markers: List[str] = field(default_factory=lambda: ["OD", "DR", "Dr"])
@@ -75,6 +78,13 @@ class BankSchema:
 
     skip_footer_markers: List[str] = field(default_factory=list)
     # Strings that mark the end of the transaction table on a page (e.g. "Total", "Page")
+
+    # ── Pipeline behaviour (scout / optional JSON) ────────────────────────────
+    strict_column_amounts: bool = False
+    # True: withdrawal/deposit only from parsed columns; skip balance-delta inference.
+
+    use_excel_balance_formulas: bool = False
+    # True: working sheet F/G/H use formulas from hidden internal balance (col Z).
 
     # ── Internal tracking ────────────────────────────────────────────────────
     extraction_model: str = ""   # Which AI model produced this schema
@@ -98,6 +108,51 @@ class BankSchema:
             and self.balance_style in BALANCE_STYLE_OPTIONS
             and self.amount_style in AMOUNT_STYLE_OPTIONS
         )
+
+    def validate_blueprint_for_extraction(self) -> None:
+        """
+        Ensure scout produced enough column identity for Phase 3 + working sheet.
+        Column *names* are not parsed from PDF text here; they label the blueprint only.
+        """
+        from .pipeline_exceptions import BankConfigMappingError
+
+        def _req(val: str, field: str) -> None:
+            if not str(val or "").strip():
+                raise BankConfigMappingError(
+                    f"Scout blueprint missing required column mapping: {field}",
+                    field,
+                )
+
+        _req(self.balance_col_name, "balance_col_name")
+        lay = self.column_layout
+        if lay == "debit_credit_balance":
+            _req(self.withdrawal_col_name, "withdrawal_col_name")
+            _req(self.deposit_col_name, "deposit_col_name")
+        elif lay == "amount_then_balance":
+            _req(self.narration_col_name, "narration_col_name")
+        elif lay == "amount_flag_balance":
+            _req(self.narration_col_name, "narration_col_name")
+
+    def coerce_column_layout_if_separate_dr_cr_columns(self) -> None:
+        """
+        Scout sometimes labels Withdrawal/Deposit columns correctly but sets
+        column_layout to amount_then_balance (credit-card habit). That leaves
+        Dr/Cr empty and infer_dr_cr mis-attributes the full opening→row delta
+        as one deposit. If headers clearly describe two amount columns, use
+        debit_credit_balance (still bank-agnostic — driven only by header text).
+        """
+        if self.column_layout != "amount_then_balance":
+            return
+        wl = (self.withdrawal_col_name or "").lower()
+        dl = (self.deposit_col_name or "").lower()
+        has_wd = any(
+            x in wl for x in ("withdrawal", "debit", "(dr)", " dr", "dr)")
+        )
+        has_dep = any(
+            x in dl for x in ("deposit", "credit", "(cr)", " cr", "cr)")
+        )
+        if has_wd and has_dep:
+            self.column_layout = "debit_credit_balance"
 
 
 DATE_FORMAT_OPTIONS = {
