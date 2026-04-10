@@ -285,20 +285,24 @@ class SchemaParser:
             debit  = vals[-3]
             credit = vals[-2]
             bal    = self._sign(vals[-1], bal_marker)
-            # Exactly one of debit/credit is the actual transaction
+            # Exactly one of debit/credit is the actual transaction;
+            # the other column is blank (0 in plain-number extraction).
             if debit > 0 and credit > 0:
-                # Both non-zero (rare): pick the one that matches balance direction
-                if bal < 0:
-                    return {"closing_balance": bal, "withdrawal": debit, "deposit": None,
-                            "_txn_amount": debit, "_narration_cutoff": cutoff}
-                else:
-                    return {"closing_balance": bal, "withdrawal": None, "deposit": credit,
-                            "_txn_amount": credit, "_narration_cutoff": cutoff}
+                # Both non-zero — the extra number likely came from narration/ref.
+                # Fall back to treating last 2 numbers as (txn_amount, balance).
+                txn_amt = credit  # second-to-last is more likely the transaction col
+                return {
+                    "closing_balance": bal,
+                    "_txn_amount": txn_amt,
+                    "withdrawal": None,  # resolved by infer_dr_cr
+                    "deposit":    None,
+                    "_narration_cutoff": cutoff,
+                }
             return {
                 "closing_balance": bal,
                 "withdrawal": debit if debit > 0 else None,
                 "deposit":    credit if credit > 0 else None,
-                "_txn_amount": debit or credit,
+                "_txn_amount": debit or credit or None,
                 "_narration_cutoff": cutoff,
             }
 
@@ -441,9 +445,11 @@ def infer_dr_cr(
     Walk through sorted transactions and infer withdrawal/deposit from the
     direction of balance change (prev → current).
 
-    Only fills in withdrawal/deposit where both are None (i.e. the layout did
-    not already resolve them, e.g. debit_credit_balance with both cols present).
-    Also strips the internal _txn_amount key before returning.
+    Primary:  use _txn_amount + delta direction when available.
+    Fallback: when _txn_amount is None but the balance changed, compute the
+              amount directly from abs(delta).  This handles cases where the
+              regex found the closing balance but missed the transaction column
+              (e.g. HDFC CC debit_credit_balance mis-classification).
     """
     prev_bal = opening_balance
 
@@ -451,15 +457,22 @@ def infer_dr_cr(
         cb = txn.get("closing_balance", 0)
         txn_amt = txn.get("_txn_amount")
 
-        # Only infer when not already resolved
-        if txn.get("withdrawal") is None and txn.get("deposit") is None and txn_amt:
-            delta = cb - prev_bal
-            if delta < 0:
-                txn["withdrawal"] = txn_amt
-                txn["deposit"]    = None
-            else:
-                txn["withdrawal"] = None
-                txn["deposit"]    = txn_amt
+        # Only infer when withdrawal/deposit are still unresolved
+        if txn.get("withdrawal") is None and txn.get("deposit") is None:
+            delta = round(cb - prev_bal, 2)
+
+            # If regex didn't find an explicit amount, derive it from balance delta
+            if txn_amt is None and abs(delta) > 0.01:
+                txn_amt = abs(delta)
+
+            if txn_amt:
+                if delta < 0:
+                    txn["withdrawal"] = round(txn_amt, 2)
+                    txn["deposit"]    = None
+                elif delta > 0:
+                    txn["withdrawal"] = None
+                    txn["deposit"]    = round(txn_amt, 2)
+                # delta == 0 and txn_amt provided: leave as None (can't determine direction)
 
         # Clean internal field
         txn.pop("_txn_amount", None)
