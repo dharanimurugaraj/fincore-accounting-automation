@@ -58,12 +58,18 @@ def generate_presigned_put_url(key: str, expires: int = 600) -> str:
         raise StorageError(f"Failed to generate presigned PUT URL: {str(e)}")
 
 def generate_presigned_get_url(key: str, expires: int = 900) -> str:
-    """Generates a presigned GET URL for downloads (15 min default)."""
+    """Generates a presigned GET URL for downloads (15 min default).
+    Includes ResponseContentDisposition so browsers save with the correct filename."""
     try:
+        filename = key.split("/")[-1]  # e.g. 20260410_055454_workingsheet.xlsx
         client = get_r2_client()
         return client.generate_presigned_url(
             "get_object",
-            Params={"Bucket": settings.R2_BUCKET_NAME, "Key": key},
+            Params={
+                "Bucket": settings.R2_BUCKET_NAME,
+                "Key": key,
+                "ResponseContentDisposition": f'attachment; filename="{filename}"',
+            },
             ExpiresIn=expires
         )
     except ClientError as e:

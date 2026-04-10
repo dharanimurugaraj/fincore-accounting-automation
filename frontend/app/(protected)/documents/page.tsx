@@ -88,8 +88,7 @@ export default function DocumentsPage() {
 
   const handleDownload = (key: string) => {
     const token = localStorage.getItem("fincore_token");
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-    const downloadUrl = `${baseUrl}/documents?action=download&key=${encodeURIComponent(key)}&token=${token}`;
+    const downloadUrl = `/api/documents?action=download&key=${encodeURIComponent(key)}&token=${token}`;
     window.open(downloadUrl, "_blank");
   };
 

@@ -199,10 +199,21 @@ class PDFExtractor:
             combined_usage = _merge_usage(scout_usage, regex_usage)
             return {"data": data, "usage": combined_usage}
 
-        # -- Fallback: legacy AI vision (If scout fails or confidence is low) --
+        # On Vercel, legacy vision is disabled (PDF rendering unavailable).
+        # Raise a hard error so the pipeline marks the run as FAILED with a
+        # clear message, rather than silently producing an empty Excel file.
+        scout_error = scout_result.get("error", "unknown")
+        is_vercel = os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME")
+        if is_vercel:
+            raise RuntimeError(
+                f"AI scout failed to identify bank statement format: {scout_error}. "
+                "Ensure OPENROUTER_API_KEY is set in Vercel environment variables."
+            )
+
+        # Local fallback: legacy AI vision
         print(
             f"[EXTRACTOR] Phase 2 scout failed or invalid schema "
-            f"({scout_result.get('error', 'unknown')}). "
+            f"({scout_error}). "
             f"Falling back to AI vision for {os.path.basename(pdf_path)}."
         )
         return await self._legacy_vision_extract(pdf_path, on_progress, user_context)
