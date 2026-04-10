@@ -151,6 +151,8 @@ class FinCorePipeline:
             # Dynamic Cleanup: Remove previous records for this job to avoid unique constraint violations on re-runs
             execute_query('DELETE FROM "ParsedAccount" WHERE "runId" = %s', (job_id,))
 
+            from app.core.database import execute_values_insert
+
             for res in results:
                 extracted = res["extracted"]
                 if res["usage"]: ai_usage.append(res["usage"])
@@ -167,6 +169,8 @@ class FinCorePipeline:
                     )
                 )
                 
+                # BATCH INSERT TRANSACTIONS
+                txn_values = []
                 for txn in extracted.get("transactions", []):
                     bal = float(txn.get("closing_balance", 0))
                     wd = float(txn.get("withdrawal_dr", txn.get("withdrawal") or 0))
@@ -178,14 +182,18 @@ class FinCorePipeline:
                     dr_cr = "CR" if pos_bal > 0 else "DR"
                     cc_val = abs(bal) if bal < 0 else 0
 
-                    execute_insert(
-                        'INSERT INTO "Transaction" (id, "accountId", date, narration, "refNumber", withdrawal, deposit, "closingBalance", "drCrFlag", "ccValue", "posBalance", "noOfDays", category) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                        (
-                            f"txn_{uuid.uuid4().hex}", acct_id, txn.get("date"), txn.get("narration"),
-                            txn.get("ref_number"), wd, dep,
-                            bal, dr_cr, cc_val, pos_bal, no_days, txn.get("category")
-                        )
+                    txn_values.append((
+                        f"txn_{uuid.uuid4().hex}", acct_id, txn.get("date"), txn.get("narration"),
+                        txn.get("ref_number"), wd, dep,
+                        bal, dr_cr, cc_val, pos_bal, no_days, txn.get("category")
+                    ))
+                
+                if txn_values:
+                    execute_values_insert(
+                        'INSERT INTO "Transaction" (id, "accountId", date, narration, "refNumber", withdrawal, deposit, "closingBalance", "drCrFlag", "ccValue", "posBalance", "noOfDays", category) VALUES %s',
+                        txn_values
                     )
+
                 # Route FX accounts separately — they go to fx_sheet, not working_sheet
                 if extracted.get("account_type", "CC") == "FX":
                     fx_accounts.append(extracted)

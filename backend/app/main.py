@@ -85,7 +85,7 @@ async def progress_generator(job_id: str):
     
     last_percent = -1
     while True:
-        query = 'SELECT "progressPercent", "progressMessage", "progressSubsteps", status FROM "PipelineRun" WHERE id = %s'
+        query = 'SELECT "progressPercent", "progressMessage", "progressSubsteps", status, "workingSheetKey", "bankingReportKey" FROM "PipelineRun" WHERE id = %s'
         rows = await asyncio.to_thread(execute_query, query, (job_id,))
         if rows:
             run = rows[0]
@@ -105,6 +105,14 @@ async def progress_generator(job_id: str):
                     "sub_steps": sub_steps,
                     "status": run["status"]
                 }
+                
+                # Attach download keys if job is finished
+                if run["status"] in ["APPROVED", "complete"] and run["workingSheetKey"] and run["bankingReportKey"]:
+                    data["downloads"] = {
+                        "working_sheet": run["workingSheetKey"],
+                        "banking_report": run["bankingReportKey"]
+                    }
+                    
                 yield f"data: {json.dumps(data)}\n\n"
                 last_percent = current_percent
                 
@@ -115,7 +123,7 @@ async def progress_generator(job_id: str):
         await asyncio.sleep(1.0) # Poll DB every second
 
 @app.get("/api/v1/process/progress/{job_id}")
-async def get_progress(job_id: str):
+async def get_progress(job_id: str, user: CurrentUser):
     return StreamingResponse(
         progress_generator(job_id),
         media_type="text/event-stream",

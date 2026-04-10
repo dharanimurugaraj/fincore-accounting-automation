@@ -175,6 +175,29 @@ def update_pipeline_status(run_id: str, status: str, stage: int = None, metadata
     execute_query(query, tuple(params))
 
 
+def execute_values_insert(query: str, values: list, page_size: int = 100):
+    """
+    High-performance batch insertion using psycopg2.extras.execute_values.
+    Significantly reduces SSL handshake overhead in serverless/proxy environments.
+    """
+    from psycopg2.extras import execute_values
+    
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            execute_values(cur, query, values, page_size=page_size)
+            conn.commit()
+    except Exception as e:
+        logger.error(f"DB Batch Insert Failed: {e}")
+        conn.rollback()
+        raise
+    finally:
+        pool = _get_pool()
+        if pool:
+            pool.putconn(conn)
+        else:
+            conn.close()
+
 def update_pipeline_s3_key(run_id: str, field: str, s3_key: str):
     """Update a specific S3 key field in the PipelineRun."""
     # Validate field name against known columns

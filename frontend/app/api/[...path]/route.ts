@@ -12,17 +12,6 @@ type RouteProps = {
     params: Promise<{ path: string[] }>;
 };
 
-// 🛡️ SAFELY Import Prisma to avoid FUNCTION_INVOCATION_FAILED
-const getPrisma = async () => {
-    try {
-        const { prisma } = await import("@/lib/db");
-        return prisma;
-    } catch (e) {
-        console.warn("[Proxy] Prisma loading failed, falling back to Python. Error:", e);
-        return null;
-    }
-};
-
 export async function GET(request: NextRequest, props: RouteProps) {
     return handle(request, props.params);
 }
@@ -48,50 +37,6 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
     const segments = params.path || [];
     const path = segments.join("/") || "unresolved";
     const method = request.method;
-
-    // 🔥 PRODUCTION PRISMA OPTIMIZATION
-    // If this is an auth check, we use Prisma directly in production to bypass the slow Python proxy.
-    if (process.env.NODE_ENV === "production" && path === "auth/me" && method === "GET") {
-        try {
-            const safePrisma = await getPrisma();
-            if (safePrisma) {
-                console.log(`[High-Speed Proxy] Intercepting auth/me with Prisma...`);
-                
-                const user = await safePrisma.user.findFirst({
-                    where: { email: { contains: "@vyrenzo.in" } },
-                    include: { role: true, organisation: true }
-                });
-
-                if (user) {
-                    return NextResponse.json({
-                        id: user.id,
-                        org_id: user.orgId,
-                        role_id: user.roleId,
-                        role: user.role.name,
-                        allowed_pages: user.role.allowedPages || ["*"],
-                        email: user.email,
-                        photo_url: user.photoUrl
-                    });
-                }
-            }
-        } catch (e) {
-            console.error("Prisma optimized auth error:", e);
-            // DO NOT return here — falling through to regular proxying is safer
-        }
-    }
-
-    // ⚡ DASHBOARD OPTIMIZATION - Bypass Python for the main view
-    if (process.env.NODE_ENV === "production" && path === "reports/dashboard" && method === "GET") {
-        try {
-            const safePrisma = await getPrisma();
-            if (safePrisma) {
-                console.log(`[High-Speed Proxy] Intercepting Dashboard with Prisma...`);
-                return NextResponse.json({ status: "success", data: {} }); 
-            }
-        } catch (e) {
-            console.error("Dashboard optimization error:", e);
-        }
-    }
 
     // 1. Determine the raw host string with multiple fallbacks
     let rawHost = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL || "";

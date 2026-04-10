@@ -3,7 +3,8 @@
  * Automatically attaches the Firebase idToken from localStorage for EVERY request.
  */
 
-const API_BASE = "/api"; // Using our Next.js API Proxy
+const isLocal = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+export const API_BASE = isLocal ? "http://localhost:8000/api/v1" : "/_/backend/api/v1";
 
 interface RequestOptions {
   method?: string;
