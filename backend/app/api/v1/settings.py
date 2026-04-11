@@ -4,7 +4,7 @@ Handles Personal Preferences, Organization Profile, and Global Platform Constant
 """
 
 from typing import Annotated
-from fastapi import APIRouter, HTTPException, Body
+from fastapi import APIRouter, HTTPException, Body, Response
 from app.core.database import execute_query
 from app.api.deps import CurrentUser, AdminUser, SuperAdminUser
 
@@ -14,7 +14,8 @@ router = APIRouter()
 # 1. PERSONAL PREFERENCES (All Roles)
 # ------------------------------------------------------------------------------
 @router.get("/profile")
-async def get_my_profile(user: CurrentUser):
+async def get_my_profile(user: CurrentUser, response: Response):
+    response.headers["Cache-Control"] = "private, max-age=60"
     rows = execute_query(
         'SELECT email, name, title, phone, theme, timezone, "dateFormat", "emailAlerts" FROM "User" WHERE id = %s',
         (user["id"],)
@@ -43,7 +44,8 @@ async def update_my_profile(user: CurrentUser, payload: dict = Body(...)):
 # 2. ORGANIZATION SETTINGS (Admins & Super Admins)
 # ------------------------------------------------------------------------------
 @router.get("/organization")
-async def get_organization(user: AdminUser):
+async def get_organization(user: AdminUser, response: Response):
+    response.headers["Cache-Control"] = "private, max-age=300"
     rows = execute_query(
         'SELECT id, name, "legalName", address, "logoUrl", departments FROM "Organisation" WHERE id = %s',
         (user["org_id"],)
@@ -72,7 +74,8 @@ async def update_organization(user: AdminUser, payload: dict = Body(...)):
 # 3. GLOBAL PLATFORM (Super Admins Only)
 # ------------------------------------------------------------------------------
 @router.get("/platform")
-async def get_platform_config(user: SuperAdminUser):
+async def get_platform_config(user: SuperAdminUser, response: Response):
+    response.headers["Cache-Control"] = "private, max-age=300"
     try:
         rows = execute_query('SELECT key, value FROM "GlobalConfig"')
         config = {r["key"]: r["value"] for r in rows}

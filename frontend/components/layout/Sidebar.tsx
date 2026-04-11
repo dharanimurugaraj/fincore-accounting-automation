@@ -84,6 +84,7 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={false}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                   isActive
                     ? (item.badge ? "bg-ai-violet/10 text-ai-violet font-bold" : "bg-primary/10 text-primary font-bold")
@@ -125,7 +126,7 @@ export default function Sidebar() {
     >
       <div className="flex h-16 items-center justify-between border-b border-neutral-border px-4">
         {!collapsed && (
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href="/dashboard" prefetch={false} className="flex items-center gap-2">
             <img src="/icon.png" alt="FinCore" className="h-8 w-8 object-contain" />
             <span className="text-lg font-bold text-t-heading uppercase tracking-widest">FinCore</span>
           </Link>
@@ -159,6 +160,7 @@ export default function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  prefetch={false}
                   className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                     isActive
                       ? "bg-ai-violet/10 text-ai-violet font-bold"
