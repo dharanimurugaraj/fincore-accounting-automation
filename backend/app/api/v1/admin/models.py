@@ -73,6 +73,27 @@ async def get_external_models():
 
     return {"data": _cached_models or all_models}
 
+@router.get("/key-info")
+async def get_key_info(user: AdminUser):
+    """Fetch OpenRouter key usage and limits for credit management."""
+    from app.core.config import settings
+    import httpx
+    
+    url = "https://openrouter.ai/api/v1/auth/key"
+    headers = {
+        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+    }
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, headers=headers, timeout=5.0)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                return {"error": f"OpenRouter API error: {response.status_code}", "data": None}
+    except Exception as e:
+        return {"error": str(e), "data": None}
+
 @router.get("/config")
 async def get_agent_configs(user: AdminUser):
     """Placeholder for agent configurations."""

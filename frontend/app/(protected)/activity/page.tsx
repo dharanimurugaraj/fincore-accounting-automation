@@ -63,10 +63,6 @@ export default function ActivityPage() {
   useEffect(() => {
     if (profile && canAccess('Activity', 'read')) {
       fetchActivity(true);
-      
-      // Auto-refresh every 3 seconds for dynamic updates WITHOUT shaking
-      const interval = setInterval(() => fetchActivity(false), 3000);
-      return () => clearInterval(interval);
     } else if (profile) {
       setLoading(false);
     }

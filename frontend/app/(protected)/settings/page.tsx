@@ -15,6 +15,7 @@ export default function SettingsPage() {
   const [profileData, setProfileData] = useState<any>({});
   const [orgData, setOrgData] = useState<any>({});
   const [platformData, setPlatformData] = useState<any>({});
+  const [creditData, setCreditData] = useState<any>(null);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -31,8 +32,19 @@ export default function SettingsPage() {
         }
 
         if (profile?.role_id === 0) {
-            const platRes: any = await apiRequest("settings/platform", { method: "GET" });
-            setPlatformData(platRes.platform || {});
+            try {
+                const platRes: any = await apiRequest("settings/platform", { method: "GET" });
+                setPlatformData(platRes.platform || {});
+            } catch (e) {
+                console.warn("Platform variables failed (GlobalConfig missing)");
+            }
+
+            try {
+                const creditRes: any = await apiRequest("settings/credits", { method: "GET" });
+                setCreditData(creditRes.data || null);
+            } catch (e) {
+                console.warn("OpenRouter credits failed");
+            }
         }
       } catch (e) {
         console.error("Failed to load settings:", e);
@@ -255,7 +267,69 @@ export default function SettingsPage() {
 
                {/* Placeholders for notifications/platform */}
                {activeTab === "notifications" && <div className="text-t-muted italic text-center p-12">Email alerts infrastructure is currently bypassed in Dev environments.</div>}
-               {activeTab === "platform" && <div className="text-t-muted italic text-center p-12 border border-dashed border-neutral-border bg-neutral-app/50 rounded-xl mt-4">Global Constants rendering module... Edit GlobalConfig Table for immediate metrics updates.</div>}
+               {activeTab === "platform" && (
+                    <div className="space-y-8 animate-in fade-in duration-500">
+                        <div className="flex items-center justify-between border-b border-neutral-border pb-4">
+                            <h2 className="text-xl font-bold text-ai-teal">Platform Orchestration</h2>
+                            <div className="flex items-center gap-2 px-3 py-1 bg-ai-teal/10 rounded-full border border-ai-teal/20">
+                                <span className="w-1.5 h-1.5 rounded-full bg-ai-teal animate-pulse"></span>
+                                <span className="text-[10px] font-black uppercase text-ai-teal">System Admin</span>
+                            </div>
+                        </div>
+
+                        {/* OpenRouter Credit Widget */}
+                        <div className="bg-gradient-to-br from-neutral-row to-neutral-app border border-neutral-border rounded-2xl p-6 shadow-inner tracking-tight">
+                            <div className="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-t-muted">API Engine Balance</h3>
+                                    <p className="text-xs text-t-muted italic">Live metrics from OpenRouter.ai</p>
+                                </div>
+                                <div className="text-right">
+                                    <span className="text-2xl font-black text-ai-teal">
+                                        {creditData ? `$${(creditData.total_credits - creditData.total_usage).toFixed(2)}` : "---"}
+                                    </span>
+                                    <p className="text-[10px] font-bold text-t-muted uppercase">Remaining Credits</p>
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-3">
+                                <div className="flex justify-between text-xs">
+                                    <span className="text-t-muted">Total Purchased</span>
+                                    <span className="font-bold text-t-heading">${creditData?.total_credits?.toFixed(2) || "0.00"}</span>
+                                </div>
+                                <div className="flex justify-between text-xs">
+                                    <span className="text-t-muted">Accumulated Usage</span>
+                                    <span className="font-bold text-status-critical">${creditData?.total_usage?.toFixed(2) || "0.00"}</span>
+                                </div>
+                                <div className="h-1.5 bg-neutral-border rounded-full overflow-hidden mt-4">
+                                    <div 
+                                        className="h-full bg-ai-teal rounded-full" 
+                                        style={{ width: `${creditData ? (1 - creditData.total_usage / creditData.total_credits) * 100 : 0}%` }}
+                                    ></div>
+                                </div>
+                                <p className="text-[9px] text-t-muted mt-2 italic flex items-center gap-1.5">
+                                    <Shield className="w-3 h-3" />
+                                    Account credits are managed at the organizational level (OpenRouter dashboard).
+                                </p>
+                            </div>
+                        </div>
+
+                        {Object.keys(platformData).length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {Object.entries(platformData).map(([key, val]: any) => (
+                                    <div key={key} className="p-4 border border-neutral-border rounded-xl bg-neutral-app/30">
+                                        <p className="text-[10px] font-black uppercase text-t-muted mb-1">{key.replace(/_/g, " ")}</p>
+                                        <p className="text-sm font-medium text-t-heading">{val}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-t-muted italic text-center p-12 border border-dashed border-neutral-border bg-neutral-app/50 rounded-xl">
+                                Global Config keys (extracted from GlobalConfig table) will appear here.
+                            </div>
+                        )}
+                    </div>
+                )}
            </div>
         </div>
       </div>

@@ -17,6 +17,15 @@ interface ProgressState {
   validation?: any
 }
 
+interface ORKeyInfo {
+  data?: {
+    usage: number
+    limit: number | null
+    is_free_tier: boolean
+  }
+  error?: string
+}
+
 const PIPELINE_STEPS = [
   {
     id: "upload",
@@ -67,13 +76,37 @@ export default function UploadPage() {
   const [jobId, setJobId] = useState<string | null>(null)
   const [progress, setProgress] = useState<ProgressState | null>(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [creditInfo, setCreditInfo] = useState<ORKeyInfo | null>(null)
+  const [loadingCredits, setLoadingCredits] = useState(false)
   const eventSourceRef = useRef<EventSource | null>(null)
   
   // 1. Phase 3: Keep-Warm Strategy
   useEffect(() => {
     // Ping the backend on mount to ensure serverless functions are warm
     api.get("health").catch(() => {});
+    fetchCredits();
   }, []);
+
+  const fetchCredits = async () => {
+    setLoadingCredits(true);
+    try {
+      const data = await api.get<any>("settings/credits");
+      // settings/credits returns { data: { total_credits, total_usage, ... } } or { error }
+      if (data.data) {
+        setCreditInfo({
+          data: {
+            usage: data.data.total_usage,
+            limit: data.data.total_credits,
+            is_free_tier: data.data.is_free_tier || false
+          }
+        });
+      }
+    } catch (err) {
+      console.error("Failed to fetch credits:", err);
+    } finally {
+      setLoadingCredits(false);
+    }
+  };
 
   // Recover job dynamically from Backend (Layer 2 - No Hardcoding)
   useEffect(() => {
@@ -93,6 +126,23 @@ export default function UploadPage() {
 
   const handleUpload = async () => {
     if (!files.length) return
+
+    // Credit Guard
+    if (creditInfo?.data) {
+        const remaining = (creditInfo.data.limit || 0) - creditInfo.data.usage;
+        const totalEstimatedCost = files.length * 0.05; // $0.05 per PDF estimate
+        
+        if (remaining <= 0) {
+            alert("NO OPENROUTER_API_KEY low balance please do check. Your balance is exhausted.");
+            return;
+        }
+
+        if (remaining < totalEstimatedCost) {
+            const supportedCount = Math.floor(remaining / 0.05);
+            alert(`Insufficient balance: credits support ~${supportedCount} more PDFs, but ${files.length} were uploaded. Please check your OpenRouter account.`);
+            return;
+        }
+    }
 
     const formData = new FormData()
     files.forEach(f => formData.append("files", f))
@@ -222,15 +272,15 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 p-4 md:p-8 rounded-3xl">
+    <div className="min-h-screen bg-neutral-app text-t-body p-4 md:p-8 rounded-3xl">
       <div className="max-w-3xl mx-auto">
         
         {/* Header */}
         <div className="mb-10 text-center">
-          <h1 className="text-4xl font-black mb-3 bg-gradient-to-r from-[#0ABFBC] to-slate-900 bg-clip-text text-transparent italic tracking-tight">
+          <h1 className="text-4xl font-black mb-3 bg-gradient-to-r from-ai-teal to-ai-violet bg-clip-text text-transparent italic tracking-tight">
             FINCORE INTELLIGENCE
           </h1>
-          <p className="text-slate-500 text-sm font-medium">
+          <p className="text-t-muted text-sm font-medium">
             Enterprise-grade banking extraction. Process up to 10 PDFs (100 pages each) simultaneously.
           </p>
         </div>
@@ -238,10 +288,10 @@ export default function UploadPage() {
         {/* Upload zone */}
         {!jobId && (
           <div
-            className={`border-2 border-dashed rounded-[2.5rem] p-16 text-center mb-8 transition-all duration-500 shadow-xl shadow-slate-200/50 ${
+            className={`border-2 border-dashed rounded-[2.5rem] p-16 text-center mb-8 transition-all duration-500 shadow-xl shadow-neutral-border/50 ${
               isDragging
-                ? "border-[#0ABFBC] bg-[#0ABFBC]/5 scale-[1.01]"
-                : "border-slate-200 bg-white hover:border-[#0ABFBC]/50"
+                ? "border-ai-violet bg-ai-violet/5 scale-[1.01]"
+                : "border-neutral-border bg-white hover:border-ai-violet/50"
             }`}
             onDragOver={(e) => {
               e.preventDefault()
@@ -256,14 +306,14 @@ export default function UploadPage() {
               setFiles(prev => [...prev, ...dropped])
             }}
           >
-            <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6 shadow-inner">📄</div>
-            <p className="text-slate-800 mb-2 font-bold text-lg">
+            <div className="w-16 h-16 bg-neutral-app rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6 shadow-inner">📄</div>
+            <p className="text-t-heading mb-2 font-bold text-lg">
               Drop bank statements here
             </p>
-            <p className="text-slate-400 text-xs mb-10 font-medium italic">
+            <p className="text-t-muted text-xs mb-10 font-medium italic">
               All major Indian banks supported (HDFC, SBI, ICICI, etc.)
             </p>
-            <label className="cursor-pointer inline-flex items-center gap-2 px-10 py-4 bg-[#0ABFBC] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-xl shadow-[#0ABFBC]/30">
+            <label className="cursor-pointer inline-flex items-center gap-2 px-10 py-4 bg-ai-violet text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-xl shadow-ai-violet/30">
               Select Files
               <input
                 type="file"
@@ -289,18 +339,18 @@ export default function UploadPage() {
             {files.map((file, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between bg-white border border-slate-100 rounded-[1.5rem] px-6 py-5 shadow-sm"
+                className="flex items-center justify-between bg-white border border-neutral-border rounded-[1.5rem] px-6 py-5 shadow-sm"
               >
                 <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 bg-[#0ABFBC]/5 rounded-2xl flex items-center justify-center text-2xl">📄</div>
+                  <div className="w-12 h-12 bg-ai-violet/5 rounded-2xl flex items-center justify-center text-2xl">📄</div>
                   <div>
-                    <div className="text-sm font-bold text-slate-800">{file.name}</div>
-                    <div className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em] mt-0.5">{(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                    <div className="text-sm font-bold text-t-heading">{file.name}</div>
+                    <div className="text-[10px] text-t-muted font-black uppercase tracking-[0.15em] mt-0.5">{(file.size / 1024 / 1024).toFixed(2)} MB</div>
                   </div>
                 </div>
                 <button
                   onClick={() => setFiles(f => f.filter((_, idx) => idx !== i))}
-                  className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all"
+                  className="w-10 h-10 flex items-center justify-center rounded-xl text-t-muted hover:text-status-critical hover:bg-status-critical/10 transition-all"
                 >
                   ✕
                 </button>
@@ -309,7 +359,7 @@ export default function UploadPage() {
             
             <button
               onClick={handleUpload}
-              className="w-full mt-10 py-5 bg-slate-900 text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-[#0ABFBC] transition-all active:scale-[0.98] shadow-2xl shadow-slate-900/20"
+              className="w-full mt-10 py-5 bg-t-heading text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-ai-violet transition-all active:scale-[0.98] shadow-2xl shadow-t-heading/20"
             >
               Analyze Statements →
             </button>
@@ -324,8 +374,8 @@ export default function UploadPage() {
               animate={{ opacity: 1, scale: 1 }}
               className="space-y-6"
             >
-              <div className="mb-10 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50">
-                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4">
+              <div className="mb-10 bg-white p-8 rounded-[2.5rem] border border-neutral-border shadow-xl shadow-neutral-border/50">
+                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-[0.2em] text-t-muted mb-4">
                   <div className="flex items-center gap-4">
                     <span>Overall Pipeline Progress</span>
                     <button 
@@ -334,21 +384,29 @@ export default function UploadPage() {
                             setProgress(null);
                             setFiles([]);
                         }}
-                        className="text-red-400 hover:text-red-500 hover:underline transition-all lowercase italic font-medium"
+                        className="text-status-critical hover:underline transition-all lowercase italic font-medium"
                     >(Reset / Stop)</button>
                   </div>
-                  <span className="text-[#0ABFBC] bg-[#0ABFBC]/10 px-2 py-0.5 rounded-md font-black">{progress?.percent ?? 0}%</span>
+                  <span className="text-ai-violet bg-ai-violet/10 px-2 py-0.5 rounded-md font-black italic">{progress?.percent ?? 0}%</span>
                 </div>
-                <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-3 bg-neutral-app rounded-full overflow-hidden relative">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-[#0ABFBC] to-[#40E0D0] rounded-full"
+                    className="h-full bg-gradient-to-r from-ai-teal to-ai-violet rounded-full relative z-10"
                     animate={{ width: `${progress?.percent ?? 0}%` }}
                     transition={{ duration: 0.8, ease: "circOut" }}
+                  />
+                  {/* Subtle Background Glow for active progress */}
+                  <motion.div 
+                    className="absolute top-0 left-0 h-full bg-ai-violet/20 blur-sm"
+                    animate={{ width: `${progress?.percent ?? 0}%` }}
                   />
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="relative space-y-4">
+                {/* Vertical Timeline Line */}
+                <div className="absolute left-[30px] top-6 bottom-6 w-[2px] bg-neutral-border z-0"></div>
+
                 {PIPELINE_STEPS.map((step, idx) => {
                   const status = getStepStatus(step.id)
                   const isActive = status === "running"
@@ -361,22 +419,22 @@ export default function UploadPage() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.05 }}
-                      className={`rounded-[2rem] border p-6 transition-all duration-500 shadow-sm ${
+                      className={`relative z-10 rounded-[2rem] border p-6 transition-all duration-500 shadow-sm ${
                         isActive
-                          ? "border-[#0ABFBC]/30 bg-[#0ABFBC]/5 shadow-xl shadow-[#0ABFBC]/5"
+                          ? "border-ai-violet/30 bg-ai-violet/5 shadow-xl shadow-ai-violet/5 scale-[1.02]"
                           : isDone
-                          ? "border-green-100 bg-white"
+                          ? "border-status-success/20 bg-white"
                           : isError
-                          ? "border-red-100 bg-red-50/10"
-                          : "border-slate-50 bg-white/50"
+                          ? "border-status-critical/20 bg-status-critical/5"
+                          : "border-neutral-border bg-white"
                       }`}
                     >
                       <div className="flex items-center gap-5">
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-sm flex-shrink-0 transition-all duration-500 ${
-                          isActive ? "bg-[#0ABFBC] text-white shadow-lg shadow-[#0ABFBC]/40" :
-                          isDone ? "bg-green-500 text-white shadow-lg shadow-green-500/20" :
-                          isError ? "bg-red-500 text-white shadow-lg shadow-red-500/20" :
-                          "bg-slate-50 text-slate-400"
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-sm flex-shrink-0 transition-all duration-700 z-10 ${
+                          isActive ? "bg-ai-violet text-white shadow-lg shadow-ai-violet/40" :
+                          isDone ? "bg-status-success text-white shadow-lg shadow-status-success/40" :
+                          isError ? "bg-status-critical text-white shadow-lg shadow-status-critical/40" :
+                          "bg-white border-2 border-neutral-border text-t-heading"
                         }`}>
                           {isActive ? (
                             <motion.div
@@ -385,20 +443,24 @@ export default function UploadPage() {
                               className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
                             />
                           ) : isDone ? (
-                            <span className="text-xl">✓</span>
+                            <motion.span 
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                className="text-xl font-black"
+                            >✓</motion.span>
                           ) : isError ? (
                             <span className="text-xl">✕</span>
                           ) : (
-                            <span className="font-black opacity-30 italic">{idx + 1}</span>
+                            <span className="font-bold text-t-heading/40 italic select-none">{idx + 1}</span>
                           )}
                         </div>
 
                         <div className="flex-1 min-w-0">
                           <div className={`text-xs font-black tracking-[0.15em] uppercase ${
-                            isActive ? "text-[#0ABFBC]" :
-                            isDone ? "text-slate-400" :
-                            isError ? "text-red-500" :
-                            "text-slate-300"
+                            isActive ? "text-ai-violet" :
+                            isDone ? "text-t-muted" :
+                            isError ? "text-status-critical" :
+                            "text-t-muted/40"
                           }`}>
                             {step.label}
                           </div>
@@ -406,12 +468,20 @@ export default function UploadPage() {
                             <motion.p
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
-                              className="text-[11px] text-slate-500 mt-1 font-bold italic"
+                              className="text-[11px] text-t-body mt-1 font-bold italic"
                             >
                               {progress.detail}
                             </motion.p>
                           )}
                         </div>
+                        
+                        {isActive && (
+                            <motion.div 
+                                animate={{ opacity: [0.3, 1, 0.3] }}
+                                transition={{ repeat: Infinity, duration: 1.5 }}
+                                className="px-2 py-1 bg-ai-violet text-[8px] text-white rounded-md font-black uppercase"
+                            >Live</motion.div>
+                        )}
                       </div>
 
                       {isActive && progress?.sub_steps && progress.sub_steps.length > 0 && (
@@ -420,23 +490,28 @@ export default function UploadPage() {
                           animate={{ opacity: 1, height: "auto" }}
                           className="mt-6 ml-16 space-y-3"
                         >
-                          {progress?.sub_steps?.map((sub, i) => (
-                            <motion.div
-                              key={i}
-                              initial={{ opacity: 0, x: -5 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: i * 0.1 }}
-                              className="text-[11px] font-black text-slate-500 flex items-center justify-between"
-                            >
-                              <div className="flex items-center gap-3">
-                                <span className={`w-1.5 h-1.5 rounded-full ${sub.includes("/") || sub.includes("...") ? "bg-[#0ABFBC]" : "bg-slate-200"}`}></span>
-                                <span className="tracking-wide">{sub}</span>
-                              </div>
-                              {(sub.includes("/") || sub.includes("...")) && (
-                                <span className="px-2 py-0.5 bg-slate-100 rounded text-[9px] text-slate-400 font-bold uppercase">Live</span>
-                              )}
-                            </motion.div>
-                          ))}
+                          {progress?.sub_steps?.map((sub, i) => {
+                            const isLive = sub.includes("⚡") || sub.includes("...") || sub.includes("Analyzing") || sub.includes("Validating");
+                            const isDone = sub.includes("✓");
+                            
+                            return (
+                              <motion.div
+                                key={sub}
+                                initial={{ opacity: 0, x: -5 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.05 }}
+                                className="text-[11px] font-bold text-t-body flex items-center justify-between group"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <span className={`w-1 h-1 rounded-full transition-all duration-500 ${isLive ? "bg-ai-violet animate-pulse scale-125 shadow-md shadow-ai-violet/50" : isDone ? "bg-status-success" : "bg-neutral-border"}`}></span>
+                                  <span className={`tracking-tight ${isLive ? "text-t-heading" : "text-t-muted/80"}`}>{sub.replace(/[⚡✓]/g, "").trim()}</span>
+                                </div>
+                                {isLive && (
+                                  <span className="px-1.5 py-0.5 bg-ai-violet/10 rounded text-[9px] text-ai-violet font-black uppercase italic tracking-wider">Processing</span>
+                                )}
+                              </motion.div>
+                            );
+                          })}
                         </motion.div>
                       )}
                     </motion.div>
@@ -448,11 +523,11 @@ export default function UploadPage() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-12 p-10 bg-white border border-slate-100 rounded-[3rem] shadow-2xl shadow-slate-200 text-center"
+                  className="mt-12 p-10 bg-white border border-neutral-border rounded-[3rem] shadow-2xl shadow-neutral-border/20 text-center"
                 >
-                  <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">🎯</div>
-                  <h3 className="text-slate-900 text-2xl font-black mb-2 italic">Analysis Succeeded</h3>
-                  <p className="text-slate-400 text-xs font-medium mb-10">Reports are ready. AI verified all transactions and formulas.</p>
+                  <div className="w-16 h-16 bg-status-success/10 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6 shadow-xl shadow-status-success/10">✨</div>
+                  <h3 className="text-t-heading text-2xl font-black mb-2 italic">Analysis Succeeded</h3>
+                  <p className="text-t-muted text-xs font-medium mb-10">Reports are ready. AI verified all transactions and formulas.</p>
                   <div className="flex flex-col sm:flex-row gap-5">
                     <button
                       onClick={() => {
@@ -460,7 +535,7 @@ export default function UploadPage() {
                         const url = `/api/process/download?path=${encodeURIComponent(progress.downloads!.working_sheet)}&token=${token}`;
                         window.open(url, "_blank");
                       }}
-                      className="flex-1 py-5 bg-[#0D1B3E] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-110 transition-all shadow-xl shadow-[#0D1B3E]/30 active:scale-95"
+                      className="flex-1 py-5 bg-t-heading text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-110 transition-all shadow-xl shadow-t-heading/30 active:scale-95"
                     >📊 Working Sheet</button>
                     <button
                       onClick={() => {
@@ -468,7 +543,7 @@ export default function UploadPage() {
                         const url = `/api/process/download?path=${encodeURIComponent(progress.downloads!.banking_report)}&token=${token}`;
                         window.open(url, "_blank");
                       }}
-                      className="flex-1 py-5 bg-[#0ABFBC] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-110 transition-all shadow-xl shadow-[#0ABFBC]/30 active:scale-95"
+                      className="flex-1 py-5 bg-ai-violet text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.25em] text-center hover:brightness-110 transition-all shadow-xl shadow-ai-violet/30 active:scale-95"
                     >📋 Banking Report</button>
                   </div>
                 </motion.div>
@@ -478,16 +553,16 @@ export default function UploadPage() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-10 p-10 bg-red-50 border border-red-100 rounded-[3rem] text-center"
+                    className="mt-10 p-10 bg-status-critical/5 border border-status-critical/10 rounded-[3rem] text-center"
                 >
                     <div className="text-4xl mb-6">🚨</div>
-                    <h3 className="text-red-600 font-black mb-3 text-xl italic uppercase tracking-tight">Processing Aborted</h3>
-                    <div className="bg-white/50 p-4 rounded-2xl border border-red-200 mb-8 mt-4">
-                        <p className="text-red-900 text-xs font-black tracking-tight">{progress.detail}</p>
+                    <h3 className="text-status-critical font-black mb-3 text-xl italic uppercase tracking-tight">Processing Aborted</h3>
+                    <div className="bg-white/50 p-4 rounded-2xl border border-status-critical/20 mb-8 mt-4">
+                        <p className="text-status-critical text-xs font-black tracking-tight">{progress.detail}</p>
                     </div>
                     <button 
                         onClick={() => {setJobId(null); setProgress(null); setFiles([]);}}
-                        className="px-10 py-4 bg-red-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:bg-red-700 shadow-xl shadow-red-600/20"
+                        className="px-10 py-4 bg-status-critical text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:bg-status-critical/80 shadow-xl shadow-status-critical/20"
                     >Restart Pipeline</button>
                 </motion.div>
               )}
@@ -496,7 +571,7 @@ export default function UploadPage() {
                 <div className="mt-8 text-center pb-20">
                     <button 
                         onClick={() => {setJobId(null); setProgress(null); setFiles([]);}}
-                        className="px-10 py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all hover:bg-slate-200"
+                        className="px-10 py-4 bg-neutral-app text-t-muted rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all hover:bg-neutral-border"
                     >Analyze Another Statement</button>
                 </div>
               )}
