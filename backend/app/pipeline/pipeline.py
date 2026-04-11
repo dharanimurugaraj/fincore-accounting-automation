@@ -76,17 +76,28 @@ class FinCorePipeline:
                     return {"valid": False, "reason": str(e), "path": s3_key}
 
             # Gather results with per-file live reporting
-            validation_results = []
             file_results = {os.path.basename(k): "Validating..." for k in pdf_paths}
-
-            for i, s3_key in enumerate(pdf_paths):
+            
+            async def wrap_validation(s3_key, index):
                 filename = os.path.basename(s3_key)
-                self.update_progress(job_id, "validation", "running", f"Validating bank statements: {filename}...", 10 + int((i/len(pdf_paths))*10), 
+                # Initial progress report for this file
+                self.update_progress(job_id, "validation", "running", 
+                                     f"Validating bank statements: {filename}...", 
+                                     10 + int((index/len(pdf_paths))*5), 
                                      sub_steps=[f"{'⚡' if 'Validating' in prog else '✓'} {f}" for f, prog in file_results.items()])
                 
                 res = await download_and_validate(s3_key)
                 file_results[filename] = "Validated"
-                validation_results.append(res)
+                
+                # Final progress report for this file
+                self.update_progress(job_id, "validation", "running", 
+                                     f"Validated: {filename}", 
+                                     15 + int((index/len(pdf_paths))*5), 
+                                     sub_steps=[f"{'✓' if 'Validated' in prog else '⚡'} {f}" for f, prog in file_results.items()])
+                return res
+
+            # Parallel download and validation
+            validation_results = await asyncio.gather(*[wrap_validation(path, i) for i, path in enumerate(pdf_paths)])
             
             for result in validation_results:
                 if result["valid"]:
