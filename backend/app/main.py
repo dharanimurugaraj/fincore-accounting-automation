@@ -14,7 +14,6 @@ from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.api.v1.router import api_v1_router
-from app.services.s3_service import get_storage
 from app.core.database import execute_query, execute_insert
 from fastapi import UploadFile, File, Response
 from fastapi.responses import StreamingResponse, FileResponse
@@ -24,7 +23,6 @@ import uuid
 from typing import List
 from datetime import datetime
 import os
-from app.pipeline.pipeline import FinCorePipeline
 from app.api.deps import CurrentUser
 
 from contextlib import asynccontextmanager
@@ -239,6 +237,7 @@ async def process_pdfs(
         return Response(content=f"Storage upload failed: {str(e)}", status_code=500)
     
     # 3. Start PDF Parser Worker (Now using R2 keys)
+    from app.pipeline.pipeline import FinCorePipeline
     pipeline = FinCorePipeline()
     asyncio.create_task(pipeline.run(job_id, r2_keys, user_context=user))
     
@@ -273,6 +272,12 @@ async def download_file(path: str, user: CurrentUser):
         return Response(content=f"Download failed: {str(e)}", status_code=500)
 
 
+
+@app.get("/api/v1/ping")
+async def ping():
+    """Ultra-fast warmup endpoint with zero heavy imports."""
+    from datetime import datetime
+    return {"status": "ok", "timestamp": datetime.utcnow().isoformat()}
 
 @app.get("/api/v1/health")
 async def health():

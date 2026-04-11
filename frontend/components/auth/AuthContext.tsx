@@ -35,7 +35,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [idToken, setIdToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch internal user data:
+    // Layer 0: Backend Keep-Warm / Pre-fetch
+    useEffect(() => {
+        // Silent ping to wake up Vercel Lambda before the user even tries to log in
+        fetch("/api/v1/ping").catch(() => {});
+    }, []);
+
+    // Fetch internal user data:
   useEffect(() => {
     if (idToken) {
         fetch("/api/auth/me", {
