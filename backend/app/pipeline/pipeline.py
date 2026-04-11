@@ -75,8 +75,18 @@ class FinCorePipeline:
                 except Exception as e:
                     return {"valid": False, "reason": str(e), "path": s3_key}
 
-            # Gather results
-            validation_results = await asyncio.gather(*[download_and_validate(k) for k in pdf_paths])
+            # Gather results with per-file live reporting
+            validation_results = []
+            file_results = {os.path.basename(k): "Validating..." for k in pdf_paths}
+
+            for i, s3_key in enumerate(pdf_paths):
+                filename = os.path.basename(s3_key)
+                self.update_progress(job_id, "validation", "running", f"Validating bank statements: {filename}...", 10 + int((i/len(pdf_paths))*10), 
+                                     sub_steps=[f"{'⚡' if 'Validating' in prog else '✓'} {f}" for f, prog in file_results.items()])
+                
+                res = await download_and_validate(s3_key)
+                file_results[filename] = "Validated"
+                validation_results.append(res)
             
             for result in validation_results:
                 if result["valid"]:
@@ -109,11 +119,13 @@ class FinCorePipeline:
                     else:
                         file_progress[filename] = f"Analyzing Page {current}/{total}"
                     
-                    should_update = (current == 1 or current == total or (current - last_reported_page) >= 5)
+                    should_update = (current == 1 or current == total or (current - last_reported_page) >= 3)
                     if should_update:
                         last_reported_page = current
-                        sub_steps = [f"{'✓' if 'Finalized' in prog else '⏳'} {f}: {prog}" for f, prog in file_progress.items()]
-                        self.update_progress(job_id, "extraction", "running", f"Parsing {len(validated_pdfs)} PDFs in parallel...", 40, sub_steps=sub_steps)
+                        sub_steps = [f"{'✓' if 'Finalized' in prog else '⚡'} {f}: {prog}" for f, prog in file_progress.items()]
+                        # Include active filename in the main message for "lively" feel
+                        active_file = filename if current < total else "Batch"
+                        self.update_progress(job_id, "extraction", "running", f"AI Processing: {active_file} ({current}/{total} pgs)...", 40 + int((current/max(total,1))*10), sub_steps=sub_steps)
                 return callback
 
             async def process_single_pdf(pdf_info):

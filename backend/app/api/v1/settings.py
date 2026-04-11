@@ -73,9 +73,34 @@ async def update_organization(user: AdminUser, payload: dict = Body(...)):
 # ------------------------------------------------------------------------------
 @router.get("/platform")
 async def get_platform_config(user: SuperAdminUser):
-    rows = execute_query('SELECT key, value FROM "GlobalConfig"')
-    config = {r["key"]: r["value"] for r in rows}
-    return {"platform": config}
+    try:
+        rows = execute_query('SELECT key, value FROM "GlobalConfig"')
+        config = {r["key"]: r["value"] for r in rows}
+        return {"platform": config}
+    except Exception as e:
+        # Gracefully handle missing table or other query errors in Dev
+        print(f"DEBUG: settings/platform retrieval skipped: {e}")
+        return {"platform": {}, "warning": "GlobalConfig table not found or inaccessible"}
+
+@router.get("/credits")
+async def get_credits(user: SuperAdminUser):
+    """Fetch live OpenRouter credit balance for Super Admins."""
+    import httpx
+    from app.core.config import settings
+    
+    url = "https://openrouter.ai/api/v1/credits"
+    headers = {
+        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+    }
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, headers=headers, timeout=5.0)
+            if response.status_code == 200:
+                return response.json()
+            return {"error": f"OpenRouter API error: {response.status_code}", "data": None}
+    except Exception as e:
+        return {"error": str(e), "data": None}
 
 @router.patch("/platform")
 async def update_platform_config(user: SuperAdminUser, payload: dict = Body(...)):
