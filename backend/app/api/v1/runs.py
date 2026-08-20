@@ -2,7 +2,7 @@ import uuid
 import json
 from datetime import datetime
 from typing import List, Optional
-from fastapi import APIRouter, HTTPException, Query, Body
+from fastapi import APIRouter, HTTPException, Query, Body, BackgroundTasks
 from pydantic import BaseModel
 
 from app.api.deps import CurrentUser
@@ -82,7 +82,7 @@ async def create_run(user: CurrentUser, data: RunCreate):
     }
 
 @router.post("/{run_id}/start")
-async def start_run(run_id: str, user: CurrentUser):
+async def start_run(run_id: str, user: CurrentUser, background_tasks: BackgroundTasks):
     """
     Triggers the actual pipeline execution after files are uploaded.
     """
@@ -112,12 +112,11 @@ async def start_run(run_id: str, user: CurrentUser):
     if not s3_keys:
         raise HTTPException(status_code=400, detail="No files uploaded for this run")
 
-    # Pass to pipeline (using asyncio.create_task for now as Celery isn't fully wired)
-    # Using the existing pipeline runner logic
-    import asyncio
+    # Use FastAPI BackgroundTasks — guaranteed to run after response is sent,
+    # even on multi-worker/Vercel deployments. asyncio.create_task() can be
+    # silently dropped when the request loop is recycled.
     pipeline = FinCorePipeline()
-    # Note: We pass the keys directly. Pipeline will need to be updated to download from R2.
-    asyncio.create_task(pipeline.run(run_id, s3_keys, user_context=user))
+    background_tasks.add_task(pipeline.run, run_id, s3_keys, user_context=user)
 
     return {"run_id": run_id, "status": "started"}
 

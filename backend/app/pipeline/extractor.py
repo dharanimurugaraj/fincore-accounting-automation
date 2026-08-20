@@ -239,7 +239,7 @@ class PDFExtractor:
         prompt = SCOUT_PROMPT.replace("{page1_text}", page1_text[:6000])
 
         payload = {
-            "model": "anthropic/claude-4.5-sonnet-20250929",
+            "model": "anthropic/claude-sonnet-4-5",
             "messages": [{"role": "user", "content": prompt}],
             "response_format": {"type": "json_object"},
             "temperature": 0,
@@ -302,12 +302,12 @@ class PDFExtractor:
         semaphore = asyncio.Semaphore(10) # Max 10 concurrent parsing threads
 
         print(
-            "\n[PHASE 3] Column → internal model: "
+            "\n[PHASE 3] Column -> internal model: "
             f"layout={schema.column_layout!r}; "
-            f"Withdrawal (Dr) ← {schema.withdrawal_col_name!r}, "
-            f"Deposit (Cr) ← {schema.deposit_col_name!r}, "
-            f"signed balance ← {schema.balance_col_name!r} "
-            f"(markers {schema.positive_markers!r} / {schema.negative_markers!r} → Cr+ / OD− → Positive Bal & Days)\n"
+            f"Withdrawal (Dr) <- {schema.withdrawal_col_name!r}, "
+            f"Deposit (Cr) <- {schema.deposit_col_name!r}, "
+            f"signed balance <- {schema.balance_col_name!r} "
+            f"(markers {schema.positive_markers!r} / {schema.negative_markers!r} -> Cr+ / OD- -> Positive Bal & Days)\n"
         )
 
         async def _parse(page_idx: int, text: str) -> Dict:
@@ -526,7 +526,7 @@ class PDFExtractor:
             "X-Title": "FinCore AI",
         }
         payload = {
-            "model": "anthropic/claude-4.5-sonnet-20250929",
+            "model": "anthropic/claude-sonnet-4-5",
             "messages": [{
                 "role": "user",
                 "content": [
@@ -584,6 +584,11 @@ class PDFExtractor:
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(url, headers=headers, json=payload, timeout=60.0)
+                if response.status_code != 200:
+                    err_body = response.json() if "application/json" in response.headers.get("content-type", "") else response.text
+                    err_msg = err_body.get("error", {}).get("message", str(err_body)) if isinstance(err_body, dict) else str(err_body)
+                    print(f"ERROR: OpenRouter HTTP {response.status_code} for model '{payload.get('model')}': {err_msg}")
+                    return {"data": {"error": f"OpenRouter {response.status_code}: {err_msg}"}, "usage": {}}
                 data = response.json()
                 content = data["choices"][0]["message"].get("content", "")
                 content = _strip_json_fences(content)

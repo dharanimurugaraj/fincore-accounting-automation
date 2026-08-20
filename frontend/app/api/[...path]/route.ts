@@ -114,7 +114,8 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
             method,
             headers: headers,
             cache: 'no-store',
-            signal: controller.signal // Link the abort signal
+            signal: controller.signal, // Link the abort signal
+            redirect: 'manual' // Pass redirects (like 307 to R2) back to the client
         };
 
         if (method !== "GET" && method !== "HEAD") {
@@ -148,6 +149,14 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
             return new Response(blob, {
                 status: response.status,
                 statusText: response.statusText,
+                headers: response.headers
+            });
+        }
+
+        // Return standard response or redirect
+        if (response.status >= 300 && response.status < 400) {
+            return new Response(null, {
+                status: response.status,
                 headers: response.headers
             });
         }

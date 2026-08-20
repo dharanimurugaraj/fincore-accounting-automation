@@ -30,16 +30,16 @@ async def handle_documents_request(
         # 1. Security Check: Verify key belongs to user's org (or Super Admin)
         if is_super_admin:
             access_query = """
-                SELECT id, "status" FROM "Upload" WHERE "s3Key" = %s
+                SELECT id, "status"::text FROM "Upload" WHERE "s3Key" = %s
                 UNION
-                SELECT id, "status" FROM "PipelineRun" WHERE ("workingSheetKey" = %s OR "bankingReportKey" = %s)
+                SELECT id, "status"::text FROM "PipelineRun" WHERE ("workingSheetKey" = %s OR "bankingReportKey" = %s)
             """
             rows = execute_query(access_query, (key, key, key))
         else:
             access_query = """
-                SELECT id, "status" FROM "Upload" WHERE "s3Key" = %s AND "orgId" = %s
+                SELECT id, "status"::text FROM "Upload" WHERE "s3Key" = %s AND "orgId" = %s
                 UNION
-                SELECT id, "status" FROM "PipelineRun" 
+                SELECT id, "status"::text FROM "PipelineRun" 
                 WHERE ("workingSheetKey" = %s OR "bankingReportKey" = %s) AND "orgId" = %s
             """
             rows = execute_query(access_query, (key, user["org_id"], key, key, user["org_id"]))

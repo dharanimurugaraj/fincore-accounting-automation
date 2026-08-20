@@ -15,7 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.api.v1.router import api_v1_router
 from app.core.database import execute_query, execute_insert
-from fastapi import UploadFile, File, Response
+from fastapi import UploadFile, File, Response, BackgroundTasks
 from fastapi.responses import StreamingResponse, FileResponse
 import asyncio
 import json
@@ -114,7 +114,7 @@ async def progress_generator(job_id: str):
                 yield f"data: {json.dumps(data)}\n\n"
                 last_percent = current_percent
                 
-            if run["status"] in ["APPROVED", "ERROR"]:
+            if run["status"] in ["APPROVED", "FAILED", "VALIDATION_FAILED", "ERROR"]:
                 break
         else:
             yield ": heartbeat\n\n"
@@ -181,7 +181,8 @@ async def get_active_job(user: CurrentUser):
 @app.post("/api/v1/process")
 async def process_pdfs(
     user: CurrentUser,
-    files: List[UploadFile] = File(...)
+    files: List[UploadFile] = File(...),
+    background_tasks: BackgroundTasks = None,
 ):
     from app.services.storage_service import derive_org_folder, generate_run_timestamp, get_upload_key, upload_file_object
     from io import BytesIO
@@ -239,8 +240,14 @@ async def process_pdfs(
     # 3. Start PDF Parser Worker (Now using R2 keys)
     from app.pipeline.pipeline import FinCorePipeline
     pipeline = FinCorePipeline()
-    asyncio.create_task(pipeline.run(job_id, r2_keys, user_context=user))
-    
+    # Use FastAPI BackgroundTasks — guaranteed to run after response is sent,
+    # even on multi-worker/Vercel deployments. asyncio.create_task() can be
+    # silently dropped when the request loop is recycled.
+    if background_tasks is not None:
+        background_tasks.add_task(pipeline.run, job_id, list(r2_keys), user_context=user)
+    else:
+        asyncio.create_task(pipeline.run(job_id, list(r2_keys), user_context=user))
+
     return {"job_id": job_id}
 
 @app.get("/api/v1/process/download")

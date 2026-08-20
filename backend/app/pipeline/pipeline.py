@@ -26,17 +26,31 @@ class FinCorePipeline:
         """ Persistent Progress Helper (Writes to DB Layer) """
         from app.core.database import execute_query
         import json
-        
+
         # Format substeps for JSON column
         substeps_json = json.dumps(sub_steps) if sub_steps else None
-        
-        # Map step to RunStatus enum if needed, but progressPercent is the primary UI driver
-        # For now, we update the metadata and Percent
-        execute_query(
-            'UPDATE "PipelineRun" SET "progressPercent" = %s, "progressMessage" = %s, "progressSubsteps" = %s WHERE id = %s',
-            (percent, f"[{step.upper()}] {message}", substeps_json, job_id)
-        )
-        
+
+        # Terminal states must flip the DB status column so the SSE loop can exit.
+        # Without this, an error leaves status=STAGE1_RUNNING forever.
+        db_status_map = {
+            "error":    "FAILED",
+            "complete": "APPROVED",
+        }
+        db_status = db_status_map.get(step)
+
+        if db_status:
+            execute_query(
+                'UPDATE "PipelineRun" SET "progressPercent" = %s, "progressMessage" = %s, '
+                '"progressSubsteps" = %s, status = %s WHERE id = %s',
+                (percent, f"[{step.upper()}] {message}", substeps_json, db_status, job_id)
+            )
+        else:
+            execute_query(
+                'UPDATE "PipelineRun" SET "progressPercent" = %s, "progressMessage" = %s, '
+                '"progressSubsteps" = %s WHERE id = %s',
+                (percent, f"[{step.upper()}] {message}", substeps_json, job_id)
+            )
+
         # Log to server console
         print(f"[PROGRESS] Job {job_id[-6:]}: {percent}% - {message}")
 
@@ -47,7 +61,7 @@ class FinCorePipeline:
         """
         try:
             # 1. Validation & Download from R2
-            from app.services.storage_service import download_file_to_memory, derive_org_folder, get_excel_key, upload_file_object
+            from app.services.storage_service import download_file_to_memory, derive_org_folder, get_excel_key, upload_file_object, generate_run_timestamp
             
             self.update_progress(job_id, "validation", "running", "Downloading and validating bank statements...", 10)
             validated_pdfs = []

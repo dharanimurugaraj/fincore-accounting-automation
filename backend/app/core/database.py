@@ -201,7 +201,7 @@ def execute_values_insert(query: str, values: list, page_size: int = 100):
 def update_pipeline_s3_key(run_id: str, field: str, s3_key: str):
     """Update a specific S3 key field in the PipelineRun."""
     # Validate field name against known columns
-    allowed = {"statementExcelKey", "workingSheetKey", "bankingReportKey"}
+    allowed = {"statementExcelKey", "workingSheetKey", "bankingReportKey", "fxSheetKey"}
     if field not in allowed:
         logger.error(f"Invalid pipeline field update: {field}")
         return

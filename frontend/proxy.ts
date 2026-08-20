@@ -42,9 +42,9 @@ export function proxy(request: NextRequest) {
 
     // Use environment variables for verification
     const correctUser = process.env.AUTH_USER || 'vyrenzo';
-    const correctPass = process.env.AUTH_PASS || 'finance@1234';
+    const correctPass = process.env.AUTH_PASS;
 
-    if (user === correctUser && pass === correctPass) {
+    if (correctPass && user === correctUser && pass === correctPass) {
       // SUCCESS: Set persistent cookie and allow through
       const response = NextResponse.next();
       response.cookies.set('fincore_auth_session', 'true', {

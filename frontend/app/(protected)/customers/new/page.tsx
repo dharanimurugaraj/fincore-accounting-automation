@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 import { 
   Building2, 
   User, 
@@ -67,18 +68,10 @@ export default function NewCustomerPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("/api/customers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
-      if (res.ok) {
-        router.push("/customers");
-      } else {
-        const error = await res.json();
-        alert(`Error: ${error.detail || "Failed to create customer"}`);
-      }
-    } catch (err) {
+      await api.post("customers", formData);
+      router.push("/customers");
+    } catch (err: any) {
+      alert(`Error: ${err.message || "Failed to create customer"}`);
       console.error("Submit failed", err);
     } finally {
       setLoading(false);

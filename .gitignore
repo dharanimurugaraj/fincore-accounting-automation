@@ -40,5 +40,11 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# ── Local Storage (Data) ──────────────────────────────────────────────────────
+# ── Local Storage & Temporary Files ───────────────────────────────────────────
 fincore-backend/storage/data/
+backend/storage/
+junk/
+scratch/
+*.pem
+*.key
+
