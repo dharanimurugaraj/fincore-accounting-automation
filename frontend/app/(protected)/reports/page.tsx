@@ -241,8 +241,8 @@ export default function ReportsPage() {
                     Validation Checks
                   </h4>
                   <div className="space-y-2">
-                    {run.validationResult.checks.map((check, idx) => (
-                      <ValidationRow key={idx} check={check} />
+                    {run.validationResult.checks.map((check) => (
+                      <ValidationRow key={check.name} check={check} />
                     ))}
                   </div>
                 </div>

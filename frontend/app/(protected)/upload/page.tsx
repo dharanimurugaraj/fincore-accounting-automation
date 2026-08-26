@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { api, API_BASE } from "@/lib/api"
+import { useAuth } from "@/components/auth/AuthContext"
 
 interface ProgressState {
   step: string
@@ -72,6 +73,7 @@ const PIPELINE_STEPS = [
 ]
 
 export default function UploadPage() {
+  const { profile } = useAuth()
   const [files, setFiles] = useState<File[]>([])
   const [jobId, setJobId] = useState<string | null>(null)
   const [progress, setProgress] = useState<ProgressState | null>(null)
@@ -84,8 +86,10 @@ export default function UploadPage() {
   useEffect(() => {
     // Ping the backend on mount to ensure serverless functions are warm
     api.get("health").catch(() => {});
-    fetchCredits();
-  }, []);
+    if (profile?.role === "SUPER_ADMIN") {
+      fetchCredits();
+    }
+  }, [profile?.role]);
 
   const fetchCredits = async () => {
     setLoadingCredits(true);

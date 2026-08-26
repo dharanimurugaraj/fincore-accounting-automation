@@ -48,9 +48,11 @@ export async function apiRequest<T>(
   try {
     const response = await fetch(url, fetchOptions);
     
-    if (response.status === 401 || response.status === 403) {
+    if (response.status === 401) {
       console.error("Auth Fail: Session expired or invalid.");
       // Option: Trigger logout globally
+    } else if (response.status === 403) {
+      console.error("Auth Fail: Permission denied.");
     }
 
     if (!response.ok) {
