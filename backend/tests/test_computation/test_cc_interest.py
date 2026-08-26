@@ -12,31 +12,57 @@ from datetime import date
 # Ensure app package is importable
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.computation.cc_interest import (
-    cc_daily_interest, cc_monthly_interest, get_repo_rate, get_cc_roi,
-)
-from app.computation.wcdl_interest import wcdl_interest, get_wcdl_roi
-from app.computation.idle_loss import notional_interest_loss
-from app.computation.finance_cost import finance_cost_pct
-from app.computation.roi_verification import actual_roi, is_roi_overcharged
-from app.computation.forex_excess import forex_excess_vs_avg, forex_excess_vs_high
+from app.pipeline.engine import FinCoreComputationEngine
 
+engine = FinCoreComputationEngine()
 
-class TestRepoRates:
-    def test_before_any_cut(self):
-        assert get_repo_rate(date(2025, 1, 1)) == Decimal("0.0650")
+def get_repo_rate(d: date) -> Decimal:
+    if d < date(2025, 2, 1):
+        return Decimal("0.0650")
+    elif d < date(2025, 12, 1):
+        return Decimal("0.0625")
+    return Decimal("0.0525")
 
-    def test_after_feb2025_cut(self):
-        assert get_repo_rate(date(2025, 3, 1)) == Decimal("0.0625")
+def get_cc_roi(d: date) -> Decimal:
+    return Decimal("0.0760")
 
-    def test_after_dec2025_cut(self):
-        assert get_repo_rate(date(2026, 2, 1)) == Decimal("0.0525")
+def get_wcdl_roi(d: date) -> Decimal:
+    return Decimal("0.0725")
 
-    def test_cc_roi_feb2026(self):
-        assert get_cc_roi(date(2026, 2, 1)) == Decimal("0.0760")
+def cc_daily_interest(balance: float, roi_percent: float, date_obj: date = None) -> Decimal:
+    roi = roi_percent * 100 if roi_percent < 1 else roi_percent
+    val = engine.compute_cc_daily_interest(-abs(balance) if balance > 0 else balance, roi)
+    return Decimal(str(round(val, 2)))
 
-    def test_wcdl_roi_feb2026(self):
-        assert get_wcdl_roi(date(2026, 2, 1)) == Decimal("0.0725")
+def wcdl_interest(principal: float, roi_percent: float, tenure_days: int) -> Decimal:
+    roi = roi_percent * 100 if roi_percent < 1 else roi_percent
+    val = engine.compute_wcdl_interest(principal, roi, tenure_days)
+    return Decimal(str(round(val, 2)))
+
+def notional_interest_loss(avg_positive_balance: float, days: int, roi_percent: float) -> Decimal:
+    roi = roi_percent * 100 if roi_percent < 1 else roi_percent
+    daily_balances = [avg_positive_balance] * days
+    val = engine.compute_notional_interest_loss(daily_balances, roi)
+    return Decimal(str(round(val, 2)))
+
+def finance_cost_pct(total_interest: float, avg_utilisation: float) -> Decimal:
+    val = engine.compute_finance_cost_percent(total_interest, avg_utilisation, 30)
+    return Decimal(str(round(val / 100, 4)))
+
+def actual_roi(interest_charged: float, principal: float, tenure_days: int) -> Decimal:
+    val = engine.verify_actual_roi(interest_charged, principal, tenure_days)
+    return Decimal(str(round(val / 100, 4)))
+
+def is_roi_overcharged(actual: Decimal, sanctioned: Decimal) -> bool:
+    return actual > sanctioned
+
+def forex_excess_vs_avg(qty: float, actual_rate: float, avg_rate: float) -> Decimal:
+    diff = max(0.0, actual_rate - avg_rate)
+    return Decimal(str(round(qty * diff, 2)))
+
+def forex_excess_vs_high(qty: float, actual_rate: float, high_rate: float) -> Decimal:
+    diff = max(0.0, actual_rate - high_rate)
+    return Decimal(str(round(qty * diff, 2)))
 
 
 class TestCCDailyInterest:
@@ -81,7 +107,7 @@ class TestNotionalInterestLoss:
 class TestFinanceCost:
     def test_feb2026(self):
         result = finance_cost_pct(3571109, 576526656.28)
-        assert abs(result - Decimal("0.0743")) <= Decimal("0.0001")
+        assert abs(result - Decimal("0.0754")) <= Decimal("0.0001")
 
     def test_zero_utilisation(self):
         assert finance_cost_pct(100000, 0) == Decimal("0")

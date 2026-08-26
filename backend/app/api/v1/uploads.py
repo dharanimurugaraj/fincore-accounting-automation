@@ -8,6 +8,8 @@ import uuid
 from fastapi.responses import RedirectResponse
 from app.services.storage_service import generate_presigned_get_url
 
+from app.services.audit_service import log_action
+
 router = APIRouter()
 
 @router.get("")
@@ -58,14 +60,7 @@ async def handle_documents_request(
             raise HTTPException(status_code=500, detail=f"Storage error: {str(e)}")
 
         # 4. Audit Log
-        audit_id = f"aud_{uuid.uuid4().hex[:12]}"
-        execute_insert(
-            """
-            INSERT INTO "AuditLog" (id, "orgId", "userId", action, "entityType", "entityId", metadata, "createdAt")
-            VALUES (%s, %s, %s, 'FILE_DOWNLOADED', 'Document', %s, %s, %s)
-            """,
-            (audit_id, user["org_id"], user["id"], key, json.dumps({"key": key}), datetime.utcnow())
-        )
+        log_action(user, "FILE_DOWNLOADED", "Document", key, {"key": key})
 
         return RedirectResponse(url)
 

@@ -46,9 +46,16 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+raw_origins = settings.FRONTEND_URL
+origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
+default_local_origins = ["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:8000", "http://127.0.0.1:8000"]
+for loc in default_local_origins:
+    if loc not in origins:
+        origins.append(loc)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Allow all for proxy-based communication
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -122,6 +129,10 @@ async def progress_generator(job_id: str):
 
 @app.get("/api/v1/process/progress/{job_id}")
 async def get_progress(job_id: str, user: CurrentUser):
+    query = 'SELECT "orgId" FROM "PipelineRun" WHERE id = %s'
+    rows = await asyncio.to_thread(execute_query, query, (job_id,))
+    if not rows or rows[0]["orgId"] != user["org_id"]:
+        return Response(content="Unauthorized access to job progress", status_code=403)
     return StreamingResponse(
         progress_generator(job_id),
         media_type="text/event-stream",
@@ -132,14 +143,16 @@ async def get_progress(job_id: str, user: CurrentUser):
     )
 
 @app.get("/api/v1/process/status/{job_id}")
-async def get_job_status(job_id: str):
+async def get_job_status(job_id: str, user: CurrentUser):
     """ Pollable endpoint for job status (Layer 2/6 - DB Driven) """
-    query = 'SELECT status, stage, "workingSheetKey", "bankingReportKey", "errorMessage", "completedAt", "progressPercent", "progressMessage", "progressSubsteps" FROM "PipelineRun" WHERE id = %s'
+    query = 'SELECT "orgId", status, stage, "workingSheetKey", "bankingReportKey", "errorMessage", "completedAt", "progressPercent", "progressMessage", "progressSubsteps" FROM "PipelineRun" WHERE id = %s'
     rows = await asyncio.to_thread(execute_query, query, (job_id,))
     if not rows:
         return Response(content="Job not found", status_code=404)
     
     run = rows[0]
+    if run["orgId"] != user["org_id"]:
+        return Response(content="Unauthorized access to job", status_code=403)
     
     # Substeps handling
     sub_steps = []
@@ -187,7 +200,7 @@ async def process_pdfs(
     from app.services.storage_service import derive_org_folder, generate_run_timestamp, get_upload_key, upload_file_object
     from io import BytesIO
     
-    job_id = f"job_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    job_id = f"job_{uuid.uuid4().hex}"
     org_folder = derive_org_folder(user["email"])
     run_timestamp = generate_run_timestamp()
     
@@ -253,26 +266,38 @@ async def process_pdfs(
 @app.get("/api/v1/process/download")
 async def download_file(path: str, user: CurrentUser):
     """ 
-    Legacy Delivery Service (Layer 6) - Updated for R2.
+    Delivery Service - Updated for R2.
     Redirects to a secure R2 presigned URL.
     """
-    from app.services.storage_service import generate_presigned_get_url
+    from app.services.storage_service import generate_presigned_get_url, derive_org_folder
     from fastapi.responses import RedirectResponse
     
-    # 1. Basic Validation
-    if not path:
-        return Response(content="File path required", status_code=400)
+    # 1. Basic Validation (Prevent Open Redirect & Path Traversal)
+    if not path or path.startswith("http:") or path.startswith("https:") or "://" in path or "\\" in path:
+        return Response(content="Invalid file path", status_code=400)
+
+    # 2. Security: Verify user belongs to org owning this file
+    org_folder = derive_org_folder(user["email"])
+    is_owned = path.startswith(f"{org_folder}/")
     
-    # 2. Security: Verify user belongs to org owning this run (Optional but recommended)
-    # For speed in legacy UI, we trust the path if it contains the org folder derived from email
-    # but a stricter check would query the DB.
+    if not is_owned:
+        rows_pr = await asyncio.to_thread(
+            execute_query,
+            'SELECT id FROM "PipelineRun" WHERE "orgId" = %s AND ("workingSheetKey" = %s OR "bankingReportKey" = %s OR "fxSheetKey" = %s OR "statementExcelKey" = %s)',
+            (user["org_id"], path, path, path, path)
+        )
+        rows_up = await asyncio.to_thread(
+            execute_query,
+            'SELECT id FROM "Upload" WHERE "orgId" = %s AND "s3Key" = %s',
+            (user["org_id"], path)
+        )
+        if rows_pr or rows_up:
+            is_owned = True
+
+    if not is_owned:
+        return Response(content="Access denied to requested file", status_code=403)
     
     try:
-        # If it's already a full URL (rare but possible), just redirect
-        if path.startswith("http"):
-            return RedirectResponse(path)
-            
-        # Generate presigned URL from R2
         url = generate_presigned_get_url(path)
         return RedirectResponse(url)
     except Exception as e:

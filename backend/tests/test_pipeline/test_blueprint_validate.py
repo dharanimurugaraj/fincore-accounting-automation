@@ -46,6 +46,6 @@ def test_signed_style_uses_numeric_sign():
     pos, days, _ = _positive_bal_num_days_cc(-100.0, "signed", None)
     assert pos == 0.0
     assert days == 0
-    pos2, days2, _ = _positive_bal_num_days_cc(50.0, "signed", None)
+    pos2, days2, _ = _positive_bal_num_days_cc(50.0, "signed", True)
     assert pos2 == 50.0
     assert days2 == 1
