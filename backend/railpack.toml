@@ -1,0 +1,4 @@
+# Force Docker build instead of auto-detection
+[build]
+builder = "docker"
+
