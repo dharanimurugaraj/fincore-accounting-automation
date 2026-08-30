@@ -67,11 +67,8 @@ async function handle(request: NextRequest, paramsPromise: Promise<{ path: strin
         cleanHost = request.headers.get("host") || "finance.vyrenzo.in";
     }
 
-    // 3. Apply Vercel Multi-service Prefix if needed
+    // 3. Removed legacy /_/backend prefix logic
     let finalHost = cleanHost;
-    if (!isLocal && !cleanHost.includes("_/backend")) {
-        finalHost = `${cleanHost}/_/backend`.replace(/\/\/+/g, "/");
-    }
     // Final check for leading slash
     if (finalHost.startsWith("/")) finalHost = finalHost.slice(1);
 
