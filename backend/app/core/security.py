@@ -94,13 +94,33 @@ async def get_current_user(
         name = decoded_token.get('name', '')
         photo_url = decoded_token.get('picture', '') # Firebase provides 'picture' for Google Auth
 
-        # 2. Check if user exists in our DB
+        # 2. Check if user exists in our DB by firebaseUid
         rows = execute_query(
             'SELECT u.id, u."orgId", u."roleId", r.name as role_name, r."allowedPages" '
             'FROM "User" u JOIN "Role" r ON u."roleId" = r.id '
             'WHERE u."firebaseUid" = %s',
             (fb_uid,),
         )
+
+        if not rows and email:
+            # 2b. Fallback check by email (in case user was seeded or created without firebaseUid)
+            email_rows = execute_query(
+                'SELECT u.id FROM "User" u WHERE u.email = %s',
+                (email,),
+            )
+            if email_rows:
+                user_id = email_rows[0]["id"]
+                execute_insert(
+                    'UPDATE "User" SET "firebaseUid" = %s WHERE id = %s',
+                    (fb_uid, user_id),
+                )
+                print(f"[auth] Linked existing user {email} (id: {user_id}) to firebaseUid: {fb_uid}")
+                rows = execute_query(
+                    'SELECT u.id, u."orgId", u."roleId", r.name as role_name, r."allowedPages" '
+                    'FROM "User" u JOIN "Role" r ON u."roleId" = r.id '
+                    'WHERE u.id = %s',
+                    (user_id,),
+                )
 
         if not rows:
             # 3. Dynamic User Creation
