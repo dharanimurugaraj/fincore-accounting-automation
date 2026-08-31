@@ -18,7 +18,7 @@ export default function NotFound() {
         <div className="space-y-3">
           <h1 className="text-4xl font-bold text-t-heading tracking-tight">404 — Missing Route</h1>
           <p className="text-t-muted text-lg leading-relaxed">
-            The page you are looking for doesn't exist or has been relocated within the Vyrenzo platform.
+            The page you are looking for doesn&apos;t exist or has been relocated within the Vyrenzo platform.
           </p>
         </div>
 
