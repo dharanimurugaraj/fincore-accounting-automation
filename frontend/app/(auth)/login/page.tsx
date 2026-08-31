@@ -93,7 +93,7 @@ export default function LoginPage() {
                  <span className="text-xl font-black text-t-heading tracking-tighter italic">FINCORE</span>
               </div>
               <h2 className="text-2xl font-black text-t-heading tracking-tight mb-2">Welcome Back</h2>
-              <p className="text-t-muted text-sm px-4">Access your organization's financial control center.</p>
+              <p className="text-t-muted text-sm px-4">Access your organization&apos;s financial control center.</p>
             </div>
 
             {error && (

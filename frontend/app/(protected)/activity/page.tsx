@@ -73,7 +73,7 @@ export default function ActivityPage() {
       <div className="flex flex-col items-center justify-center p-20 text-center bg-neutral-card/30 rounded-2xl border border-neutral-border animate-in fade-in zoom-in duration-500">
         <Activity className="h-16 w-16 text-status-critical mb-4" />
         <h1 className="text-2xl font-bold text-t-heading mb-2">Access Denied</h1>
-        <p className="text-t-muted max-w-sm">Permissions for 'Activity Monitoring' have not been granted for your account. Please contact your Super Admin.</p>
+        <p className="text-t-muted max-w-sm">Permissions for &apos;Activity Monitoring&apos; have not been granted for your account. Please contact your Super Admin.</p>
       </div>
     );
   }
